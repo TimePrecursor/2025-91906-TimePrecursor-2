@@ -26,17 +26,14 @@ class GameView(arcade.View):
 
         # setting up window variables:
         self.background_color = arcade.color.AMAZON
-        self.player_texture = arcade.load_texture(
-            "assets/Carnivores1.png"
-        )
 
-        # Separate variable that holds the player sprite
-        self.first_sprite = arcade.Sprite(self.player_texture)
-        self.first_sprite.center_x = WINDOW_WIDTH/4
-        self.first_sprite.center_y = WINDOW_HEIGHT/4
+        # If I have sprites, I will create them here
+        # This may help:
+        # ac.sprites.sprite_creation(self, sprite_File, sprite_W, sprite_H, sprite_X, sprite_Y)
+        import asset_creation as ac
+        carnivore_sprite = ac.sprites.sprite_creation(self, "assets\Carnivores1.png", 100,100,100,100)
 
-        # If you have sprite lists, you should create them here,
-        # and set them to None
+
 
     def reset(self):
         """Reset the game to the initial state."""
