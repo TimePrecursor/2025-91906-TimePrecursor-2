@@ -1,10 +1,14 @@
-codeVersion: str = "1.02"
+codeVersion= "1.03"
 
 import arcade
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 WINDOW_TITLE = f"Evolution Game V{codeVersion}"
+
+
+
+
 
 
 class GameView(arcade.View):
@@ -18,8 +22,19 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
 
+        # setting up window variables:
         self.background_color = arcade.color.AMAZON
 
+        texture = arcade.load_texture("assets/Carnivores1.png")
+        scale = .6
+        arcade.draw_texture_rect(
+            texture,
+            arcade.XYWH(540, 120, texture.width, texture.height).scale(scale)
+        )
+        arcade.draw_texture_rect(
+            texture,
+            arcade.XYWH(540, 60, texture.width, texture.height).scale(scale), angle=45,
+        )
         # If you have sprite lists, you should create them here,
         # and set them to None
 
