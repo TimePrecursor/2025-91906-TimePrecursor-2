@@ -9,7 +9,9 @@ WINDOW_TITLE = f"Evolution Game V{codeVersion}"
 
 
 
-
+# The texture will only be loaded during the first sprite creation
+tex_name = "assets/Carnivores1.png"
+sprite_1 = arcade.Sprite(tex_name)
 
 class GameView(arcade.View):
     """
@@ -24,17 +26,15 @@ class GameView(arcade.View):
 
         # setting up window variables:
         self.background_color = arcade.color.AMAZON
+        self.player_texture = arcade.load_texture(
+            "assets/Carnivores1.png"
+        )
 
-        texture = arcade.load_texture("assets/Carnivores1.png")
-        scale = .6
-        arcade.draw_texture_rect(
-            texture,
-            arcade.XYWH(540, 120, texture.width, texture.height).scale(scale)
-        )
-        arcade.draw_texture_rect(
-            texture,
-            arcade.XYWH(540, 60, texture.width, texture.height).scale(scale), angle=45,
-        )
+        # Separate variable that holds the player sprite
+        self.first_sprite = arcade.Sprite(self.player_texture)
+        self.first_sprite.center_x = WINDOW_WIDTH/4
+        self.first_sprite.center_y = WINDOW_HEIGHT/4
+
         # If you have sprite lists, you should create them here,
         # and set them to None
 
@@ -51,6 +51,8 @@ class GameView(arcade.View):
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
         self.clear()
+        #stuff here:
+        arcade.draw_sprite(self.first_sprite)
 
 
     def on_update(self, delta_time):
