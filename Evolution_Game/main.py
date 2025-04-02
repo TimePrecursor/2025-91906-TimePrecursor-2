@@ -1,6 +1,7 @@
 codeVersion= "1.03"
 
 import arcade
+import asset_creation as ac
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -27,11 +28,16 @@ class GameView(arcade.View):
         # setting up window variables:
         self.background_color = arcade.color.AMAZON
 
+
+
         # If I have sprites, I will create them here
         # This may help:
-        # ac.sprites.sprite_creation(self, sprite_File, sprite_W, sprite_H, sprite_X, sprite_Y)
-        import asset_creation as ac
-        carnivore_sprite = ac.sprites.sprite_creation(self, "assets\Carnivores1.png", 100,100,100,100)
+        # ac.sprite_creation(self,name.png",1,1)
+        # The offset percent default is 1 AKA (100%)
+        self.carnivore_sprite = ac.sprite_creation(self, "assets/Carnivores1.png", 100,1)
+        self.herbivore_sprite = ac.sprite_creation(self, "assets/Herbivores1.png",1,1)
+        self.decomposer_sprite = ac.sprite_creation(self, "assets/Decomposers1.png",1,1)
+
 
 
 
@@ -49,7 +55,10 @@ class GameView(arcade.View):
         # the screen to the background color, and erase what we drew last frame.
         self.clear()
         #stuff here:
-        arcade.draw_sprite(self.first_sprite)
+        arcade.draw_sprite(self.carnivore_sprite)
+        arcade.draw_sprite(self.herbivore_sprite)
+        arcade.draw_sprite(self.decomposer_sprite)
+
 
 
     def on_update(self, delta_time):
