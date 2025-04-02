@@ -1,8 +1,10 @@
+codeVersion: str = "1.02"
+
 import arcade
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
-WINDOW_TITLE = "Starting Template"
+WINDOW_TITLE = f"Evolution Game V{codeVersion}"
 
 
 class GameView(arcade.View):
