@@ -1,7 +1,7 @@
 codeVersion= "1.048"
 
 import arcade
-import asset_creation as ac
+from pathlib import *
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -11,8 +11,6 @@ WINDOW_TITLE = f"Evolution Game V{codeVersion}"
 
 
 # The texture will only be loaded during the first sprite creation
-tex_name = "assets/Carnivores1.png"
-sprite_1 = arcade.Sprite(tex_name)
 
 class GameView(arcade.View):
     """
@@ -28,12 +26,13 @@ class GameView(arcade.View):
         # setting up window variables:
         self.background_color = arcade.color.AMAZON
 
-
+        folder2 = Path('Evolution_Game/assets')
         sprite_list = {
             "assets/Carnivores1.png" : [0,"carnivore_sprite"],
             "assets/Herbivores1.png" : [1,"herbivore_sprite"],
             "assets/Decomposers1.png" : [2,"decomposer_sprite"]
         }
+
         # If I have sprites, I will create them here
         # This may help:
         # ac.sprite_creation(self,name.png",1,1)
@@ -41,14 +40,16 @@ class GameView(arcade.View):
         self.sprites = arcade.SpriteList()
         index1 = 0
         for i in sprite_list:
+            # Define the filename to search for
+            file_to_find = i
+            file_path = Path(i)
+            print(file_path)
+            # ---------------
             index1 += 0.5
-            print(i)
-            # lolzers = self.sprite_creation(self, i, 100)
-            sprite_texture = arcade.load_texture(i)
+            sprite_texture = arcade.load_texture(file_path)
             xsprite = arcade.Sprite(sprite_texture)
             xsprite.center_x = ((WINDOW_WIDTH / 2) * index1)
             xsprite.center_y = ((WINDOW_HEIGHT / 2) + 0)
-            # xsprite.center_y += 1
             self.sprites.append(xsprite)
 
 
