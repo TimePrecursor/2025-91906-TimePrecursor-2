@@ -13,11 +13,11 @@ class sprites:
 
 
 # offsetPercent_X, offsetPercent_Y)
-def sprite_creation(self, sprite_File, offset_X, offset_Y):
-    self.sprite_texture = arcade.load_texture(sprite_File)
-    self.first_sprite = arcade.Sprite(self.sprite_texture)
-    self.first_sprite.center_x = ((WINDOW_WIDTH / 2)+offset_X)
-    self.first_sprite.center_y = ((WINDOW_HEIGHT / 2)+offset_Y)
+# def sprite_creation(self, sprite_File, offset_X, offset_Y):
+#     self.sprite_texture = arcade.load_texture(sprite_File)
+#     self.first_sprite = arcade.Sprite(self.sprite_texture)
+#     self.first_sprite.center_x = ((WINDOW_WIDTH / 2)+offset_X)
+#     self.first_sprite.center_y = ((WINDOW_HEIGHT / 2)+offset_Y)
 
 # def sprite_pngs(self, WINDOW_WIDTH, WINDOW_HEIGHT):
 #     carnivore_png = arcade.Sprite(self.player_texture)

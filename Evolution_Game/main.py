@@ -29,17 +29,33 @@ class GameView(arcade.View):
         self.background_color = arcade.color.AMAZON
 
 
-
+        sprite_list = ["assets/Carnivores1.png","assets/Herbivores1.png","assets/Decomposers1.png"]
         # If I have sprites, I will create them here
         # This may help:
         # ac.sprite_creation(self,name.png",1,1)
         # The offset percent default is 1 AKA (100%)
-        self.carnivore_sprite = ac.sprite_creation(self, "assets/Carnivores1.png", 100,1)
-        self.herbivore_sprite = ac.sprite_creation(self, "assets/Herbivores1.png",1,1)
-        self.decomposer_sprite = ac.sprite_creation(self, "assets/Decomposers1.png",1,1)
+        self.sprites = arcade.SpriteList()
+        index1 = 0
+        for i in sprite_list:
+            index1 =+ 1
+            # lolzers = self.sprite_creation(self, i, 100)
+            sprite_texture = arcade.load_texture(i)
+            first_sprite = arcade.Sprite(sprite_texture)
+            first_sprite.center_x = ((WINDOW_WIDTH / 2) * index1)
+            first_sprite.center_y = ((WINDOW_HEIGHT / 2) + 0)
+            self.sprites.append(first_sprite)
 
 
+        # self.carnivore_sprite = ac.sprite_creation(self, "assets/Carnivores1.png", 100,1)
+        # self.herbivore_sprite = ac.sprite_creation(self, "assets/Herbivores1.png",1,1)
+        # self.decomposer_sprite = ac.sprite_creation(self, "assets/Decomposers1.png",1,1)
 
+    # def sprite_creation(self, sprite_file, offset_X, offset_Y):
+    #     self.sprite_texture = arcade.load_texture(sprite_file)
+    #     self.first_sprite = arcade.Sprite(self.sprite_texture)
+    #     self.first_sprite.center_x = ((WINDOW_WIDTH / 2) + offset_X)
+    #     self.first_sprite.center_y = ((WINDOW_HEIGHT / 2) + offset_Y)
+    #     return self.first_sprite
 
     def reset(self):
         """Reset the game to the initial state."""
@@ -55,9 +71,10 @@ class GameView(arcade.View):
         # the screen to the background color, and erase what we drew last frame.
         self.clear()
         #stuff here:
-        arcade.draw_sprite(self.carnivore_sprite)
-        arcade.draw_sprite(self.herbivore_sprite)
-        arcade.draw_sprite(self.decomposer_sprite)
+        self.sprites.draw()
+        # arcade.draw_sprite(self.carnivore_sprite)
+        # arcade.draw_sprite(self.herbivore_sprite)
+        # arcade.draw_sprite(self.decomposer_sprite)
 
 
 
