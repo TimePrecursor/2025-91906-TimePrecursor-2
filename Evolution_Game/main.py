@@ -29,14 +29,18 @@ class GameView(arcade.View):
         self.background_color = arcade.color.AMAZON
 
 
-        sprite_list = ["assets/Carnivores1.png","assets/Herbivores1.png","assets/Decomposers1.png"]
+        sprite_list = {
+            "assets/Carnivores1.png" : [0,"carnivore_sprite"],
+            "assets/Herbivores1.png" : [1,"herbivore_sprite"],
+            "assets/Decomposers1.png" : [2,"decomposer_sprite"]
+        }
         # If I have sprites, I will create them here
         # This may help:
         # ac.sprite_creation(self,name.png",1,1)
         # The offset percent default is 1 AKA (100%)
         self.sprites = arcade.SpriteList()
         index1 = 0
-        for i in sprite_list:
+        for i in sprite_list.keys():
             index1 =+ 1
             # lolzers = self.sprite_creation(self, i, 100)
             sprite_texture = arcade.load_texture(i)
