@@ -1,4 +1,4 @@
-codeVersion= "1.03"
+codeVersion= "1.048"
 
 import arcade
 import asset_creation as ac
@@ -40,14 +40,16 @@ class GameView(arcade.View):
         # The offset percent default is 1 AKA (100%)
         self.sprites = arcade.SpriteList()
         index1 = 0
-        for i in sprite_list.keys():
-            index1 =+ 1
+        for i in sprite_list:
+            index1 += 0.5
+            print(i)
             # lolzers = self.sprite_creation(self, i, 100)
             sprite_texture = arcade.load_texture(i)
-            first_sprite = arcade.Sprite(sprite_texture)
-            first_sprite.center_x = ((WINDOW_WIDTH / 2) * index1)
-            first_sprite.center_y = ((WINDOW_HEIGHT / 2) + 0)
-            self.sprites.append(first_sprite)
+            xsprite = arcade.Sprite(sprite_texture)
+            xsprite.center_x = ((WINDOW_WIDTH / 2) * index1)
+            xsprite.center_y = ((WINDOW_HEIGHT / 2) + 0)
+            # xsprite.center_y += 1
+            self.sprites.append(xsprite)
 
 
         # self.carnivore_sprite = ac.sprite_creation(self, "assets/Carnivores1.png", 100,1)
@@ -123,7 +125,7 @@ class GameView(arcade.View):
 
 def main():
     """ Main function """
-    # Create a window class. This is what actually shows up on screen
+    # Create a window class.
     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
 
     # Create and setup the GameView
