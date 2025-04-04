@@ -44,7 +44,6 @@ class GameView(arcade.View):
             file_to_find = i
             file_path = os.path.join('..', 'assets', i)  # Go up one level from 'windows' folder
 
-            print(file_path)
             # ---------------
             index1 += 0.5
             sprite_texture = arcade.load_texture(file_path)
