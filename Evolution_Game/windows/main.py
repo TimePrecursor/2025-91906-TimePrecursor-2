@@ -1,7 +1,8 @@
-codeVersion= "1.048"
+codeVersion= "1.049"
 
 import arcade
-from pathlib import *
+import os
+
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -26,13 +27,12 @@ class GameView(arcade.View):
         # setting up window variables:
         self.background_color = arcade.color.AMAZON
 
-        folder2 = Path('Evolution_Game/assets')
-        sprite_list = {
-            "assets/Carnivores1.png" : [0,"carnivore_sprite"],
-            "assets/Herbivores1.png" : [1,"herbivore_sprite"],
-            "assets/Decomposers1.png" : [2,"decomposer_sprite"]
-        }
 
+        sprite_list = {
+            "CarnivoreFinal2.png" : [0,"carnivore_sprite"],
+            "HerbivoreFinal2.png" : [1,"herbivore_sprite"],
+            "DecomposerFinal2.png" : [2,"decomposer_sprite"]
+        }
         # If I have sprites, I will create them here
         # This may help:
         # ac.sprite_creation(self,name.png",1,1)
@@ -42,7 +42,8 @@ class GameView(arcade.View):
         for i in sprite_list:
             # Define the filename to search for
             file_to_find = i
-            file_path = Path(i)
+            file_path = os.path.join('..', 'assets', i)  # Go up one level from 'windows' folder
+
             print(file_path)
             # ---------------
             index1 += 0.5
