@@ -53,7 +53,13 @@ class GameView(arcade.View):
             # Define the filename to search for
             file_to_find = i
             file_path = os.path.join('..', 'assets', i)  # Go up one level from 'windows' folder
-
+            # ---------------
+            def on_mouse_press(x, y, button, modifiers):
+                # Check if the mouse click is within the sprite's bounds
+                if sprite.left <= x <= sprite.right and sprite.bottom <= y <= sprite.top:
+                    # Perform actions when the sprite is clicked
+                    print("Sprite clicked!")
+                    # ... (other actions)
             # ---------------
             index1 += 0.5
             sprite_texture = arcade.load_texture(file_path)
