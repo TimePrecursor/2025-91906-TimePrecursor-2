@@ -1,6 +1,8 @@
 codeVersion= "1.049"
 
 import arcade
+from arcade.gui import *
+from arcade import gui
 import os
 
 
@@ -26,6 +28,14 @@ class GameView(arcade.View):
 
         # setting up window variables:
         self.background_color = arcade.color.AMAZON
+        # self.grid = UIGridLayout(
+        #     column_count=3,
+        #     row_count=4,
+        #     size_hint=(0, 0),
+        #     vertical_spacing=10,
+        #     horizontal_spacing=10,
+        # )
+        # self.box = arcade.gui.UIGridLayout()
 
 
         sprite_list = {
@@ -52,7 +62,6 @@ class GameView(arcade.View):
             xsprite.center_y = ((WINDOW_HEIGHT / 2) + 0)
             self.sprites.append(xsprite)
 
-
         # self.carnivore_sprite = ac.sprite_creation(self, "assets/Carnivores1.png", 100,1)
         # self.herbivore_sprite = ac.sprite_creation(self, "assets/Herbivores1.png",1,1)
         # self.decomposer_sprite = ac.sprite_creation(self, "assets/Decomposers1.png",1,1)
@@ -73,6 +82,15 @@ class GameView(arcade.View):
         """
         Render the screen.
         """
+        # texture_button = UITextureButton(
+        #     text="UITextureButton",
+        #     width=200,
+        #     texture=TEX_RED_BUTTON_NORMAL,
+        #     texture_hovered=TEX_RED_BUTTON_HOVER,
+        #     texture_pressed=TEX_RED_BUTTON_PRESS,
+        # )
+        #     grid.add(texture_button, row=0, column=2)
+
 
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
