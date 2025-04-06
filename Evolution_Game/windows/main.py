@@ -1,4 +1,4 @@
-codeVersion= "1.72"
+codeVersion= "1.73"
 
 import arcade
 from arcade.gui import *
@@ -64,8 +64,6 @@ class MyView(UIView):
     def setup_buttons(self):
         for count, i in enumerate(self.sprite_list):
             texture_button = FirstButtons(text="", width=300, height=300, button_id=count)
-            # texture_button.on_click(event=UIOnClickEvent)
-            print(i)
             file_path_list = []
             for x in range(0,3):
                 # Define the filename to search for:
