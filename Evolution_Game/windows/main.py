@@ -13,17 +13,17 @@ WINDOW_TITLE = f"Evolution Game V{codeVersion}"
 
 
 class FirstButtons(arcade.gui.UITextureButton):
-
     def __init__(self, text, width, height, button_id):
         super().__init__(text=text, width=width, height=height)
         self.button_id = button_id
     def on_click(self, event):
         print(f"To the {self.button_id} window!")
+        orginismSelectionVeiw.showveiwfunc()
 
 
 # The texture will only be loaded during the first sprite creation
 
-class OrginismSelectionVeiw(UIView):
+class orginismSelectionVeiw(UIView):
     """
     Main application class.
 
@@ -33,13 +33,15 @@ class OrginismSelectionVeiw(UIView):
 
     def __init__(self):
         super().__init__()
-
         self.background_color = arcade.color.AMAZON
+
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+
 
         self.grid = UIGridLayout(
             column_count=3,
             row_count=5,
-            size_hint=(0, 0),
             vertical_spacing=0,
             horizontal_spacing=10,
         )
@@ -85,9 +87,8 @@ class OrginismSelectionVeiw(UIView):
 
             type = self.sprite_list[count][3]
             # self.on_FirstButton_Click(type)
-            self.ui_manager = arcade.gui.UIManager()
-            self.ui_manager.add(texture_button)
-            self.grid.add(texture_button, row=1, column=int(0 + count))
+            self.manager.add(texture_button)
+            self.grid.add(texture_button, row=1, column=int(count))
             # x = texture_button.get_current_state()
             # print(x)
 
@@ -121,7 +122,12 @@ class OrginismSelectionVeiw(UIView):
         Called when a user releases a mouse button.
         """
         pass
+    def showveiwfunc(self):
+        from CarnivoreProfessionWindow import PageView
+        self.window.show_view(PageView())
 
+    def on_hide_view(self):
+        self.manager.disable()
 
 def main():
     """ Main function """
@@ -130,7 +136,7 @@ def main():
 
 
     # Show GameView on screen
-    window.show_view(OrginismSelectionVeiw())
+    window.show_view(orginismSelectionVeiw())
 
     # Start the arcade game loop
     arcade.run()
