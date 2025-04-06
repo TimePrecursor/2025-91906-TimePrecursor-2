@@ -1,4 +1,4 @@
-codeVersion= "1.71"
+codeVersion= "1.72"
 
 import arcade
 from arcade.gui import *
@@ -13,7 +13,13 @@ WINDOW_TITLE = f"Evolution Game V{codeVersion}"
 
 
 
+class FirstButtons(arcade.gui.UITextureButton):
 
+    def __init__(self, text, width, height, button_id):
+        super().__init__(text=text, width=width, height=height)
+        self.button_id = button_id
+    def on_click(self, event):
+        print(f"To the {self.button_id} window!")
 
 
 # The texture will only be loaded during the first sprite creation
@@ -28,6 +34,7 @@ class MyView(UIView):
 
     def __init__(self):
         super().__init__()
+
         self.background_color = arcade.color.AMAZON
 
         self.grid = UIGridLayout(
@@ -41,11 +48,10 @@ class MyView(UIView):
 
 
         # If I have sprites or buttons, I will create them here:
-
         self.sprite_list = {
-            0: ["CarnivoreFinal2.png", "CarnivoreFinal2Hover.png", "CarnivoreFinal2Pressed.png"],
-            1: ["HerbivoreFinal2.png", "HerbivoreFinal2Hover.png", "HerbivoreFinal2Pressed.png"],
-            2: ["DecomposerFinal2.png" , "DecomposerFinal2Hover.png", "DecomposerFinal2Pressed.png"],
+            0: ["CarnivoreFinal2.png", "CarnivoreFinal2Hover.png", "CarnivoreFinal2Pressed.png", "Carnivore"],
+            1: ["HerbivoreFinal2.png", "HerbivoreFinal2Hover.png", "HerbivoreFinal2Pressed.png", "Herbivore"],
+            2: ["DecomposerFinal2.png" , "DecomposerFinal2Hover.png", "DecomposerFinal2Pressed.png", "Decomposer"],
         }
         self.sprites = arcade.SpriteList()
         self.setup_buttons()
@@ -57,7 +63,9 @@ class MyView(UIView):
 
     def setup_buttons(self):
         for count, i in enumerate(self.sprite_list):
-            texture_button = UITextureButton(text="", width=300, height=300)
+            texture_button = FirstButtons(text="", width=300, height=300, button_id=count)
+            # texture_button.on_click(event=UIOnClickEvent)
+            print(i)
             file_path_list = []
             for x in range(0,3):
                 # Define the filename to search for:
@@ -74,25 +82,28 @@ class MyView(UIView):
             texture_button.texture_pressed = sprite_Pressed_TEX
             texture_button.texture_hovered = sprite_Hover_TEX
 
+            # Create a UIManager instance
+            # self.ui_manager = arcade.gui.UIManager(self)
+            # self.ui_manager.add(texture_button)
+
+            type = self.sprite_list[count][3]
+            # self.on_FirstButton_Click(type)
+            self.ui_manager = arcade.gui.UIManager()
+            self.ui_manager.add(texture_button)
             self.grid.add(texture_button, row=1, column=int(0 + count))
+            # x = texture_button.get_current_state()
+            # print(x)
+
+
+
+    def on_FirstButton_Click(self, type):
+        print(f"{type} button clicked!")
 
     def on_update(self, delta_time):
         """
         All the logic to move, and the game logic goes here.
         Normally, you'll call update() on the sprite lists that
         need it.
-        """
-        pass
-
-    def on_key_press(self, key, key_modifiers):
-        """
-        Called whenever a key on the keyboard is pressed.
-        """
-        pass
-
-    def on_key_release(self, key, key_modifiers):
-        """
-        Called whenever the user lets off a previously pressed key.
         """
         pass
 
