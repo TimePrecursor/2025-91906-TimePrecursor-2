@@ -1,16 +1,15 @@
-codeVersion= "1.73"
-
 import arcade
 from arcade.gui import *
 from arcade import gui
 import os
 
+#-----------------------
+codeVersion= "1.74"
+#-----------------------
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 WINDOW_TITLE = f"Evolution Game V{codeVersion}"
-
-
 
 
 class FirstButtons(arcade.gui.UITextureButton):
@@ -24,7 +23,7 @@ class FirstButtons(arcade.gui.UITextureButton):
 
 # The texture will only be loaded during the first sprite creation
 
-class MyView(UIView):
+class OrginismSelectionVeiw(UIView):
     """
     Main application class.
 
@@ -131,11 +130,10 @@ def main():
 
 
     # Show GameView on screen
-    window.show_view(MyView())
+    window.show_view(OrginismSelectionVeiw())
 
     # Start the arcade game loop
     arcade.run()
-
 
 
 if __name__ == "__main__":
