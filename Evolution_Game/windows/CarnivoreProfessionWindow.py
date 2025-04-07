@@ -30,7 +30,7 @@ class PageView(arcade.View):
 
 
     def on_draw(self):
-        self.clear(color=arcade.color.LION)
+        self.clear(color=arcade.color.ATOMIC_TANGERINE)
         self.manager.draw()
 
     def go_back(self, event):
