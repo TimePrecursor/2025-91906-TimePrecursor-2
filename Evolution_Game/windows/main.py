@@ -44,7 +44,7 @@ class Orginismselectionveiw(UIView):
 
     def __init__(self):
         super().__init__()
-        self.background_color = arcade.color.AMAZON
+        self.background_color = arcade.color.GRULLO
 
         self.manager = arcade.gui.UIManager()
         self.manager.enable()

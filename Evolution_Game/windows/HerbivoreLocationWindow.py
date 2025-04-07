@@ -16,11 +16,20 @@ class PageView(arcade.View):
         super().__init__()
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
-        self.v_box = arcade.gui.UIBoxLayout()
-        # set color:
+        self.grid = UIGridLayout(
+            column_count=3,
+            row_count=5,
+            vertical_spacing=0,
+            horizontal_spacing=10,
+        )
+        self.grid.add(UIAnchorLayout(children=[self.grid]))
+
+        back_button = arcade.gui.UIFlatButton(text="Back to Menu", width=200, height=200)
+        back_button.on_click = self.go_back
+        self.manager.add(back_button)
 
     def on_draw(self):
-        self.clear(color=arcade.color.PEAR)
+        self.clear(color=arcade.color.AMAZON)
         self.manager.draw()
 
     def go_back(self, event):
