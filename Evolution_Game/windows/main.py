@@ -4,7 +4,7 @@ from arcade import gui
 import os
 
 #-----------------------
-codeVersion= "1.74"
+codeVersion= "1.81"
 #-----------------------
 
 WINDOW_WIDTH = 1280
@@ -13,13 +13,25 @@ WINDOW_TITLE = f"Evolution Game V{codeVersion}"
 
 
 class FirstButtons(arcade.gui.UITextureButton):
+
     def __init__(self, text, width, height, button_id):
         super().__init__(text=text, width=width, height=height)
         self.button_id = button_id
+
     def on_click(self, event):
+        import CarnivoreProfessionWindow as cw
+        import HerbivoreLocationWindow as hw
+        import DecomposerTypeWindow as dw
+
+        next_file_list = {
+            0 : cw.PageView(),
+            1 : hw.PageView(),
+            2 : dw.PageView()
+        }
+
         print(f"To the {self.button_id} window!")
-        import CarnivoreProfessionWindow as cpw
-        Orginismselectionveiw.showveiwfunc(cpw.PageView())
+        x = next_file_list[self.button_id]
+        Orginismselectionveiw.showveiwfunc(x,x)
 
 
 # The texture will only be loaded during the first sprite creation
@@ -28,8 +40,6 @@ class Orginismselectionveiw(UIView):
     """
     Main application class.
 
-    1.0 NOTE: I have already programmed most necessary functions
-    that will allow the user to play.
     """
 
     def __init__(self):
@@ -123,9 +133,8 @@ class Orginismselectionveiw(UIView):
         Called when a user releases a mouse button.
         """
         pass
-    def showveiwfunc(self):
-        from CarnivoreProfessionWindow import PageView
-        self.window.show_view(PageView())
+    def showveiwfunc(self, viewselected):
+        self.window.show_view(viewselected)
     #
     # def on_hide_view(self):
     #     self.manager.disable()

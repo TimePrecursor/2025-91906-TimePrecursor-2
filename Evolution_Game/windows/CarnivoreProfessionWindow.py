@@ -19,6 +19,7 @@ class PageView(arcade.View):
         self.v_box = arcade.gui.UIBoxLayout()
         # set color:
         self.background_color = arcade.color.LION
+
         back_button = arcade.gui.UIFlatButton(text="Back to Menu", width=200)
         back_button.on_click = self.go_back
         self.v_box.add(back_button)
@@ -28,7 +29,7 @@ class PageView(arcade.View):
         )
 
     def on_draw(self):
-        self.clear()
+        self.clear(color=arcade.color.LION)
         self.manager.draw()
 
     def go_back(self, event):
