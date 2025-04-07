@@ -18,12 +18,13 @@ class FirstButtons(arcade.gui.UITextureButton):
         self.button_id = button_id
     def on_click(self, event):
         print(f"To the {self.button_id} window!")
-        orginismSelectionVeiw.showveiwfunc()
+        import CarnivoreProfessionWindow as cpw
+        Orginismselectionveiw.showveiwfunc(cpw.PageView())
 
 
 # The texture will only be loaded during the first sprite creation
 
-class orginismSelectionVeiw(UIView):
+class Orginismselectionveiw(UIView):
     """
     Main application class.
 
@@ -125,9 +126,9 @@ class orginismSelectionVeiw(UIView):
     def showveiwfunc(self):
         from CarnivoreProfessionWindow import PageView
         self.window.show_view(PageView())
-
-    def on_hide_view(self):
-        self.manager.disable()
+    #
+    # def on_hide_view(self):
+    #     self.manager.disable()
 
 def main():
     """ Main function """
@@ -136,7 +137,7 @@ def main():
 
 
     # Show GameView on screen
-    window.show_view(orginismSelectionVeiw())
+    window.show_view(Orginismselectionveiw())
 
     # Start the arcade game loop
     arcade.run()

@@ -17,13 +17,14 @@ class PageView(arcade.View):
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
         self.v_box = arcade.gui.UIBoxLayout()
-
+        # set color:
+        self.background_color = arcade.color.LION
         back_button = arcade.gui.UIFlatButton(text="Back to Menu", width=200)
         back_button.on_click = self.go_back
         self.v_box.add(back_button)
 
         self.manager.add(
-            arcade.gui.UIAnchorWidget(anchor_x="center_x", anchor_y="center_y", child=self.v_box)
+            arcade.gui.UIAnchorLayout(anchor_x="center_x", anchor_y="center_y", child=self.v_box)
         )
 
     def on_draw(self):
@@ -31,7 +32,7 @@ class PageView(arcade.View):
         self.manager.draw()
 
     def go_back(self, event):
-        from main import orginismSelectionVeiw as orgwindow
+        from main import Orginismselectionveiw as orgwindow
         self.window.show_view(orgwindow())
 
     def on_hide_view(self):
