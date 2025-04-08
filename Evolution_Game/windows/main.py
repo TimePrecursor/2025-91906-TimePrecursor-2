@@ -4,7 +4,7 @@ from arcade import gui
 import os
 
 #-----------------------
-codeVersion= "1.92"
+codeVersion= "1.93"
 #-----------------------
 
 WINDOW_WIDTH = 1000
@@ -153,7 +153,7 @@ class Orginismselectionveiw(UIView):
 def main():
     """ Main function """
     # Create a window class.
-    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, resizable=True, center_window=True)
+    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, resizable=False, center_window=True)
 
 
     # Show GameView on screen
