@@ -4,7 +4,7 @@ from arcade import gui
 import os
 
 #-----------------------
-codeVersion= "1.81"
+codeVersion= "1.9"
 #-----------------------
 
 WINDOW_WIDTH = 1280
@@ -45,7 +45,7 @@ class Orginismselectionveiw(UIView):
     def __init__(self):
         super().__init__()
         self.background_color = arcade.color.GRULLO
-
+        self.window.width = WINDOW_WIDTH
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
@@ -79,7 +79,8 @@ class Orginismselectionveiw(UIView):
             file_path_list = []
             for x in range(0,3):
                 # Define the filename to search for:
-                file_path = os.path.join('..', 'assets', self.sprite_list[count][x])
+                file_start = r'C:\Users\21006\PycharmProjects\2025-91906-TimePrecursor-2\Evolution_Game\assets\images'
+                file_path = os.path.join(file_start, self.sprite_list[count][x])
                 file_path_list.append(file_path)
 
             # Loading textures to a specific file path:
