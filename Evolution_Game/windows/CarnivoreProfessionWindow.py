@@ -1,4 +1,3 @@
-# file made in previous versions. next commit will start coding
 import os.path
 from idlelib.configdialog import font_sample_text
 import arcade
@@ -6,10 +5,9 @@ from arcade.gui import *
 from arcade import gui
 import sys
 
+# cool thing!
 # from pymunk.examples.spiderweb import update
 
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 600
 WINDOW_TITLE = f"Evolution Game - Carnivore Selection"
 
 class PageView(arcade.View):
@@ -59,9 +57,18 @@ class PageView(arcade.View):
             x=((self.WINDOW_WIDTH/2)-(self.fontsize*5.5)),
             y=((self.WINDOW_HEIGHT)-(self.fontsize*2)),
             font_size=self.fontsize)
-        # title = arcade.draw_text("test", 100, 500, (250, 250, 250), 100, font_name='comic')
-        self.grid.add(self.title,column=2,row=1)
+        self.grid.add(self.title)
         self.manager.add(self.title)
+
+
+
+
+
+
+
+
+
+
 
         # if I want to resize -----
 

@@ -7,13 +7,14 @@ import main
 import os
 
 
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 720
 WINDOW_TITLE = f"Evolution Game - Decomposer Selection"
 
 class PageView(arcade.View):
     def __init__(self):
         super().__init__()
+        self.fontsize = 50
+        self.WINDOW_WIDTH = 1000
+        self.WINDOW_HEIGHT = 600
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
         self.grid = UIGridLayout(
@@ -41,14 +42,12 @@ class PageView(arcade.View):
         self.manager.disable()
 
     def decom_title(self):
-        size = 50
-        title = arcade.gui.UILabel(
+        self.title = arcade.gui.UILabel(
             text="D E C O M P O S E R S",
             text_color=arcade.color.WHITE,
             font_name="SwanseaBold-D0ox.ttf",
-            x=((WINDOW_WIDTH/2)-(size*6)),
-            y=(WINDOW_HEIGHT-(size*4)),
-            font_size=size)
-        # title = arcade.draw_text("test", 100, 500, (250, 250, 250), 100, font_name='comic')
-        # self.grid.add(title)
-        self.manager.add(title)
+            x=((self.WINDOW_WIDTH / 2) - (self.fontsize * 6.5)),
+            y=((self.WINDOW_HEIGHT) - (self.fontsize * 2)),
+            font_size=self.fontsize)
+        self.grid.add(self.title)
+        self.manager.add(self.title)
