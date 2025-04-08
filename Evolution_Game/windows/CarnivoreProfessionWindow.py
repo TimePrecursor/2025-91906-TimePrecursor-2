@@ -42,13 +42,14 @@ class PageView(arcade.View):
         self.manager.disable()
 
     def carni_title(self):
-        width = 50
+        size = 50
         title = arcade.gui.UILabel(
             text="C A R N I V O R E S",
             text_color=arcade.color.WHITE,
             font_name="SwanseaBold-D0ox.ttf",
-            x=((WINDOW_WIDTH/2)-(width*6)),
-            font_size=width)
+            x=((WINDOW_WIDTH/2)-(size*6)),
+            y=(WINDOW_HEIGHT-(size*4)),
+            font_size=size)
         # title = arcade.draw_text("test", 100, 500, (250, 250, 250), 100, font_name='comic')
         # self.grid.add(title)
         self.manager.add(title)
