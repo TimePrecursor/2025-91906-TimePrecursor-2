@@ -4,7 +4,7 @@ from arcade import gui
 import os
 
 #-----------------------
-codeVersion= "1.931"
+codeVersion= "1.9311"
 #-----------------------
 
 WINDOW_WIDTH = 1000
