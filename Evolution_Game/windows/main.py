@@ -4,11 +4,13 @@ from arcade import gui
 import os
 
 #-----------------------
-codeVersion= "1.91"
+codeVersion= "1.92"
 #-----------------------
 
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 720
+WINDOW_WIDTH = 1000
+WINDOW_HEIGHT = 600
+center_xz = 0
+center_yz = 0
 WINDOW_TITLE = f"Evolution Game V{codeVersion}"
 
 
@@ -45,7 +47,7 @@ class Orginismselectionveiw(UIView):
     def __init__(self):
         super().__init__()
         self.background_color = arcade.color.GRULLO
-        self.window.width = WINDOW_WIDTH
+        # self.window.width = WINDOW_WIDTH
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
@@ -104,7 +106,7 @@ class Orginismselectionveiw(UIView):
             # self.ui_manager = arcade.gui.UIManager(self)
             # self.ui_manager.add(texture_button)
 
-            type = self.sprite_list[count][3]
+            # type = self.sprite_list[count][3]
             # self.on_FirstButton_Click(type)
             self.manager.add(texture_button)
             self.grid.add(texture_button, row=1, column=int(count))
@@ -141,6 +143,7 @@ class Orginismselectionveiw(UIView):
         Called when a user releases a mouse button.
         """
         pass
+
     def showveiwfunc(self, viewselected):
         self.window.show_view(viewselected)
     #
@@ -150,7 +153,7 @@ class Orginismselectionveiw(UIView):
 def main():
     """ Main function """
     # Create a window class.
-    window = arcade.Window(1000, 600, WINDOW_TITLE, resizable=True)
+    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, resizable=True, center_window=True)
 
 
     # Show GameView on screen
