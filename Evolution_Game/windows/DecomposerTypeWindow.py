@@ -45,8 +45,12 @@ class PageView(arcade.View):
         self.title = arcade.gui.UILabel(
             text="D E C O M P O S E R S",
             text_color=arcade.color.WHITE,
-            font_name="SwanseaBold-D0ox.ttf",
-            x=((self.WINDOW_WIDTH / 2) - (self.fontsize * 6.5)),
+            font_name=(
+                "Times New Roman",  # Comes with Windows
+                "Times",  # MacOS may sometimes have this variant
+                "Liberation Serif"  # Common on Linux systems
+            ),
+            x=((self.WINDOW_WIDTH / 2) - (self.fontsize * 6)),
             y=((self.WINDOW_HEIGHT) - (self.fontsize * 2)),
             font_size=self.fontsize)
         self.grid.add(self.title)

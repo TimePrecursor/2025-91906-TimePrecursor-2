@@ -37,7 +37,7 @@ class PageView(arcade.View):
 
 
     def on_draw(self):
-        self.clear(color=arcade.color.ATOMIC_TANGERINE)
+        self.clear(color=arcade.color.CORDOVAN) #CHINESE_RED #CHESTNUT
         self.manager.draw()
 
 
@@ -53,19 +53,16 @@ class PageView(arcade.View):
         self.title = arcade.gui.UILabel(
             text="C A R N I V O R E S",
             text_color=arcade.color.WHITE,
-            font_name="SwanseaBold-D0ox.ttf",
+            font_name=(
+                "Times New Roman",  # Comes with Windows
+                "Times",  # MacOS may sometimes have this variant
+                "Liberation Serif"  # Common on Linux systems
+            ),
             x=((self.WINDOW_WIDTH/2)-(self.fontsize*5.5)),
             y=((self.WINDOW_HEIGHT)-(self.fontsize*2)),
             font_size=self.fontsize)
         self.grid.add(self.title)
         self.manager.add(self.title)
-
-
-
-
-
-
-
 
 
 

@@ -4,7 +4,7 @@ from arcade import gui
 import os
 
 #-----------------------
-codeVersion= "1.9311"
+codeVersion= "1.95"
 #-----------------------
 
 WINDOW_WIDTH = 1000
@@ -46,7 +46,9 @@ class Orginismselectionveiw(UIView):
 
     def __init__(self):
         super().__init__()
-        self.background_color = arcade.color.GRULLO
+        self.fontsize = 50
+
+        self.background_color = arcade.color.CINEREOUS
         # self.window.width = WINDOW_WIDTH
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
@@ -69,6 +71,7 @@ class Orginismselectionveiw(UIView):
         }
         self.sprites = arcade.SpriteList()
         self.setup_buttons()
+        self.label_making1()
 
     def reset(self):
         """Reset the game to the initial state."""
@@ -112,6 +115,23 @@ class Orginismselectionveiw(UIView):
             self.grid.add(texture_button, row=1, column=int(count))
             # x = texture_button.get_current_state()
             # print(x)
+
+
+    def label_making1(self):
+        for i in range(0,3):
+            self.labelvar = arcade.gui.UILabel(
+                text=self.sprite_list[i][3] ,
+                text_color=arcade.color.WHITE,
+                font_name=(
+                "Times New Roman",  # Comes with Windows
+                "Times",  # MacOS may sometimes have this variant
+                "Liberation Serif"  # Common on Linux systems
+                ),
+                # x=((WINDOW_WIDTH / 2) - (self.fontsize * 5.5)),
+                y=((WINDOW_HEIGHT) - (self.fontsize * 2)),
+                font_size=(self.fontsize/2))
+            self.grid.add(self.labelvar,column=i)
+            self.manager.add(self.labelvar)
 
 
 
