@@ -4,7 +4,7 @@ from arcade import gui
 import os
 
 #-----------------------
-codeVersion= "1.95"
+codeVersion= "1.955"
 #-----------------------
 
 WINDOW_WIDTH = 1000
@@ -55,7 +55,8 @@ class Orginismselectionveiw(UIView):
 
 
         self.grid = UIGridLayout(
-            column_count=3,
+            x=10,
+            column_count=5,
             row_count=5,
             vertical_spacing=0,
             horizontal_spacing=10,
@@ -70,6 +71,7 @@ class Orginismselectionveiw(UIView):
             2: ["DecomposerFinal2.png" , "DecomposerFinal2Hover.png", "DecomposerFinal2Pressed.png", "Decomposer"],
         }
         self.sprites = arcade.SpriteList()
+
         self.setup_buttons()
         self.label_making1()
 
@@ -111,13 +113,31 @@ class Orginismselectionveiw(UIView):
 
             # type = self.sprite_list[count][3]
             # self.on_FirstButton_Click(type)
+
+            self.grid.add(texture_button, row=3, column=int(count))
             self.manager.add(texture_button)
-            self.grid.add(texture_button, row=1, column=int(count))
             # x = texture_button.get_current_state()
             # print(x)
 
 
     def label_making1(self):
+        self.title = arcade.Text(
+            text="Choose your Creature!",
+            color=arcade.color.WHITE,
+            font_name=(
+                "Times New Roman",  # Comes with Windows
+                "Times",  # MacOS may sometimes have this variant
+                "Liberation Serif"  # Common on Linux systems
+            ),
+            x=((WINDOW_WIDTH / 2) - (self.fontsize * 5.5)),
+            y=((WINDOW_HEIGHT) - (self.fontsize * 2)),
+            z=10,
+            font_size=self.fontsize)
+        #
+        # self.manager.add(self.title)
+        # self.grid.add(self.title,row=0, column=0)
+
+
         for i in range(0,3):
             self.labelvar = arcade.gui.UILabel(
                 text=self.sprite_list[i][3] ,
@@ -130,7 +150,7 @@ class Orginismselectionveiw(UIView):
                 # x=((WINDOW_WIDTH / 2) - (self.fontsize * 5.5)),
                 y=((WINDOW_HEIGHT) - (self.fontsize * 2)),
                 font_size=(self.fontsize/2))
-            self.grid.add(self.labelvar,column=i)
+            self.grid.add(self.labelvar,column=i,row=2)
             self.manager.add(self.labelvar)
 
 
