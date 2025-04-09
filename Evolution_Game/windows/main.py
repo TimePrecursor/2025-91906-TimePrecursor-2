@@ -43,7 +43,6 @@ class Orginismselectionveiw(UIView):
     Main application class.
 
     """
-
     def __init__(self):
         super().__init__()
         self.fontsize = 50
@@ -53,15 +52,16 @@ class Orginismselectionveiw(UIView):
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
+        self.anchor = UIAnchorLayout()
+        self.ui.add(UIAnchorLayout(children=[self.anchor]))
 
         self.grid = UIGridLayout(
-            x=10,
-            column_count=5,
+            column_count=4,
             row_count=5,
             vertical_spacing=0,
             horizontal_spacing=10,
         )
-        self.ui.add(UIAnchorLayout(children=[self.grid]))
+        self.ui.add(UIGridLayout(children=[self.grid]))
 
 
         # If I have sprites or buttons, I will create them here:
@@ -76,9 +76,7 @@ class Orginismselectionveiw(UIView):
         self.label_making1()
 
     def reset(self):
-        """Reset the game to the initial state."""
-        # Do changes needed to restart the game here if you want to support that
-        pass
+        self.window.clear()
 
     def setup_buttons(self):
         for count, i in enumerate(self.sprite_list):
@@ -114,31 +112,29 @@ class Orginismselectionveiw(UIView):
             # type = self.sprite_list[count][3]
             # self.on_FirstButton_Click(type)
 
-            self.grid.add(texture_button, row=3, column=int(count))
+            self.grid.add(texture_button, row=2, column=int(count))
             self.manager.add(texture_button)
-            # x = texture_button.get_current_state()
-            # print(x)
 
 
     def label_making1(self):
-        self.title = arcade.Text(
+        self.title = arcade.gui.UILabel(
             text="Choose your Creature!",
-            color=arcade.color.WHITE,
+            text_color=arcade.color.WHITE,
             font_name=(
                 "Times New Roman",  # Comes with Windows
                 "Times",  # MacOS may sometimes have this variant
                 "Liberation Serif"  # Common on Linux systems
             ),
-            x=((WINDOW_WIDTH / 2) - (self.fontsize * 5.5)),
-            y=((WINDOW_HEIGHT) - (self.fontsize * 2)),
-            z=10,
+            x= 100 ,#((WINDOW_WIDTH / 2) - (self.fontsize * 5.5)),
+            y= 100 ,#((WINDOW_HEIGHT) - (self.fontsize * 2)),
             font_size=self.fontsize)
-        #
-        # self.manager.add(self.title)
-        # self.grid.add(self.title,row=0, column=0)
 
+        # self.title.draw()
+        # self.grid.add(self.title,row=0, column=1)
+        self.manager.add(self.title)
+        self.anchor.add(self.title,anchor_x="center",anchor_y="top")
 
-        for i in range(0,3):
+        for i in range(0, 3):
             self.labelvar = arcade.gui.UILabel(
                 text=self.sprite_list[i][3] ,
                 text_color=arcade.color.WHITE,
@@ -148,10 +144,12 @@ class Orginismselectionveiw(UIView):
                 "Liberation Serif"  # Common on Linux systems
                 ),
                 # x=((WINDOW_WIDTH / 2) - (self.fontsize * 5.5)),
-                y=((WINDOW_HEIGHT) - (self.fontsize * 2)),
+                # y=((WINDOW_HEIGHT) - (self.fontsize * 2)),
                 font_size=(self.fontsize/2))
-            self.grid.add(self.labelvar,column=i,row=2)
+            self.grid.add(self.labelvar,row=1,column=i)
             self.manager.add(self.labelvar)
+
+
 
 
 
