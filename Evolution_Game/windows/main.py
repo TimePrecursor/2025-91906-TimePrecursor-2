@@ -4,7 +4,15 @@ from arcade import gui
 import os
 
 #-----------------------
-codeVersion= "1.97"
+codeVersion= "0.5.12.7"
+'''
+Software versioning is now: (Finished Version, Major Rewrite, Bug fixing, Small changes)
+Keys:
+ - Finished Version  = How many times it has reached being a fully operational Game
+ - Major Rewrite     = New file(s), changed a large portion of code to either fix/change/optimise
+ - Bug fixing        = Fixed Small/Medium, possibly game breaking bugs, OR added needed files/assets
+ - Small changes     = Minor tweaks to either the appearance or small optimizations
+'''
 #-----------------------
 
 WINDOW_WIDTH = 1000
