@@ -36,7 +36,7 @@ class FirstButtons(arcade.gui.UITextureButton):
         Orginismselectionveiw.showveiwfunc(x,x)
 
 
-# The texture will only be loaded during the first sprite creation
+
 
 class Orginismselectionveiw(UIView):
     """
@@ -58,7 +58,7 @@ class Orginismselectionveiw(UIView):
 
         self.grid = UIGridLayout(
             column_count=6,
-            row_count=5,
+            row_count=6,
             vertical_spacing=0,
             horizontal_spacing=50,
         )
@@ -180,6 +180,7 @@ class Orginismselectionveiw(UIView):
         self.anchor.clear()
         self.ui.disable()
         self.ui.clear()
+        self.manager.disable()
 
     def showveiwfunc(self, viewselected):
         self.window.show_view(viewselected)

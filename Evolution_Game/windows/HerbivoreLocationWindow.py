@@ -25,11 +25,15 @@ class PageView(arcade.View):
         )
         self.grid.add(UIAnchorLayout(children=[self.grid]))
 
-        back_button = arcade.gui.UIFlatButton(text="Back to Menu", width=200, height=200)
-        back_button.on_click = self.go_back
-        self.manager.add(back_button)
+        self.back_button = arcade.gui.UIFlatButton(
+            text="Back to Menu",
+            width=self.WINDOW_WIDTH, height=50
+        )
+        self.back_button.on_click = self.go_back
+        self.manager.add(self.back_button)
         self.herbi_title()
 
+        self.ui = UIManager()
     def on_draw(self):
         self.clear(color=arcade.color.AMAZON)
         self.manager.draw()
@@ -39,6 +43,9 @@ class PageView(arcade.View):
         self.window.show_view(orgwindow())
 
     def on_hide_view(self):
+        self.grid.clear()
+        self.manager.disable()
+        self.manager.clear()
         self.manager.disable()
 
     def herbi_title(self):

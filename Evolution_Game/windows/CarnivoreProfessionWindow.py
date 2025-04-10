@@ -28,13 +28,15 @@ class PageView(arcade.View):
 
         self.background_color = arcade.color.ATOMIC_TANGERINE
 
-        self.back_button = arcade.gui.UIFlatButton(text="Back to Menu", width=200,height=200)
+        self.back_button = arcade.gui.UIFlatButton(
+            text="Back to Menu",
+            width=self.WINDOW_WIDTH,height=50
+        )
         self.back_button.on_click = self.go_back
-        # self.grid.add(self.back_button,column=1,row=2)
         self.manager.add(self.back_button)
 
         self.carni_title()
-
+        self.ui = UIManager()
 
     def on_draw(self):
         self.clear(color=arcade.color.CORDOVAN) #CHINESE_RED #CHESTNUT
@@ -47,6 +49,9 @@ class PageView(arcade.View):
         self.window.show_view(orgwindow())
 
     def on_hide_view(self):
+        self.grid.clear()
+        self.ui.disable()
+        self.ui.clear()
         self.manager.disable()
 
     def carni_title(self):
