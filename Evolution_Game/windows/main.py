@@ -4,7 +4,7 @@ from arcade import gui
 import os
 
 #-----------------------
-codeVersion= "1.955"
+codeVersion= "1.97"
 #-----------------------
 
 WINDOW_WIDTH = 1000
@@ -45,6 +45,7 @@ class Orginismselectionveiw(UIView):
     """
     def __init__(self):
         super().__init__()
+        self.ui = UIManager()
         self.fontsize = 50
 
         self.background_color = arcade.color.CINEREOUS
@@ -56,10 +57,10 @@ class Orginismselectionveiw(UIView):
         self.ui.add(UIAnchorLayout(children=[self.anchor]))
 
         self.grid = UIGridLayout(
-            column_count=4,
+            column_count=6,
             row_count=5,
             vertical_spacing=0,
-            horizontal_spacing=10,
+            horizontal_spacing=50,
         )
         self.ui.add(UIGridLayout(children=[self.grid]))
 
@@ -75,8 +76,7 @@ class Orginismselectionveiw(UIView):
         self.setup_buttons()
         self.label_making1()
 
-    def reset(self):
-        self.window.clear()
+
 
     def setup_buttons(self):
         for count, i in enumerate(self.sprite_list):
@@ -112,12 +112,11 @@ class Orginismselectionveiw(UIView):
             # type = self.sprite_list[count][3]
             # self.on_FirstButton_Click(type)
 
-            self.grid.add(texture_button, row=2, column=int(count))
+            self.grid.add(texture_button, row=1, column=int(count))
             self.manager.add(texture_button)
-
-
     def label_making1(self):
         self.title = arcade.gui.UILabel(
+            bold=True,
             text="Choose your Creature!",
             text_color=arcade.color.WHITE,
             font_name=(
@@ -146,7 +145,7 @@ class Orginismselectionveiw(UIView):
                 # x=((WINDOW_WIDTH / 2) - (self.fontsize * 5.5)),
                 # y=((WINDOW_HEIGHT) - (self.fontsize * 2)),
                 font_size=(self.fontsize/2))
-            self.grid.add(self.labelvar,row=1,column=i)
+            self.grid.add(self.labelvar,row=0,column=i)
             self.manager.add(self.labelvar)
 
 
@@ -157,11 +156,6 @@ class Orginismselectionveiw(UIView):
         print(f"{type} button clicked!")
 
     def on_update(self, delta_time):
-        """
-        All the logic to move, and the game logic goes here.
-        Normally, you'll call update() on the sprite lists that
-        need it.
-        """
         pass
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
@@ -181,6 +175,11 @@ class Orginismselectionveiw(UIView):
         Called when a user releases a mouse button.
         """
         pass
+    def on_hide_view(self):
+        self.grid.clear()
+        self.anchor.clear()
+        self.ui.disable()
+        self.ui.clear()
 
     def showveiwfunc(self, viewselected):
         self.window.show_view(viewselected)
