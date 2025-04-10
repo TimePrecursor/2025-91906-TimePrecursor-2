@@ -34,9 +34,40 @@ class PageView(arcade.View):
         )
         self.back_button.on_click = self.go_back
         self.manager.add(self.back_button)
+        self.ui = UIManager()
+
+        self.fontdefaults = (
+            "Times New Roman",  # Comes with Windows
+            "Times",  # MacOS may sometimes have this variant
+            "Liberation Serif"  # Common on Linux systems
+        )
+
+        self.carni_professions_list = [
+            "Speed",
+            "Ambush",
+            "Persistence",
+            "Strategy",
+            "Scavenger",
+            "Pack"]
+
+        # Index : [Type, Pros, Cons]
+        self.carni_profession_desc = {
+            0 : ["Speed","Pros: ","Cons: "],
+            1 : ["Ambush","Pros: ","Cons: "],
+            2 : ["Persistence","Pros: ","Cons: "],
+            3 : ["Strategy","Pros: ","Cons: "],
+            4 : ["Scavenger","Pros: ","Cons: "],
+            5 : ["Pack","Pros: ","Cons: "]
+        }
+
 
         self.carni_title()
-        self.ui = UIManager()
+        self.choose_carni_profession()
+
+
+
+
+
 
     def on_draw(self):
         self.clear(color=arcade.color.CORDOVAN) #CHINESE_RED #CHESTNUT
@@ -55,19 +86,55 @@ class PageView(arcade.View):
         self.manager.disable()
 
     def carni_title(self):
+        text="C A R N I V O R E S",
+
         self.title = arcade.gui.UILabel(
-            text="C A R N I V O R E S",
+            text=str(*text),
+            bold=True,
             text_color=arcade.color.WHITE,
-            font_name=(
-                "Times New Roman",  # Comes with Windows
-                "Times",  # MacOS may sometimes have this variant
-                "Liberation Serif"  # Common on Linux systems
-            ),
-            x=((self.WINDOW_WIDTH/2)-(self.fontsize*5.5)),
-            y=((self.WINDOW_HEIGHT)-(self.fontsize*2)),
+            font_name=self.fontdefaults,
+            x=((self.WINDOW_WIDTH/3.9)-(len(text)*self.fontsize)),
+            y=((self.WINDOW_HEIGHT)-(self.fontsize*1.8)),
             font_size=self.fontsize)
         self.grid.add(self.title)
         self.manager.add(self.title)
+
+
+    def choose_carni_profession(self):
+        text="Choose your hunting style!"
+        self.carni_profession_text = arcade.gui.UILabel(
+            text=str(text),
+            font_name=self.fontdefaults,
+            x=((self.WINDOW_WIDTH/3.25)-(len(text))),
+            y=(self.WINDOW_HEIGHT/2.5)+(self.WINDOW_HEIGHT/2.8),
+            font_size=30,
+        )
+        # self.grid.add(self.carni_profession_text)
+        self.manager.add(self.carni_profession_text)
+
+        self.dropdownmain = arcade.gui.UIDropdown(
+            x= (self.WINDOW_WIDTH/4),
+            y= (self.WINDOW_HEIGHT/1.5),
+            width= (self.WINDOW_WIDTH/2),
+            height=50,
+            options=self.carni_professions_list)
+
+        # self.grid.add(self.dropdownmain)
+        self.manager.add(self.dropdownmain)
+
+        pass
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

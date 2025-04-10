@@ -4,13 +4,13 @@ from arcade import gui
 import os
 
 #-----------------------
-codeVersion= "0.5.12.7"
+codeVersion= "V 0.5.13.9"
 '''
 Software versioning is now: (Finished Version, Major Rewrite, Bug fixing, Small changes)
 Keys:
  - Finished Version  = How many times it has reached being a fully operational Game
  - Major Rewrite     = New file(s), changed a large portion of code to either fix/change/optimise
- - Bug fixing        = Fixed Small/Medium, possibly game breaking bugs, OR added needed files/assets
+ - Bug fixing        = Fixed or added small things | Fixed possibly game breaking bugs | Added needed files/assets
  - Small changes     = Minor tweaks to either the appearance or small optimizations
 '''
 #-----------------------
@@ -42,7 +42,6 @@ class FirstButtons(arcade.gui.UITextureButton):
         print(f"To the {self.button_id} window!")
         x = next_file_list[self.button_id]
         Orginismselectionveiw.showveiwfunc(x,x)
-
 
 
 
