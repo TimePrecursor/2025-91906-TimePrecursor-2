@@ -46,7 +46,6 @@ class PageView(arcade.View):
             "Speed",
             "Ambush",
             "Persistence",
-            "Strategy",
             "Scavenger",
             "Pack"]
 
@@ -59,22 +58,18 @@ class PageView(arcade.View):
             1: ["Ambush",
                 "With camouflage based on their environmental surroundings, these hunters can easily sneak up on prey and wait for the perfect moment to strike. They are usually strong enough to kill prey with a single blow.",
                 "Pros: Stealthy. Intelligent. Strong.",
-                "Cons: "],
+                "Cons: Slow runner. Might have to wait a while between feeds. Prey might notice them and run away."],
             2: ["Persistence",
                 "Equipt with one goal and persistence, these creatures can hunt a single animal for days.",
                 "Pros: Very patient. Strong. Slow Metabolism (Can go without eating for a longer than usual period)",
-                "Cons: Slow. Lonely."],
-            3: ["Strategy",
-                "",
-                "Pros: ",
-                "Cons: "],
-            4: ["Scavenger",
+                "Cons: Slow. Solo hunter."],
+            3: ["Scavenger",
                 "",
                 "Pros:"
                 "",
                 "Cons: "],
-            5: ["Pack",
-                "Hunting in with pack can be both beneficial and a hindrance. More teeth means both easier and larger kills. While more mouths means les food per hunter.",
+            4: ["Pack",
+                "Hunting in with pack can be both beneficial and a hindrance. More teeth means both easier and larger kills. While more mouths means less food per hunter.",
                 "Pros: Great",
                 "Cons: "]
         }
