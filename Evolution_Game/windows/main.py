@@ -4,7 +4,7 @@ from arcade import gui
 import os
 
 #-----------------------
-codeVersion= "V 0.5.13.9"
+codeVersion= "V 0.5.13.10"
 '''
 Software versioning is now: (Finished Version, Major Rewrite, Bug fixing, Small changes)
 Keys:
@@ -19,7 +19,7 @@ WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 600
 center_xz = 0
 center_yz = 0
-WINDOW_TITLE = f"Evolution Game V{codeVersion}"
+WINDOW_TITLE = f"Evolution Game V {codeVersion}"
 
 
 class FirstButtons(arcade.gui.UITextureButton):

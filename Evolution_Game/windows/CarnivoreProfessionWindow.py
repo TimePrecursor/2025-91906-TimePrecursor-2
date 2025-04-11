@@ -52,12 +52,31 @@ class PageView(arcade.View):
 
         # Index : [Type, Pros, Cons]
         self.carni_profession_desc = {
-            0 : ["Speed","Pros: ","Cons: "],
-            1 : ["Ambush","Pros: ","Cons: "],
-            2 : ["Persistence","Pros: ","Cons: "],
-            3 : ["Strategy","Pros: ","Cons: "],
-            4 : ["Scavenger","Pros: ","Cons: "],
-            5 : ["Pack","Pros: ","Cons: "]
+            0: ["Speed",
+                "These are lighting fast sprinters, able to run faster than 100km/h, but only for short periods of time.",
+                "Pros: Fast ",
+                "Cons: High Metabolism (Has to eat more). Overheats quickly."],
+            1: ["Ambush",
+                "With camouflage based on their environmental surroundings, these hunters can easily sneak up on prey and wait for the perfect moment to strike. They are usually strong enough to kill prey with a single blow.",
+                "Pros: Stealthy. Intelligent. Strong.",
+                "Cons: "],
+            2: ["Persistence",
+                "Equipt with one goal and persistence, these creatures can hunt a single animal for days.",
+                "Pros: Very patient. Strong. Slow Metabolism (Can go without eating for a longer than usual period)",
+                "Cons: Slow. Lonely."],
+            3: ["Strategy",
+                "",
+                "Pros: ",
+                "Cons: "],
+            4: ["Scavenger",
+                "",
+                "Pros:"
+                "",
+                "Cons: "],
+            5: ["Pack",
+                "Hunting in with pack can be both beneficial and a hindrance. More teeth means both easier and larger kills. While more mouths means les food per hunter.",
+                "Pros: Great",
+                "Cons: "]
         }
 
 
