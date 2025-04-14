@@ -38,45 +38,27 @@ class PageView(arcade.View):
         self.manager.add(self.back_button)
 
 
-        self.carni_professions_list = [
-            "Speed",
-            "Ambush",
-            "Persistence",
-            "Strategy",
-            "Scavenger",
-            "Pack"]
-        # Index : [Type, Pros, Cons]
-        # self.carni_profession_desc = {
-        #     0: ["Speed",
-        #         "These are lighting fast sprinters, able to run faster than 100km/h, but only for short periods of time.",
-        #         "Pros: Fast ",
-        #         "Cons: High Metabolism (Has to eat more). Overheats quickly."],
-        #     1: ["Ambush",
-        #         "With camouflage based on their environmental surroundings, these hunters can easily sneak up on prey and wait for the perfect moment to strike. They are usually strong enough to kill prey with a single blow.",
-        #         "Pros: Stealthy. Intelligent. Strong.",
-        #         "Cons: "],
-        #     2: ["Persistence",
-        #         "Equipt with one goal and persistence, these creatures can hunt a single animal for days.",
-        #         "Pros: Very patient. Strong. Slow Metabolism (Can go without eating for a longer than usual period)",
-        #         "Cons: Slow. Lonely."],
-        #     3: ["Strategy",
-        #         "",
-        #         "Pros: ",
-        #         "Cons: "],
-        #     4: ["Scavenger",
-        #         "",
-        #         "Pros:"
-        #         "",
-        #         "Cons: "],
-        #     5: ["Pack",
-        #         "Hunting in with pack can be both beneficial and a hindrance. More teeth means both easier and larger kills. While more mouths means les food per hunter.",
-        #         "Pros: Great",
-        #         "Cons: "]
-        # }
-        self.herbi_title()
-        self.choose_carni_profession()
+        self.herbi_habitat_list = [
+            "Savana",
+            "Jungle",
+            "Swamp",
+            "Arctic",
+            "Desert"
+        ]
+        self.herbi_habitat_desc = {
+            0:["Savana","A mixed woodland-grassland biome characterised by trees being widely spaced"],
+            1:["Jungle","An area of land overgrown with dense forest and tangled vegetation. Usually very damp and humid"],
+            2:["Swamp","An area permanently saturated, or filled, with water. Rich in moss and alge"],
+            3:["Arctic","A land characterized by low temperatures and abundant snowfall, resulting in a landscape dominated by snow and ice"],
+            4:["Desert","A large, extremely dry area of land with sparse vegetation. Can contain oases"]
+        }
 
-        self.ui = UIManager()
+        self.herbi_title()
+        self.choose_herbi_habitat()
+        self.choosebutton()
+        self.choose_button.visible = False
+
+
     def on_draw(self):
         self.clear(color=arcade.color.AMAZON)
         self.manager.draw()
@@ -102,26 +84,57 @@ class PageView(arcade.View):
         self.grid.add(self.title)
         self.manager.add(self.title)
 
-    def choose_carni_profession(self):
-        text="Choose your hunting style!"
-        self.carni_profession_text = arcade.gui.UILabel(
+    def choose_herbi_habitat(self):
+        text="Choose your location!"
+        self.herbi_habitat_text = arcade.gui.UILabel(
+            width=len(text),
             text=str(text),
             font_name=self.fontdefaults,
-            x=((self.WINDOW_WIDTH/3.25)-(len(text))),
+            x=((self.WINDOW_WIDTH/4)+(len(text))*3.2),
             y=(self.WINDOW_HEIGHT/2.5)+(self.WINDOW_HEIGHT/2.8),
             font_size=30,
         )
         # self.grid.add(self.carni_profession_text)
-        self.manager.add(self.carni_profession_text)
+        self.manager.add(self.herbi_habitat_text)
 
         self.dropdownmain = arcade.gui.UIDropdown(
             x= (self.WINDOW_WIDTH/4),
             y= (self.WINDOW_HEIGHT/1.5),
             width= (self.WINDOW_WIDTH/2),
             height=50,
-            options=self.carni_professions_list)
+            options=self.herbi_habitat_list)
 
         # self.grid.add(self.dropdownmain)
         self.manager.add(self.dropdownmain)
 
-        pass
+        self.habitat_desc_area = arcade.gui.UILabel(
+            align="center",
+            width=self.WINDOW_WIDTH / 2,
+            height=self.WINDOW_WIDTH / 4,
+            multiline=True,
+            x=(self.WINDOW_WIDTH / 2) - self.WINDOW_WIDTH / 4,
+            y=(self.WINDOW_HEIGHT / 4) - 20,
+            text='',
+            font_name=self.fontdefaults,
+            font_size=18
+        )
+        self.manager.add(self.habitat_desc_area)
+
+        dropdown = self.dropdownmain
+        @dropdown.event()
+        def on_change(event: UIOnChangeEvent):
+            x = self.herbi_habitat_list.index(event.new_value)
+            y = self.herbi_habitat_desc[x][1]
+            self.habitat_desc_area.text = y
+            self.choose_button.visible = True
+
+
+    def choosebutton(self):
+        self.choose_button = arcade.gui.UIFlatButton(
+            x=(self.WINDOW_WIDTH/2)-(self.WINDOW_WIDTH/8),
+            y=self.WINDOW_HEIGHT/8,
+            width=self.WINDOW_WIDTH/4,
+            height=50,
+            text="Confirm!",
+        )
+        self.manager.add(self.choose_button)

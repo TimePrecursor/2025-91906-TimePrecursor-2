@@ -8,7 +8,7 @@ codeVersion= "V 0.5.13.10"
 '''
 Software versioning is now: (Finished Version, Major Rewrite, Bug fixing, Small changes)
 Keys:
- - Finished Version  = How many times it has reached being a fully operational Game
+ - Finished Version  = How many times it has reached being a fully operational Game / Stages complete 
  - Major Rewrite     = New file(s), changed a large portion of code to either fix/change/optimise
  - Bug fixing        = Fixed or added small things | Fixed possibly game breaking bugs | Added needed files/assets
  - Small changes     = Minor tweaks to either the appearance or small optimizations
