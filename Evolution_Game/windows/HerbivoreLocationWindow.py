@@ -1,10 +1,7 @@
-# not yet
-
 import arcade
 from arcade.gui import *
 from arcade import gui
-import main
-import os
+
 
 
 WINDOW_TITLE = f"Evolution Game - Herbivore Selection"
@@ -36,6 +33,7 @@ class PageView(arcade.View):
         )
         self.back_button.on_click = self.go_back
         self.manager.add(self.back_button)
+
 
 
         self.herbi_habitat_list = [
@@ -71,7 +69,6 @@ class PageView(arcade.View):
         self.grid.clear()
         self.manager.disable()
         self.manager.clear()
-        self.manager.disable()
 
     def herbi_title(self):
         self.title = arcade.gui.UILabel(
@@ -94,7 +91,6 @@ class PageView(arcade.View):
             y=(self.WINDOW_HEIGHT/2.5)+(self.WINDOW_HEIGHT/2.8),
             font_size=30,
         )
-        # self.grid.add(self.carni_profession_text)
         self.manager.add(self.herbi_habitat_text)
 
         self.dropdownmain = arcade.gui.UIDropdown(
@@ -104,7 +100,6 @@ class PageView(arcade.View):
             height=50,
             options=self.herbi_habitat_list)
 
-        # self.grid.add(self.dropdownmain)
         self.manager.add(self.dropdownmain)
 
         self.habitat_desc_area = arcade.gui.UILabel(

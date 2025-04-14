@@ -155,13 +155,6 @@ class Orginismselectionveiw(UIView):
             self.grid.add(self.labelvar,row=0,column=i)
             self.manager.add(self.labelvar)
 
-
-
-
-
-    def on_FirstButton_Click(self, type):
-        print(f"{type} button clicked!")
-
     def on_update(self, delta_time):
         pass
 
@@ -191,7 +184,8 @@ class Orginismselectionveiw(UIView):
 
     def showveiwfunc(self, viewselected):
         self.window.show_view(viewselected)
-    #
+
+
     # def on_hide_view(self):
     #     self.manager.disable()
 

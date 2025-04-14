@@ -1,9 +1,6 @@
-import os.path
-from idlelib.configdialog import font_sample_text
 import arcade
 from arcade.gui import *
 from arcade import gui
-import sys
 
 # cool thing!
 # from pymunk.examples.spiderweb import update
@@ -92,9 +89,9 @@ class PageView(arcade.View):
 
     def on_hide_view(self):
         self.grid.clear()
-        self.ui.disable()
-        self.ui.clear()
         self.manager.disable()
+        self.manager.clear()
+
 
     def carni_title(self):
         text="C A R N I V O R E S",
@@ -107,7 +104,7 @@ class PageView(arcade.View):
             x=((self.WINDOW_WIDTH/3.9)-(len(text)*self.fontsize)),
             y=((self.WINDOW_HEIGHT)-(self.fontsize*1.8)),
             font_size=self.fontsize)
-        self.grid.add(self.title)
+        # self.grid.add(self.title)
         self.manager.add(self.title)
 
 

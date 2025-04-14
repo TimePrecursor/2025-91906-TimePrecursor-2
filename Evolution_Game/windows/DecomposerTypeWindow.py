@@ -1,10 +1,7 @@
-# not yet
-
 import arcade
 from arcade.gui import *
 from arcade import gui
-import main
-import os
+
 
 
 WINDOW_TITLE = f"Evolution Game - Decomposer Selection"
@@ -49,8 +46,10 @@ class PageView(arcade.View):
         }
 
         self.decom_title()
-        self.choose_herbi_habitat()
+        self.choose_decom_type()
         self.choosebutton()
+        self.choose_button.visible = False
+
 
     def on_draw(self):
         self.clear(color=arcade.color.CADET)
@@ -64,7 +63,6 @@ class PageView(arcade.View):
         self.grid.clear()
         self.manager.disable()
         self.manager.clear()
-        self.manager.disable()
 
     def decom_title(self):
         self.title = arcade.gui.UILabel(
@@ -77,9 +75,8 @@ class PageView(arcade.View):
         self.grid.add(self.title)
         self.manager.add(self.title)
 
-
-    def choose_herbi_habitat(self):
-        text="Choose your location!"
+    def choose_decom_type(self):
+        text="Choose your organism!"
         self.decom_type_text = arcade.gui.UILabel(
             width=len(text),
             text=str(text),
@@ -88,7 +85,6 @@ class PageView(arcade.View):
             y=(self.WINDOW_HEIGHT/2.5)+(self.WINDOW_HEIGHT/2.8),
             font_size=30,
         )
-        # self.grid.add(self.carni_profession_text)
         self.manager.add(self.decom_type_text)
 
         self.dropdownmain = arcade.gui.UIDropdown(
