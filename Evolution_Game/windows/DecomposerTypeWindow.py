@@ -1,10 +1,12 @@
 import arcade
 from arcade.gui import *
 from arcade import gui
-
+import importlib.util
+import sys
 
 
 WINDOW_TITLE = f"Evolution Game - Decomposer Selection"
+
 
 class PageView(arcade.View):
     def __init__(self):
@@ -19,17 +21,19 @@ class PageView(arcade.View):
         self.WINDOW_HEIGHT = 600
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
+
         self.grid = UIGridLayout(
             column_count=3,
             row_count=5,
             vertical_spacing=0,
             horizontal_spacing=10,
         )
-        self.grid.add(UIAnchorLayout(children=[self.grid]))
+        self.grid.add(UIGridLayout(children=[self.grid]))
 
         self.back_button = arcade.gui.UIFlatButton(
             text="Back to Menu",
-            width=self.WINDOW_WIDTH, height=50
+            width=self.WINDOW_WIDTH,
+            height=50
         )
         self.back_button.on_click = self.go_back
         self.manager.add(self.back_button)

@@ -33,16 +33,14 @@ class FirstButtons(arcade.gui.UITextureButton):
         import HerbivoreLocationWindow as hw
         import DecomposerTypeWindow as dw
 
-        next_file_list = {
-            0 : cw.PageView(),
-            1 : hw.PageView(),
-            2 : dw.PageView()
+        view_factory = {
+            0: [lambda: cw.PageView(), "Carnivore Profession"],
+            1: [lambda: hw.PageView(), "Herbivore Location"],
+            2: [lambda: dw.PageView(), "Decomposer Type"]
         }
-
-        print(f"To the {self.button_id} window!")
-        x = next_file_list[self.button_id]
-        Orginismselectionveiw.showveiwfunc(x,x)
-
+        next_view = view_factory[self.button_id][0]()  # ✅ Only instantiates when needed
+        Orginismselectionveiw.showveiwfunc(next_view, next_view)
+        print(f"DEBUGGING:  To the {view_factory[self.button_id][1]} window!")
 
 
 class Orginismselectionveiw(UIView):
@@ -86,7 +84,7 @@ class Orginismselectionveiw(UIView):
 
 
     def setup_buttons(self):
-        for count, i in enumerate(self.sprite_list):
+        for count in self.sprite_list.keys():
             texture_button = FirstButtons(text="", width=300, height=300, button_id=count)
             file_path_list = []
             for x in range(0,3):
@@ -121,6 +119,7 @@ class Orginismselectionveiw(UIView):
 
             self.grid.add(texture_button, row=1, column=int(count))
             self.manager.add(texture_button)
+
     def label_making1(self):
         self.title = arcade.gui.UILabel(
             bold=True,
@@ -137,8 +136,9 @@ class Orginismselectionveiw(UIView):
 
         # self.title.draw()
         # self.grid.add(self.title,row=0, column=1)
-        self.manager.add(self.title)
+        # self.manager.add(self.title)
         self.anchor.add(self.title,anchor_x="center",anchor_y="top")
+        self.manager.add(self.title)
 
         for i in range(0, 3):
             self.labelvar = arcade.gui.UILabel(
@@ -158,41 +158,39 @@ class Orginismselectionveiw(UIView):
     def on_update(self, delta_time):
         pass
 
-    def on_mouse_motion(self, x, y, delta_x, delta_y):
-        """
-        Called whenever the mouse moves.
-        """
-        pass
+    # def on_mouse_motion(self, x, y, delta_x, delta_y):
+    #     """
+    #     Called whenever the mouse moves.
+    #     """
+    #     pass
+    #
+    # def on_mouse_press(self, x, y, button, key_modifiers):
+    #     """
+    #     Called when the user presses a mouse button.
+    #     """
+    #     pass
+    #
+    # def on_mouse_release(self, x, y, button, key_modifiers):
+    #     """
+    #     Called when a user releases a mouse button.
+    #     """
+    #     pass
 
-    def on_mouse_press(self, x, y, button, key_modifiers):
-        """
-        Called when the user presses a mouse button.
-        """
-        pass
-
-    def on_mouse_release(self, x, y, button, key_modifiers):
-        """
-        Called when a user releases a mouse button.
-        """
-        pass
     def on_hide_view(self):
         self.grid.clear()
         self.anchor.clear()
-        self.ui.disable()
         self.ui.clear()
+        self.ui.disable()
         self.manager.disable()
 
     def showveiwfunc(self, viewselected):
         self.window.show_view(viewselected)
 
 
-    # def on_hide_view(self):
-    #     self.manager.disable()
-
 def main():
     """ Main function """
     # Create a window class.
-    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, resizable=False, center_window=True)
+    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE, resizable=False)
 
 
     # Show GameView on screen

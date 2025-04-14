@@ -1,6 +1,8 @@
 import arcade
 from arcade.gui import *
 from arcade import gui
+import importlib.util
+import sys
 
 # cool thing!
 # from pymunk.examples.spiderweb import update
@@ -15,13 +17,14 @@ class PageView(arcade.View):
         self.WINDOW_HEIGHT = 600
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
+
         self.grid = UIGridLayout(
             column_count=5,
             row_count=5,
             vertical_spacing=0,
             horizontal_spacing=10,
         )
-        self.grid.add(UIAnchorLayout(children=[self.grid]))
+        self.grid.add(UIGridLayout(children=[self.grid]))
 
         self.background_color = arcade.color.ATOMIC_TANGERINE
 
@@ -32,7 +35,7 @@ class PageView(arcade.View):
         )
         self.back_button.on_click = self.go_back
         self.manager.add(self.back_button)
-        self.ui = UIManager()
+        # self.ui = UIManager()
 
         self.fontdefaults = (
             "Times New Roman",  # Comes with Windows
