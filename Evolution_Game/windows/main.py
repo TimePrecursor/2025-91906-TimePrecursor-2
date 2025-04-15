@@ -38,7 +38,7 @@ class FirstButtons(arcade.gui.UITextureButton):
             1: [lambda: hw.PageView(), "Herbivore Location"],
             2: [lambda: dw.PageView(), "Decomposer Type"]
         }
-        next_view = view_factory[self.button_id][0]()  # ✅ Only instantiates when needed
+        next_view = view_factory[self.button_id][0]()  # Only instantiates when needed
         Orginismselectionveiw.showveiwfunc(next_view, next_view)
         print(f"DEBUGGING:  To the {view_factory[self.button_id][1]} window!")
 
