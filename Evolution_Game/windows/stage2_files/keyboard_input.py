@@ -1,8 +1,5 @@
 import arcade
 import os
-import math
-from arcade.gui import *
-import random
 
 SPRITE_SCALING = 0.2
 
@@ -62,13 +59,19 @@ class GameView(arcade.View):
         """ Set up the game and initialize the variables. """
         self.player_list = arcade.SpriteList()
 
+
         # Find the texture
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-        image_folder = os.path.join(project_root, "assets", "images", "animal_textures_fixed")
-        file_name = "fox_fixed.png"
-        file_path = os.path.join(image_folder, file_name)
+        cache_file_path = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
+        with open(cache_file_path, "r") as f:
+            file_val = f.readline()
+        print(str(file_val)," = line 1")
 
+        # file_path1 = os.path.join(cache_file_path, str(file_val))
         # Set up the player
+
+        file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{file_val}.png")
+
         self.player_sprite = Player(file_path, scale=SPRITE_SCALING)
         self.player_sprite.center_x = 50
         self.player_sprite.center_y = 50
@@ -150,6 +153,12 @@ class GameView(arcade.View):
         elif key == arcade.key.RIGHT:
             self.right_pressed = False
             self.update_player_speed()
+
+    def load_choice(self, file_path):
+        from Evolution_Game.windows.stage2_files.saved_cache import functions_misc as f
+        settings = f.functions.load_settings(self,file_path=file_path)
+        print(settings["random_carnivore_choice"], 'LOL')  # Output: Time
+        return settings["random_carnivore_choice"]
 
 #
 # def main():

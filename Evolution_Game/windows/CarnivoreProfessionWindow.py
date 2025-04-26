@@ -1,9 +1,8 @@
 import arcade
 from arcade.gui import *
 from arcade import gui
-import importlib.util
-import sys
 import random
+import os
 
 # cool thing!
 # from pymunk.examples.spiderweb import update
@@ -58,7 +57,7 @@ class PageView(arcade.View):
         self.carni_choices = {
         "Speed" : ['Cheetah', 'Cheetah'],
         "Ambush" : ['Tiger', 'Lion'],
-        "Persistence" : ['Snow Leopard', 'Wolf'],
+        "Persistence" : ['SnowLeopard', 'Wolf'],
         "Scavenger" : ['Fox', 'Hyena'],
         "Pack" : ['Wolf', 'Meerkat']
         }
@@ -167,13 +166,12 @@ class PageView(arcade.View):
             self.choose_button.visible = True
 
     def random_carnivore(self, choice):
-        import stage2_files.keyboard_input as play_view
         try:
             carnivore = random.choice(self.carni_choices[choice])
             print(carnivore)
         except:
             print('error')
-        self.window.show_view(play_view.GameView())
+        return carnivore
 
     def choosebutton(self):
         self.choose_button = arcade.gui.UIFlatButton(
@@ -188,9 +186,20 @@ class PageView(arcade.View):
         self.manager.add(self.choose_button)
 
 
-    def click(self,event):
-        self.random_carnivore(self.dropdownmain.value)
 
+    def click(self,event):
+        choice = self.dropdownmain.value
+
+        # write this "choice" to the cache
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
+
+        # import Evolution_Game.windows.stage2_files.saved_cache.functions_misc as f
+        with open(cache_file, "w") as f:
+            f.write(self.random_carnivore(choice))
+
+        import stage2_files.keyboard_input as play_view
+        self.window.show_view(play_view.GameView())
 
 
 

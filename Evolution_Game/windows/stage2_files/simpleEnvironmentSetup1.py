@@ -159,7 +159,7 @@ class environment_simlation(UIView):
         #Decomposers: low speed, high efficiency.
 
         self.index1 += 1
-        with open(r"saved_cache\cache1.txt", "w") as f:
+        with open(r"saved_cache/cache1.txt", "w") as f:
             f.write(f"{self.index1}")
 
         print(f"One evolution step done!")
