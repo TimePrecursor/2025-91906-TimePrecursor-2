@@ -3,6 +3,7 @@ from arcade.gui import *
 from arcade import gui
 import importlib.util
 import sys
+import random
 
 # cool thing!
 # from pymunk.examples.spiderweb import update
@@ -42,15 +43,27 @@ class PageView(arcade.View):
             "Times",  # MacOS may sometimes have this variant
             "Liberation Serif"  # Common on Linux systems
         )
-
+        # "Speed" - Cheetah
+        # "Ambush" - Tiger / Lion
+        # "Persistence" - Snow Leopard / Wolf
+        # "Scavenger" - Fox / Hyena
+        # "Pack" - Wolf / Meerkat
         self.carni_professions_list = [
             "Speed",
             "Ambush",
             "Persistence",
             "Scavenger",
-            "Pack"]
+            "Pack"
+        ]
+        self.carni_choices = {
+        "Speed" : ['Cheetah', 'Cheetah'],
+        "Ambush" : ['Tiger', 'Lion'],
+        "Persistence" : ['Snow Leopard', 'Wolf'],
+        "Scavenger" : ['Fox', 'Hyena'],
+        "Pack" : ['Wolf', 'Meerkat']
+        }
 
-        # Index : [Type, Pros, Cons]
+        # Index : [Name, Description, Pros, Cons]
         self.carni_profession_desc = {
             0: ["Speed",
                 "These are lighting fast sprinters, able to run faster than 100km/h, but only for short periods of time.",
@@ -143,7 +156,6 @@ class PageView(arcade.View):
             font_name=self.fontdefaults,
             font_size=18
         )
-
         self.manager.add(self.profession_desc_area)
 
         dropdown = self.dropdownmain
@@ -154,6 +166,15 @@ class PageView(arcade.View):
             self.profession_desc_area.text = y
             self.choose_button.visible = True
 
+    def random_carnivore(self, choice):
+        import stage2_files.keyboard_input as play_view
+        try:
+            carnivore = random.choice(self.carni_choices[choice])
+            print(carnivore)
+        except:
+            print('error')
+        self.window.show_view(play_view.GameView())
+
     def choosebutton(self):
         self.choose_button = arcade.gui.UIFlatButton(
             x=(self.WINDOW_WIDTH/2)-(self.WINDOW_WIDTH/8),
@@ -162,13 +183,13 @@ class PageView(arcade.View):
             height=50,
             text="Confirm!",
         )
+
+        self.choose_button.on_click = self.click
         self.manager.add(self.choose_button)
 
 
-
-
-
-
+    def click(self,event):
+        self.random_carnivore(self.dropdownmain.value)
 
 
 
