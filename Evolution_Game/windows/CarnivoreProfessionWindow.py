@@ -168,7 +168,7 @@ class PageView(arcade.View):
     def random_carnivore(self, choice):
         try:
             carnivore = random.choice(self.carni_choices[choice])
-            print(carnivore)
+            # print(carnivore)
         except:
             print('error')
         return carnivore

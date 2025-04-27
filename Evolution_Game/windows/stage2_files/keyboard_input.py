@@ -1,5 +1,6 @@
 import arcade
 import os
+import math
 
 SPRITE_SCALING = 0.2
 
@@ -65,7 +66,7 @@ class GameView(arcade.View):
         cache_file_path = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
         with open(cache_file_path, "r") as f:
             file_val = f.readline()
-        print(str(file_val)," = line 1")
+
 
         # file_path1 = os.path.join(cache_file_path, str(file_val))
         # Set up the player
@@ -87,36 +88,39 @@ class GameView(arcade.View):
         self.player_sprite.change_x = 0
         self.player_sprite.change_y = 0
 
-        # Manual angle setting based on key inputs
+        # Movement input
+        if self.up_pressed:
+            self.player_sprite.change_y += MOVEMENT_SPEED
+        if self.down_pressed:
+            self.player_sprite.change_y -= MOVEMENT_SPEED
+        if self.left_pressed:
+            self.player_sprite.change_x -= MOVEMENT_SPEED
+        if self.right_pressed:
+            self.player_sprite.change_x += MOVEMENT_SPEED
+
+        # Normalize diagonal movement to fix faster diagonal speed
+        magnitude = math.hypot(self.player_sprite.change_x, self.player_sprite.change_y)
+        if magnitude > MOVEMENT_SPEED:
+            scale = MOVEMENT_SPEED / magnitude
+            self.player_sprite.change_x *= scale
+            self.player_sprite.change_y *= scale
+
+        # Set angle manually based on keys
         if self.up_pressed and not self.down_pressed and not self.left_pressed and not self.right_pressed:
-            self.player_sprite.change_y = MOVEMENT_SPEED
             self.player_sprite.angle = 180  # Up
         elif self.down_pressed and not self.up_pressed and not self.left_pressed and not self.right_pressed:
-            self.player_sprite.change_y = -MOVEMENT_SPEED
             self.player_sprite.angle = 0  # Down
         elif self.left_pressed and not self.right_pressed and not self.up_pressed and not self.down_pressed:
-            self.player_sprite.change_x = -MOVEMENT_SPEED
             self.player_sprite.angle = 90  # Left
         elif self.right_pressed and not self.left_pressed and not self.up_pressed and not self.down_pressed:
-            self.player_sprite.change_x = MOVEMENT_SPEED
             self.player_sprite.angle = 270  # Right
-
-        # Diagonal directions
         elif self.up_pressed and self.right_pressed:
-            self.player_sprite.change_y = MOVEMENT_SPEED
-            self.player_sprite.change_x = MOVEMENT_SPEED
             self.player_sprite.angle = 225  # Up-Right
         elif self.up_pressed and self.left_pressed:
-            self.player_sprite.change_y = MOVEMENT_SPEED
-            self.player_sprite.change_x = -MOVEMENT_SPEED
             self.player_sprite.angle = 135  # Up-Left
         elif self.down_pressed and self.left_pressed:
-            self.player_sprite.change_y = -MOVEMENT_SPEED
-            self.player_sprite.change_x = -MOVEMENT_SPEED
             self.player_sprite.angle = 45  # Down-Left
         elif self.down_pressed and self.right_pressed:
-            self.player_sprite.change_y = -MOVEMENT_SPEED
-            self.player_sprite.change_x = MOVEMENT_SPEED
             self.player_sprite.angle = 315  # Down-Right
 
     def on_update(self, delta_time):
@@ -157,7 +161,7 @@ class GameView(arcade.View):
     def load_choice(self, file_path):
         from Evolution_Game.windows.stage2_files.saved_cache import functions_misc as f
         settings = f.functions.load_settings(self,file_path=file_path)
-        print(settings["random_carnivore_choice"], 'LOL')  # Output: Time
+        # print(settings["random_carnivore_choice"], 'LOL')  # Output: Time
         return settings["random_carnivore_choice"]
 
 #
