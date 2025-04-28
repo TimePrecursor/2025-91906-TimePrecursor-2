@@ -1,11 +1,17 @@
 import arcade
+# from arcade import *
+# from arcade import gui
 import os
 import math
 
+from arcade.gui import UIView, UIAnchorLayout
+
+# from arcade.gui import UIManager, UIView
+
 SPRITE_SCALING = 0.2
 
-WINDOW_WIDTH = 1280
-WINDOW_HEIGHT = 720
+WINDOW_WIDTH = 1000
+WINDOW_HEIGHT = 600
 
 MOVEMENT_SPEED = 3
 
@@ -34,14 +40,11 @@ class GameView(arcade.View):
     """
 
     def __init__(self):
-        """
-        Initializer
-        """
         super().__init__()
+        self.manager = arcade.gui.UIManager
 
         # Variables that will hold sprite lists
         self.player_list = None
-
         # Set up the player info
         self.player_sprite = None
 
@@ -51,22 +54,22 @@ class GameView(arcade.View):
         self.up_pressed = False
         self.down_pressed = False
 
+        self.anchor = UIAnchorLayout()
         # Set the background color
         self.background_color = arcade.color.AMAZON
-
+        self.manager.enable(UIView)
         self.setup()
     def setup(self):
         """ Set up the game and initialize the variables. """
         self.player_list = arcade.SpriteList()
-
 
         # Find the texture
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         cache_file_path = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
         with open(cache_file_path, "r") as f:
             file_val = f.readline()
-
-
+        self.chosen_animal = file_val
+        self.topRight_info()
         # file_path1 = os.path.join(cache_file_path, str(file_val))
         # Set up the player
 
@@ -82,19 +85,22 @@ class GameView(arcade.View):
         """ Render the screen. """
         self.clear()
         self.player_list.draw()
+        self.anchor.do_layout()
+        # self.manager.draw(self=self)
+
 
     def update_player_speed(self):
         self.player_sprite.change_x = 0
         self.player_sprite.change_y = 0
 
         # Movement input
-        if self.up_pressed and (self.player_sprite.center_y < (WINDOW_HEIGHT-170)):
+        if self.up_pressed and (self.player_sprite.center_y < (WINDOW_HEIGHT-50)):
             self.player_sprite.change_y += MOVEMENT_SPEED
         if self.down_pressed and (self.player_sprite.center_y > 50):
             self.player_sprite.change_y -= MOVEMENT_SPEED
         if self.left_pressed and (self.player_sprite.center_x > 50):
             self.player_sprite.change_x -= MOVEMENT_SPEED
-        if self.right_pressed and (self.player_sprite.center_x < (WINDOW_WIDTH-330)):
+        if self.right_pressed and (self.player_sprite.center_x < (WINDOW_WIDTH-50)):
             self.player_sprite.change_x += MOVEMENT_SPEED
 
         # Normalize diagonal movement to fix faster diagonal speed
@@ -157,12 +163,21 @@ class GameView(arcade.View):
             self.right_pressed = False
             self.update_player_speed()
 
-    def load_choice(self, file_path):
-        from Evolution_Game.windows.stage2_files.saved_cache import functions_misc as f
-        settings = f.functions.load_settings(self,file_path=file_path)
-        # print(settings["random_carnivore_choice"], 'LOL')  # Output: Time
-        return settings["random_carnivore_choice"]
+    # def load_choice(self, file_path):
+    #     from Evolution_Game.windows.stage2_files.saved_cache import functions_misc as f
+    #     settings = f.functions.load_settings(self,file_path=file_path)
+    #     return settings["random_carnivore_choice"]
 
+    def topRight_info(self):
+        self.chosen_label = arcade.gui.UILabel(
+            # x=10,
+            # y=WINDOW_HEIGHT-20,
+            text=self.chosen_animal,
+            width=len(self.chosen_animal)+5,
+            bold=True
+        )
+        self.anchor.add(self.chosen_label,anchor_x="left",anchor_y="top")
+        # self.manager.add(self,self.chosen_label)
 #
 # def main():
 #     """ Main function """
