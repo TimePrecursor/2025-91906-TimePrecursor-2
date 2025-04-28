@@ -6,7 +6,6 @@ SPRITE_SCALING = 0.2
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
-WINDOW_TITLE = "Better Move Sprite with Keyboard Example"
 
 MOVEMENT_SPEED = 3
 
@@ -17,16 +16,16 @@ class Player(arcade.Sprite):
         self.center_x += self.change_x
         self.center_y += self.change_y
 
-        # Check for out-of-bounds
-        if self.left < 0:
-            self.left = 0
-        elif self.right > WINDOW_WIDTH - 1:
-            self.right = WINDOW_WIDTH - 1
-
-        if self.bottom < 0:
-            self.bottom = 0
-        elif self.top > WINDOW_HEIGHT - 1:
-            self.top = WINDOW_HEIGHT - 1
+        # # Check for out-of-bounds
+        # if self.left < 0:
+        #     self.left = 0
+        # elif self.right > WINDOW_WIDTH - 1:
+        #     self.right = WINDOW_WIDTH - 1
+        #
+        # if self.bottom < 0:
+        #     self.bottom = 0
+        # elif self.top > WINDOW_HEIGHT - 1:
+        #     self.top = WINDOW_HEIGHT - 1
 
 
 class GameView(arcade.View):
@@ -89,13 +88,13 @@ class GameView(arcade.View):
         self.player_sprite.change_y = 0
 
         # Movement input
-        if self.up_pressed:
+        if self.up_pressed and (self.player_sprite.center_y < (WINDOW_HEIGHT-170)):
             self.player_sprite.change_y += MOVEMENT_SPEED
-        if self.down_pressed:
+        if self.down_pressed and (self.player_sprite.center_y > 50):
             self.player_sprite.change_y -= MOVEMENT_SPEED
-        if self.left_pressed:
+        if self.left_pressed and (self.player_sprite.center_x > 50):
             self.player_sprite.change_x -= MOVEMENT_SPEED
-        if self.right_pressed:
+        if self.right_pressed and (self.player_sprite.center_x < (WINDOW_WIDTH-330)):
             self.player_sprite.change_x += MOVEMENT_SPEED
 
         # Normalize diagonal movement to fix faster diagonal speed
