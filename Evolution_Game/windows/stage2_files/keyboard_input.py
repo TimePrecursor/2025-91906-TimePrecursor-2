@@ -4,7 +4,7 @@ import arcade
 import os
 import math
 
-from arcade.gui import UIView, UIAnchorLayout
+from arcade.gui import UIView, UIAnchorLayout, UIGridLayout
 
 # from arcade.gui import UIManager, UIView
 
@@ -34,14 +34,15 @@ class Player(arcade.Sprite):
         #     self.top = WINDOW_HEIGHT - 1
 
 
-class GameView(arcade.View):
+class GameView(UIView):
     """
     Main application class.
     """
 
     def __init__(self):
         super().__init__()
-        self.manager = arcade.gui.UIManager
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
 
         # Variables that will hold sprite lists
         self.player_list = None
@@ -54,10 +55,11 @@ class GameView(arcade.View):
         self.up_pressed = False
         self.down_pressed = False
 
-        self.anchor = UIAnchorLayout()
+        self.grid = UIAnchorLayout()
+        self.manager.add(self.grid)
+
         # Set the background color
         self.background_color = arcade.color.AMAZON
-        self.manager.enable(UIView)
         self.setup()
     def setup(self):
         """ Set up the game and initialize the variables. """
@@ -69,7 +71,7 @@ class GameView(arcade.View):
         with open(cache_file_path, "r") as f:
             file_val = f.readline()
         self.chosen_animal = file_val
-        self.topRight_info()
+        self.top_right_info()
         # file_path1 = os.path.join(cache_file_path, str(file_val))
         # Set up the player
 
@@ -85,8 +87,8 @@ class GameView(arcade.View):
         """ Render the screen. """
         self.clear()
         self.player_list.draw()
-        self.anchor.do_layout()
-        # self.manager.draw(self=self)
+        # self.anchor.do_layout()
+        self.manager.draw()
 
 
     def update_player_speed(self):
@@ -168,7 +170,7 @@ class GameView(arcade.View):
     #     settings = f.functions.load_settings(self,file_path=file_path)
     #     return settings["random_carnivore_choice"]
 
-    def topRight_info(self):
+    def top_right_info(self):
         self.chosen_label = arcade.gui.UILabel(
             # x=10,
             # y=WINDOW_HEIGHT-20,
@@ -176,8 +178,8 @@ class GameView(arcade.View):
             width=len(self.chosen_animal)+5,
             bold=True
         )
-        self.anchor.add(self.chosen_label,anchor_x="left",anchor_y="top")
-        # self.manager.add(self,self.chosen_label)
+        self.grid.add(self.chosen_label,align_y=(WINDOW_HEIGHT/2)-25,align_x=0)
+        self.manager.add(self.chosen_label)
 #
 # def main():
 #     """ Main function """
