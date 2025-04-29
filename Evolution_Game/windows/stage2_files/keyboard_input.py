@@ -13,7 +13,7 @@ SPRITE_SCALING = 0.2
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 600
 
-MOVEMENT_SPEED = 3
+MOVEMENT_SPEED = 5
 
 
 class Player(arcade.Sprite):
@@ -41,6 +41,10 @@ class GameView(UIView):
 
     def __init__(self):
         super().__init__()
+        from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
+
+        self.environment = EnvironmentSetup()
+
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
@@ -61,6 +65,7 @@ class GameView(UIView):
         # Set the background color
         self.background_color = arcade.color.AMAZON
         self.setup()
+
     def setup(self):
         """ Set up the game and initialize the variables. """
         self.player_list = arcade.SpriteList()
@@ -76,20 +81,28 @@ class GameView(UIView):
         # Set up the player
 
         file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{file_val}.png")
+        tree_texture_path = self.environment.asset_paths("tree1.png")
+        self.environment.create_random_trees(tree_texture_path)
 
         self.player_sprite = Player(file_path, scale=SPRITE_SCALING)
         self.player_sprite.center_x = 50
         self.player_sprite.center_y = 50
         self.player_sprite.angle = 0  # Start by facing up (90 degrees)
         self.player_list.append(self.player_sprite)
+        # self.otherimports()
 
     def on_draw(self):
         """ Render the screen. """
         self.clear()
-        self.player_list.draw()
-        # self.anchor.do_layout()
-        self.manager.draw()
+        self.player_list.draw()  # Draw player first
+        self.environment.draw_trees()  # Draw trees afterward
+        self.manager.draw()  # Draw UI (if you have any)
 
+    # def on_draw(self):
+    #     self.clear()
+    #     from Evolution_Game.windows.stage2_files import environmentSetupMkII
+    #     env_setup = environmentSetupMkII.EnvironmentSetup
+    #     env_setup.draw_trees(self)
 
     def update_player_speed(self):
         self.player_sprite.change_x = 0
@@ -133,7 +146,7 @@ class GameView(UIView):
     def on_update(self, delta_time):
         """ Movement and game logic """
         self.update_player_speed()  # Update speed and rotation here
-        self.player_list.update(delta_time)
+        self.player_list.update(delta_time)  # Make sure this is updating the sprite
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -174,21 +187,36 @@ class GameView(UIView):
         self.chosen_label = arcade.gui.UILabel(
             # x=10,
             # y=WINDOW_HEIGHT-20,
+            font_size=20,
             text=self.chosen_animal,
-            width=len(self.chosen_animal)+5,
+            height=20,
+            width=len(self.chosen_animal)+10,
             bold=True
         )
         self.grid.add(self.chosen_label,align_y=(WINDOW_HEIGHT/2)-25,align_x=0)
         self.manager.add(self.chosen_label)
-#
-# def main():
-#     """ Main function """
-#     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
-#     game = GameView()
-#     game.setup()
-#     window.show_view(game)
-#     arcade.run()
-#
-#
-# if __name__ == "__main__":
-#     main()
+
+    # def otherimports(self):
+    #     from Evolution_Game.windows.stage2_files import environmentSetupMkII
+    #
+    #     # Create an instance of the EnvironmentSetup class
+    #     env_setup = environmentSetupMkII.EnvironmentSetup
+    #
+    #     # Call the draw_trees method to add trees to the list
+    #     env_setup.draw_trees(environmentSetupMkII.EnvironmentSetup)
+    #
+    #     # Access tree_list from the instance
+    #     print(environmentSetupMkII.tree_list,"tree_list")
+
+
+def main():
+    """ Main function """
+    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT)
+    game = GameView()
+    game.setup()
+    window.show_view(game)
+    arcade.run()
+
+
+if __name__ == "__main__":
+    main()
