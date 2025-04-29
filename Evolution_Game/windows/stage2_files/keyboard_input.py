@@ -6,6 +6,8 @@ import math
 
 from arcade.gui import UIView, UIAnchorLayout, UIGridLayout
 
+from Evolution_Game.depricated_files.files_to_be_added.simpleCreatureSetup1 import creature_setup
+
 # from arcade.gui import UIManager, UIView
 
 SPRITE_SCALING = 0.2
@@ -13,7 +15,7 @@ SPRITE_SCALING = 0.2
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 600
 
-MOVEMENT_SPEED = 5
+NORMAL_SPEED = 3
 
 
 class Player(arcade.Sprite):
@@ -22,23 +24,8 @@ class Player(arcade.Sprite):
         self.center_x += self.change_x
         self.center_y += self.change_y
 
-        # # Check for out-of-bounds
-        # if self.left < 0:
-        #     self.left = 0
-        # elif self.right > WINDOW_WIDTH - 1:
-        #     self.right = WINDOW_WIDTH - 1
-        #
-        # if self.bottom < 0:
-        #     self.bottom = 0
-        # elif self.top > WINDOW_HEIGHT - 1:
-        #     self.top = WINDOW_HEIGHT - 1
-
 
 class GameView(UIView):
-    """
-    Main application class.
-    """
-
     def __init__(self):
         super().__init__()
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
@@ -58,6 +45,7 @@ class GameView(UIView):
         self.right_pressed = False
         self.up_pressed = False
         self.down_pressed = False
+        self.shift_pressed = False
 
         self.grid = UIAnchorLayout()
         self.manager.add(self.grid)
@@ -65,6 +53,7 @@ class GameView(UIView):
         # Set the background color
         self.background_color = arcade.color.AMAZON
         self.setup()
+
 
     def setup(self):
         """ Set up the game and initialize the variables. """
@@ -98,30 +87,31 @@ class GameView(UIView):
         self.environment.draw_trees()  # Draw trees afterward
         self.manager.draw()  # Draw UI (if you have any)
 
-    # def on_draw(self):
-    #     self.clear()
-    #     from Evolution_Game.windows.stage2_files import environmentSetupMkII
-    #     env_setup = environmentSetupMkII.EnvironmentSetup
-    #     env_setup.draw_trees(self)
-
     def update_player_speed(self):
         self.player_sprite.change_x = 0
         self.player_sprite.change_y = 0
 
+        sprint_speed = 0
+        import creature_stats
+        creature = str(self.chosen_animal)
+        if self.shift_pressed:
+            sprint_speed = creature_stats.predator_roles["Speed"][0]["sprint_speed"]
+
         # Movement input
+        final_speed = NORMAL_SPEED + sprint_speed
         if self.up_pressed and (self.player_sprite.center_y < (WINDOW_HEIGHT-50)):
-            self.player_sprite.change_y += MOVEMENT_SPEED
+            self.player_sprite.change_y += final_speed
         if self.down_pressed and (self.player_sprite.center_y > 50):
-            self.player_sprite.change_y -= MOVEMENT_SPEED
+            self.player_sprite.change_y -= final_speed
         if self.left_pressed and (self.player_sprite.center_x > 50):
-            self.player_sprite.change_x -= MOVEMENT_SPEED
+            self.player_sprite.change_x -= final_speed
         if self.right_pressed and (self.player_sprite.center_x < (WINDOW_WIDTH-50)):
-            self.player_sprite.change_x += MOVEMENT_SPEED
+            self.player_sprite.change_x += final_speed
 
         # Normalize diagonal movement to fix faster diagonal speed
         magnitude = math.hypot(self.player_sprite.change_x, self.player_sprite.change_y)
-        if magnitude > MOVEMENT_SPEED:
-            scale = MOVEMENT_SPEED / magnitude
+        if magnitude > NORMAL_SPEED:
+            scale = NORMAL_SPEED / magnitude
             self.player_sprite.change_x *= scale
             self.player_sprite.change_y *= scale
 
@@ -162,6 +152,10 @@ class GameView(UIView):
         elif key == arcade.key.RIGHT:
             self.right_pressed = True
             self.update_player_speed()
+        elif key == arcade.key.LSHIFT:
+            self.shift_pressed = True
+            print("Shift pressed")
+            self.update_player_speed()
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key."""
@@ -176,6 +170,10 @@ class GameView(UIView):
             self.update_player_speed()
         elif key == arcade.key.RIGHT:
             self.right_pressed = False
+            self.update_player_speed()
+        elif key == arcade.key.LSHIFT:
+            self.shift_pressed = False
+            print("Shift released")
             self.update_player_speed()
 
     # def load_choice(self, file_path):
@@ -195,19 +193,6 @@ class GameView(UIView):
         )
         self.grid.add(self.chosen_label,align_y=(WINDOW_HEIGHT/2)-25,align_x=0)
         self.manager.add(self.chosen_label)
-
-    # def otherimports(self):
-    #     from Evolution_Game.windows.stage2_files import environmentSetupMkII
-    #
-    #     # Create an instance of the EnvironmentSetup class
-    #     env_setup = environmentSetupMkII.EnvironmentSetup
-    #
-    #     # Call the draw_trees method to add trees to the list
-    #     env_setup.draw_trees(environmentSetupMkII.EnvironmentSetup)
-    #
-    #     # Access tree_list from the instance
-    #     print(environmentSetupMkII.tree_list,"tree_list")
-
 
 def main():
     """ Main function """

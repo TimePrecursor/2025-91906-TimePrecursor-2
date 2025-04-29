@@ -54,13 +54,14 @@ class PageView(arcade.View):
             "Scavenger",
             "Pack"
         ]
-        self.carni_choices = {
-        "Speed" : ['Cheetah', 'Cheetah'],
-        "Ambush" : ['Tiger', 'Lion'],
-        "Persistence" : ['SnowLeopard', 'Wolf'],
-        "Scavenger" : ['Fox', 'Hyena'],
-        "Pack" : ['Wolf', 'Meerkat']
-        }
+        # self.carni_choices = {
+        #     # "Type" : {['Name', 'Name'],[Sprinting Speeds],[Sneak Stealth],[Detectable Range]},
+        # "Speed" : {['Cheetah', 'Cheetah'],[10,10],[]},
+        # "Ambush" : {['Tiger', 'Lion'],[7,8],[]},
+        # "Persistence" : {['SnowLeopard', 'Wolf'],[6,7],[]},
+        # "Scavenger" : {['Fox', 'Hyena'],[6,7],[]},
+        # "Pack" : {['Wolf', 'Meerkat'],[7,8],[]}
+        # }
 
         # Index : [Name, Description, Pros, Cons]
         self.carni_profession_desc = {
@@ -167,11 +168,18 @@ class PageView(arcade.View):
 
     def random_carnivore(self, choice):
         try:
-            carnivore = random.choice(self.carni_choices[choice])
-            # print(carnivore)
-        except:
-            print('error')
-        return carnivore
+            from stage2_files import creature_stats as stats
+            choice_stats = stats.predator_roles[choice]  # Access the list for the chosen role
+
+            # Pick a random predator from the list
+            random_predator = random.choice(choice_stats)
+
+            # Print the predator's name (and optionally other stats)
+            carnivore = random_predator["name"]
+            print(f"Chosen carnivore: {carnivore}")
+
+        except Exception as e:
+            print(f"Error: {e}")
 
     def choosebutton(self):
         self.choose_button = arcade.gui.UIFlatButton(
@@ -185,23 +193,32 @@ class PageView(arcade.View):
         self.choose_button.on_click = self.click
         self.manager.add(self.choose_button)
 
-
-
-    def click(self,event):
+    def click(self, event):
+        # Get the selected profession
         choice = self.dropdownmain.value
 
-        # write this "choice" to the cache
+        # Call random_carnivore to handle the random selection
+        self.random_carnivore(choice)
+
+        # Write the selected carnivore's name to the cache file
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
 
-        # import Evolution_Game.windows.stage2_files.saved_cache.functions_misc as f
         with open(cache_file, "w") as f:
-            f.write(self.random_carnivore(choice))
+            from stage2_files import creature_stats as stats
+            choice_stats = stats.predator_roles[choice]
 
+            # Randomly select a predator from the chosen profession's list
+            random_predator = random.choice(choice_stats)
+
+            # Write the predator's name to the cache
+            carnivore = random_predator["name"]
+            print(carnivore)
+            f.write(carnivore)
+
+        # Switch to the next view
         import stage2_files.keyboard_input as play_view
         self.window.show_view(play_view.GameView())
-
-
 
         # if I want to resize -----
 

@@ -1,0 +1,82 @@
+predator_roles = {
+    "Speed": [
+        {
+            "name": "Cheetah",
+            "sprint_speed": 2,
+            "normal_speed": 3,
+            "normal_detectable_range": 30,
+            "sneak_detectable_range": 15
+        },
+        {
+            "name": "Cheetah",
+            "sprint_speed": 2,
+            "normal_speed": 3,
+            "normal_detectable_range": 30,
+            "sneak_detectable_range": 15
+        }
+    ],
+    "Ambush": [
+        {
+            "name": "Tiger",
+            "sprint_speed": 7,
+            "normal_speed": 3,
+            "normal_detectable_range": 20,
+            "sneak_detectable_range": 5
+        },
+        {
+            "name": "Lion",
+            "sprint_speed": 8,
+            "normal_speed": 3,
+            "normal_detectable_range": 25,
+            "sneak_detectable_range": 10
+        }
+    ],
+    "Persistence": [
+        {
+            "name": "SnowLeopard",
+            "sprint_speed": 6,
+            "normal_speed": 2,
+            "normal_detectable_range": 15,
+            "sneak_detectable_range": 5
+        },
+        {
+            "name": "Wolf",
+            "sprint_speed": 7,
+            "normal_speed": 4,
+            "normal_detectable_range": 30,
+            "sneak_detectable_range": 12
+        }
+    ],
+    "Scavenger": [
+        {
+            "name": "Fox",
+            "sprint_speed": 6,
+            "normal_speed": 3,
+            "normal_detectable_range": 20,
+            "sneak_detectable_range": 7
+        },
+        {
+            "name": "Hyena",
+            "sprint_speed": 7,
+            "normal_speed": 3,
+            "normal_detectable_range": 40,
+            "sneak_detectable_range": 20
+        }
+    ],
+    "Pack": [
+        {
+            "name": "Wolf",
+            "sprint_speed": 7,
+            "normal_speed": 4,
+            "normal_detectable_range": 30,
+            "sneak_detectable_range": 12
+        },
+        {
+            "name": "Meerkat",
+            "sprint_speed": 4,
+            "normal_speed": 2,
+            "normal_detectable_range": 25,
+            "sneak_detectable_range": 15
+        }
+    ]
+}
