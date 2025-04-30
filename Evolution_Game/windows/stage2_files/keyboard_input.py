@@ -31,7 +31,6 @@ class GameView(UIView):
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
 
         self.environment = EnvironmentSetup()
-
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
