@@ -166,20 +166,19 @@ class PageView(arcade.View):
             self.profession_desc_area.text = y
             self.choose_button.visible = True
 
-    def random_carnivore(self, choice):
-        try:
-            from stage2_files import creature_stats as stats
-            choice_stats = stats.predator_roles[choice]  # Access the list for the chosen role
-
-            # Pick a random predator from the list
-            random_predator = random.choice(choice_stats)
-
-            # Print the predator's name (and optionally other stats)
-            carnivore = random_predator["name"]
-            print(f"Chosen carnivore: {carnivore}")
-
-        except Exception as e:
-            print(f"Error: {e}")
+    # def random_carnivore(self, choice):
+    #     try:
+    #         from stage2_files import creature_stats as stats
+    #         choice_stats = stats.predator_roles[choice]  # Access the list for the chosen role
+    #
+    #         # Pick a random predator from the list
+    #         random_predator = random.choice(choice_stats)
+    #
+    #         # Print the predator's name (and optionally other stats)
+    #         carnivore = random_predator["name"]
+    #         print(f"Chosen carnivore: {carnivore}")
+    #     except Exception as e:
+    #         print(f"Error: {e}")
 
     def choosebutton(self):
         self.choose_button = arcade.gui.UIFlatButton(
@@ -193,12 +192,15 @@ class PageView(arcade.View):
         self.choose_button.on_click = self.click
         self.manager.add(self.choose_button)
 
+
+
     def click(self, event):
         # Get the selected profession
         choice = self.dropdownmain.value
 
+
         # Call random_carnivore to handle the random selection
-        self.random_carnivore(choice)
+        # self.random_carnivore(choice)
 
         # Write the selected carnivore's name to the cache file
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -214,11 +216,13 @@ class PageView(arcade.View):
             # Write the predator's name to the cache
             carnivore = random_predator["name"]
             print(carnivore)
-            f.write(carnivore)
+            f.write(f"{carnivore}"+'\n')
+            f.write(self.dropdownmain.value)
 
         # Switch to the next view
         import stage2_files.keyboard_input as play_view
-        self.window.show_view(play_view.GameView())
+        self.window.show_view(play_view.GameView1())
+
 
         # if I want to resize -----
 
