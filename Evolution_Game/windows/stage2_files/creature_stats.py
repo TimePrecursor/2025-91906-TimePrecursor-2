@@ -6,7 +6,7 @@ predator_roles = {
             "normal_speed": 3,
             "normal_detectable_range": 30,
             "sneak_detectable_range": 15,
-            "stamina": 40
+            "stamina": 50
         },
         {
             "name": "Cheetah",
@@ -14,7 +14,7 @@ predator_roles = {
             "normal_speed": 3,
             "normal_detectable_range": 30,
             "sneak_detectable_range": 15,
-            "stamina": 40
+            "stamina": 50
         }
     ],
     "Ambush": [
