@@ -10,22 +10,25 @@ from Evolution_Game.depricated_files.files_to_be_added.simpleCreatureSetup1 impo
 
 # from arcade.gui import UIManager, UIView
 
-SPRITE_SCALING = 0.2
+SPRITE_SCALING = 0.15
 
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 600
 
-NORMAL_SPEED = 3
-
+NORMAL_SPEED = 1
 
 class Player(arcade.Sprite):
-    def update(self, delta_time: float = 1 / 60):
-        """ Move the player """
-        self.center_x += self.change_x
-        self.center_y += self.change_y
+    def __init__(self, image, scale):
+        """ Initialize the player sprite """
+        super().__init__(image, scale)
+        self.center_x = WINDOW_WIDTH // 2  # Start in the middle of the screen
+        self.center_y = WINDOW_HEIGHT // 2
+        self.change_x = 0
+        self.change_y = 0
 
 
-class GameView(UIView):
+
+class GameView1(UIView):
     def __init__(self):
         super().__init__()
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
@@ -62,19 +65,21 @@ class GameView(UIView):
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         cache_file_path = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
         with open(cache_file_path, "r") as f:
-            file_val = f.readline()
-        self.chosen_animal = file_val
+            line1 = f.readline().rstrip("\n")
+            line2 = f.readline().rstrip("\n")
+        self.chosen_animal = line1
+        self.creature_type = line2
         self.top_right_info()
         # file_path1 = os.path.join(cache_file_path, str(file_val))
         # Set up the player
 
-        file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{file_val}.png")
+        file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{self.chosen_animal}.png")
         tree_texture_path = self.environment.asset_paths("tree1.png")
         self.environment.create_random_trees(tree_texture_path)
 
         self.player_sprite = Player(file_path, scale=SPRITE_SCALING)
-        self.player_sprite.center_x = 50
-        self.player_sprite.center_y = 50
+        self.player_sprite.center_x = WINDOW_WIDTH/2
+        self.player_sprite.center_y = WINDOW_HEIGHT/2
         self.player_sprite.angle = 0  # Start by facing up (90 degrees)
         self.player_list.append(self.player_sprite)
         # self.otherimports()
@@ -86,18 +91,18 @@ class GameView(UIView):
         self.environment.draw_trees()  # Draw trees afterward
         self.manager.draw()  # Draw UI (if you have any)
 
-    def update_player_speed(self):
+    def update_player_speed(self,x=False):
         self.player_sprite.change_x = 0
         self.player_sprite.change_y = 0
-
-        sprint_speed = 0
-        import creature_stats
-        creature = str(self.chosen_animal)
-        if self.shift_pressed:
-            sprint_speed = creature_stats.predator_roles["Speed"][0]["sprint_speed"]
-
+        from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
+        sprint_speed = (predator_roles[self.creature_type][0]["sprint_speed"])/3
         # Movement input
-        final_speed = NORMAL_SPEED + sprint_speed
+
+        if self.shift_pressed:
+            final_speed = NORMAL_SPEED + sprint_speed
+        else:
+            final_speed = NORMAL_SPEED
+
         if self.up_pressed and (self.player_sprite.center_y < (WINDOW_HEIGHT-50)):
             self.player_sprite.change_y += final_speed
         if self.down_pressed and (self.player_sprite.center_y > 50):
@@ -109,10 +114,12 @@ class GameView(UIView):
 
         # Normalize diagonal movement to fix faster diagonal speed
         magnitude = math.hypot(self.player_sprite.change_x, self.player_sprite.change_y)
-        if magnitude > NORMAL_SPEED:
-            scale = NORMAL_SPEED / magnitude
+        if magnitude > final_speed:
+            scale = final_speed / magnitude
             self.player_sprite.change_x *= scale
             self.player_sprite.change_y *= scale
+
+
 
         # Set angle manually based on keys
         if self.up_pressed and not self.down_pressed and not self.left_pressed and not self.right_pressed:
@@ -137,6 +144,7 @@ class GameView(UIView):
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
 
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
         if key == arcade.key.UP:
@@ -153,8 +161,7 @@ class GameView(UIView):
             self.update_player_speed()
         elif key == arcade.key.LSHIFT:
             self.shift_pressed = True
-            print("Shift pressed")
-            self.update_player_speed()
+            self.update_player_speed(x=True)
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key."""
@@ -172,7 +179,6 @@ class GameView(UIView):
             self.update_player_speed()
         elif key == arcade.key.LSHIFT:
             self.shift_pressed = False
-            print("Shift released")
             self.update_player_speed()
 
     # def load_choice(self, file_path):
@@ -193,10 +199,24 @@ class GameView(UIView):
         self.grid.add(self.chosen_label,align_y=(WINDOW_HEIGHT/2)-25,align_x=0)
         self.manager.add(self.chosen_label)
 
+    def check_key(self,key):
+        if key == True:
+            return True
+        else:
+            return False
+
+
+
+
+
+
+
+
+
 def main():
     """ Main function """
     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT)
-    game = GameView()
+    game = GameView1()
     game.setup()
     window.show_view(game)
     arcade.run()
