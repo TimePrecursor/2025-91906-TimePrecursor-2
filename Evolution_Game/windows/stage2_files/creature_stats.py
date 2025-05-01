@@ -6,7 +6,8 @@ predator_roles = {
             "normal_speed": 3,
             "normal_detectable_range": 30,
             "sneak_detectable_range": 15,
-            "stamina": 50
+            "stamina": 50,
+            "metabolism": 9
         },
         {
             "name": "Cheetah",
@@ -14,7 +15,8 @@ predator_roles = {
             "normal_speed": 3,
             "normal_detectable_range": 30,
             "sneak_detectable_range": 15,
-            "stamina": 50
+            "stamina": 50,
+            "metabolism": 9
         }
     ],
     "Ambush": [
@@ -24,7 +26,8 @@ predator_roles = {
             "normal_speed": 3,
             "normal_detectable_range": 20,
             "sneak_detectable_range": 5,
-            "stamina": 60
+            "stamina": 60,
+            "metabolism": 7
         },
         {
             "name": "Lion",
@@ -32,7 +35,8 @@ predator_roles = {
             "normal_speed": 3,
             "normal_detectable_range": 25,
             "sneak_detectable_range": 10,
-            "stamina": 55
+            "stamina": 55,
+            "metabolism": 7
         }
     ],
     "Persistence": [
@@ -42,7 +46,8 @@ predator_roles = {
             "normal_speed": 2,
             "normal_detectable_range": 15,
             "sneak_detectable_range": 5,
-            "stamina": 70
+            "stamina": 70,
+            "metabolism": 6
         },
         {
             "name": "Wolf",
@@ -50,7 +55,8 @@ predator_roles = {
             "normal_speed": 4,
             "normal_detectable_range": 30,
             "sneak_detectable_range": 12,
-            "stamina": 80
+            "stamina": 80,
+            "metabolism": 6
         }
     ],
     "Scavenger": [
@@ -60,7 +66,8 @@ predator_roles = {
             "normal_speed": 3,
             "normal_detectable_range": 20,
             "sneak_detectable_range": 7,
-            "stamina": 50
+            "stamina": 50,
+            "metabolism": 7
         },
         {
             "name": "Hyena",
@@ -68,7 +75,8 @@ predator_roles = {
             "normal_speed": 3,
             "normal_detectable_range": 40,
             "sneak_detectable_range": 20,
-            "stamina": 60
+            "stamina": 60,
+            "metabolism": 6
         }
     ],
     "Pack": [
@@ -78,7 +86,8 @@ predator_roles = {
             "normal_speed": 4,
             "normal_detectable_range": 30,
             "sneak_detectable_range": 12,
-            "stamina": 80
+            "stamina": 80,
+            "metabolism": 6
         },
         {
             "name": "Meerkat",
@@ -86,7 +95,8 @@ predator_roles = {
             "normal_speed": 2,
             "normal_detectable_range": 25,
             "sneak_detectable_range": 15,
-            "stamina": 30
+            "stamina": 30,
+            "metabolism": 8
         }
     ]
 }

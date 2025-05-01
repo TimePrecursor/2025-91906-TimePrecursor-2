@@ -6,6 +6,8 @@ import math
 
 from arcade.gui import UIView, UIAnchorLayout, UIGridLayout, UIOnChangeEvent
 from arcade.gui import UIManager, UISlider
+from pyglet.math import clamp
+
 from Evolution_Game.depricated_files.files_to_be_added.simpleCreatureSetup1 import creature_setup
 
 # from arcade.gui import UIManager, UIView
@@ -36,7 +38,6 @@ class GameView1(UIView):
         self.environment = EnvironmentSetup()
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
-
         # Variables that will hold sprite lists
         self.player_list = None
         # Set up the player info
@@ -86,6 +87,15 @@ class GameView1(UIView):
         self.stamina = (predator_roles[self.creature_type][0]["stamina"])
         self.max_stamina = (predator_roles[self.creature_type][0]["stamina"])
 
+        # implement metabolism and hunger
+        metabolism = (predator_roles[self.creature_type][0]["metabolism"])
+        self.hunger = 100
+        self.max_hunger = 100
+        self.max_hunger_ratio = (self.hunger/100)
+        self.hunger_ratio = self.max_hunger_ratio
+        print(self.max_hunger_ratio)
+
+
     def on_draw(self):
         """ Render the screen. """
         self.clear()
@@ -93,7 +103,9 @@ class GameView1(UIView):
         self.environment.draw_trees()  # Draw trees afterward
         self.manager.draw()  # Draw UI (if you have any)
         max_stam = self.max_stamina
-        self.draw_health_bar(width=max_stam*4)
+        max_hung = self.max_hunger
+        self.draw_hunger_bar(width=max_stam * 4)
+        self.draw_stamina_bar(width=max_hung * 4)
 
 
     def update_player_speed(self,x=False):
@@ -102,15 +114,20 @@ class GameView1(UIView):
         from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
         sprint_speed = (predator_roles[self.creature_type][0]["sprint_speed"])/3
 
-        # Movement input
-        if self.shift_pressed and self.stamina > 10:
+        # Movement input and stamina/hunger effects
+        if self.shift_pressed and self.stamina > 10 and self.hunger > 10:
             final_speed = sprint_speed
-            self.stamina -= final_speed/3
+            self.stamina -= 0.5
+        elif self.shift_pressed and self.stamina > 10 and self.hunger < 20:
+            final_speed = sprint_speed-2
+            self.stamina -= 0.5
         else:
             final_speed = NORMAL_SPEED
 
-        if self.shift_pressed is False and self.stamina < 100:
-            self.stamina += 0.5
+        if self.shift_pressed is False and self.stamina < 100 and self.hunger > 20:
+            self.stamina += (sprint_speed/2.5)
+            self.hunger -= (sprint_speed/10)
+
 
         if self.up_pressed and (self.player_sprite.center_y < (WINDOW_HEIGHT-50)):
             self.player_sprite.change_y += final_speed
@@ -212,45 +229,72 @@ class GameView1(UIView):
             # x=10,
             # y=WINDOW_HEIGHT-20,
             font_size=15,
-            text="STAMINA:",
+            text="Stamina:",
             height=40,
-            width=len("STAMINA:") + 10,
+            width=len("Stamina:") + 10,
             bold=True
         )
-        self.grid.add(self.health_lab, align_y=(WINDOW_HEIGHT//2)-20, align_x=(-WINDOW_WIDTH//2)+100)
+        self.grid.add(self.health_lab, align_y=(WINDOW_HEIGHT//2)-25, align_x=(-WINDOW_WIDTH//2)+65)
         self.manager.add(self.health_lab)
 
+        self.hunger_lab = arcade.gui.UILabel(
+            # x=10,
+            # y=WINDOW_HEIGHT-20,
+            font_size=15,
+            text="Hunger:",
+            height=40,
+            width=len("Hunger:") + 10,
+            bold=True
+        )
+        self.grid.add(self.hunger_lab, align_y=(WINDOW_HEIGHT//2)-90, align_x=(-WINDOW_WIDTH // 2)+65)
+        self.manager.add(self.hunger_lab)
+
     # def draw_health_bar(self, x=(WINDOW_WIDTH/-2)-100, y=(WINDOW_HEIGHT/2)+200, width=200, height=100):
-    def draw_health_bar(self, x=(WINDOW_WIDTH//40), y=(WINDOW_HEIGHT)-50, width=None, height=25):
+    def draw_stamina_bar(self, x=(WINDOW_WIDTH // 40), y=WINDOW_HEIGHT - 50, width=None, height=25):
         # Left and right coordinates
         left = x
         right = x + width
-
         # Correct the Y coordinates
         top = y + height / 2
         bottom = y - height / 2
-
-        # Background (gray bar)
-        # arcade.draw_lrbt_rectangle_filled(left, right, bottom, top, arcade.color.GRAY)
-
-        # Health bar (colored based on health ratio)
-        health_ratio = self.stamina / 100
-        health_right = x + (width * health_ratio)
-        color = self.get_health_color()
-        arcade.draw_lrbt_rectangle_filled(left, health_right, bottom, top, color)
-
+        # Stamina bar (colored based on health ratio)
+        Stamina_ratio = self.stamina / 100
+        Stamina_right = x + (width * Stamina_ratio)
+        color = self.get_Stamina_color()
+        arcade.draw_lrbt_rectangle_filled(left, Stamina_right, bottom, top, color)
         # Outline (optional border)
-        arcade.draw_lrbt_rectangle_outline(left, right, bottom, top, arcade.color.BLACK, 2)
+        arcade.draw_lrbt_rectangle_outline(left, right, bottom, top, arcade.color.BLACK, 3)
 
+    def draw_hunger_bar(self, x=(WINDOW_WIDTH // 40), y=WINDOW_HEIGHT - 110, width=None, height=25):
+        # Left and right coordinates
+        left = x
+        right = x + width
+        # Correct the Y coordinates
+        top = y + height / 2
+        bottom = y - height / 2
+        # Stamina bar (colored based on health ratio)
+        hunger_ratio = self.hunger / 100
+        hunger_right = x + (width * hunger_ratio)
+        color = self.get_hunger_color()
+        arcade.draw_lrbt_rectangle_filled(left, hunger_right, bottom, top, color)
+        # Outline (optional border)
+        arcade.draw_lrbt_rectangle_outline(left, right, bottom, top, arcade.color.BLACK, 3)
 
-    def get_health_color(self):
+    def get_Stamina_color(self):
         if self.stamina >= 80:
             return arcade.color.LIGHT_SKY_BLUE
-        elif self.stamina < 80 and self.stamina >= 20:
+        elif 80 > self.stamina >= 20:
             return arcade.color.YELLOW
         elif self.stamina < 20:
             return arcade.color.RED
 
+    def get_hunger_color(self):
+        if self.hunger >= 80:
+            return arcade.color.LIGHT_SKY_BLUE
+        elif 80 > self.hunger >= 20:
+            return arcade.color.YELLOW
+        elif self.hunger < 20:
+            return arcade.color.RED
 
     def check_key(self,key):
         if key == True:
