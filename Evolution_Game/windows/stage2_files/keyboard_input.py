@@ -88,7 +88,7 @@ class GameView1(UIView):
         self.max_stamina = (predator_roles[self.creature_type][0]["stamina"])
 
         # implement metabolism and hunger
-        metabolism = (predator_roles[self.creature_type][0]["metabolism"])
+        self.metabolism = (predator_roles[self.creature_type][0]["metabolism"])
         self.hunger = 100
         self.max_hunger = 100
         self.max_hunger_ratio = (self.hunger/100)
@@ -104,8 +104,8 @@ class GameView1(UIView):
         self.manager.draw()  # Draw UI (if you have any)
         max_stam = self.max_stamina
         max_hung = self.max_hunger
-        self.draw_hunger_bar(width=max_stam * 4)
-        self.draw_stamina_bar(width=max_hung * 4)
+        self.draw_hunger_bar(width=max_hung * 2)
+        self.draw_stamina_bar(width=max_stam * 4)
 
 
     def update_player_speed(self,x=False):
@@ -124,8 +124,9 @@ class GameView1(UIView):
         else:
             final_speed = NORMAL_SPEED
 
-        if self.shift_pressed is False and self.stamina < 100 and self.hunger > 20:
+        if self.shift_pressed is False and self.stamina < self.max_stamina and self.hunger > 20:
             self.stamina += (sprint_speed/2.5)
+            self.stamina = clamp(self.stamina,0,self.max_stamina)
             self.hunger -= (sprint_speed/10)
 
 
@@ -258,7 +259,7 @@ class GameView1(UIView):
         top = y + height / 2
         bottom = y - height / 2
         # Stamina bar (colored based on health ratio)
-        Stamina_ratio = self.stamina / 100
+        Stamina_ratio = self.stamina / self.max_stamina
         Stamina_right = x + (width * Stamina_ratio)
         color = self.get_Stamina_color()
         arcade.draw_lrbt_rectangle_filled(left, Stamina_right, bottom, top, color)

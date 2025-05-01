@@ -5,7 +5,7 @@ import os
 import random
 
 #-----------------------
-codeVersion= "V 1.28.40.0 - FROM HOME"
+codeVersion= "V 1.29.0.2"
 '''
 Software versioning is now: (Finished Version, Major Rewrite, Bug fixing, Small changes)
 Keys:
