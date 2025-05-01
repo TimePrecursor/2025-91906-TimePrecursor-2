@@ -70,7 +70,7 @@ class GameView1(UIView):
             line2 = f.readline().rstrip("\n")
         self.chosen_animal = line1
         self.creature_type = line2
-        self.top_right_info()
+        self.cr_index = 0
         # file_path1 = os.path.join(cache_file_path, str(file_val))
         # Set up the player
 
@@ -83,17 +83,28 @@ class GameView1(UIView):
         self.player_sprite.center_y = WINDOW_HEIGHT/2
         self.player_sprite.angle = 0  # Start by facing up (90 degrees)
         self.player_list.append(self.player_sprite)
-        from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
-        self.stamina = (predator_roles[self.creature_type][0]["stamina"])
-        self.max_stamina = (predator_roles[self.creature_type][0]["stamina"])
 
+        with open(cache_file_path, "r") as f:
+            line3 = f.readline()
+        from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
+        creature_type = predator_roles[self.creature_type]
+        if creature_type == self.chosen_animal:
+            pass
+        elif creature_type != self.chosen_animal:
+            self.cr_index = 1
+        self.stamina = (predator_roles[self.creature_type][self.cr_index]["stamina"])
+        self.max_stamina = (predator_roles[self.creature_type][self.cr_index]["stamina"])
+        self.range = (predator_roles[self.creature_type][self.cr_index]["normal_detectable_range"])
+        self.stat_speed = (predator_roles[self.creature_type][self.cr_index]["sprint_speed"])
+        self.sprint_speed = self.stat_speed / 3
         # implement metabolism and hunger
-        self.metabolism = (predator_roles[self.creature_type][0]["metabolism"])
+        self.metabolism = (predator_roles[self.creature_type][self.cr_index]["metabolism"])
         self.hunger = 100
         self.max_hunger = 100
         self.max_hunger_ratio = (self.hunger/100)
         self.hunger_ratio = self.max_hunger_ratio
         print(self.max_hunger_ratio)
+        self.top_right_info()
 
 
     def on_draw(self):
@@ -111,23 +122,21 @@ class GameView1(UIView):
     def update_player_speed(self,x=False):
         self.player_sprite.change_x = 0
         self.player_sprite.change_y = 0
-        from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
-        sprint_speed = (predator_roles[self.creature_type][0]["sprint_speed"])/3
 
         # Movement input and stamina/hunger effects
         if self.shift_pressed and self.stamina > 10 and self.hunger > 10:
-            final_speed = sprint_speed
+            final_speed = self.sprint_speed
             self.stamina -= 0.5
         elif self.shift_pressed and self.stamina > 10 and self.hunger < 20:
-            final_speed = sprint_speed-2
+            final_speed = self.sprint_speed-2
             self.stamina -= 0.5
         else:
             final_speed = NORMAL_SPEED
 
         if self.shift_pressed is False and self.stamina < self.max_stamina and self.hunger > 20:
-            self.stamina += (sprint_speed/2.5)
+            self.stamina += (self.sprint_speed/2.5)
             self.stamina = clamp(self.stamina,0,self.max_stamina)
-            self.hunger -= (sprint_speed/10)
+            self.hunger -= (self.sprint_speed/10)
 
 
         if self.up_pressed and (self.player_sprite.center_y < (WINDOW_HEIGHT-50)):
@@ -208,47 +217,48 @@ class GameView1(UIView):
             self.shift_pressed = False
             self.update_player_speed()
 
-    # def load_choice(self, file_path):
-    #     from Evolution_Game.windows.stage2_files.saved_cache import functions_misc as f
-    #     settings = f.functions.load_settings(self,file_path=file_path)
-    #     return settings["random_carnivore_choice"]
-
     def top_right_info(self):
         self.chosen_label = arcade.gui.UILabel(
-            # x=10,
-            # y=WINDOW_HEIGHT-20,
             font_size=20,
             text=self.chosen_animal,
             height=20,
-            width=len(self.chosen_animal)+10,
+            width=200,
             bold=True
         )
         self.grid.add(self.chosen_label, align_y=(WINDOW_HEIGHT / 2) - 25, align_x=0)
         self.manager.add(self.chosen_label)
 
         self.health_lab = arcade.gui.UILabel(
-            # x=10,
-            # y=WINDOW_HEIGHT-20,
             font_size=15,
             text="Stamina:",
             height=40,
-            width=len("Stamina:") + 10,
+            width=200,
             bold=True
         )
-        self.grid.add(self.health_lab, align_y=(WINDOW_HEIGHT//2)-25, align_x=(-WINDOW_WIDTH//2)+65)
+        self.grid.add(self.health_lab, align_y=(WINDOW_HEIGHT//2)-25, align_x=(-WINDOW_WIDTH//2)+60)
         self.manager.add(self.health_lab)
 
         self.hunger_lab = arcade.gui.UILabel(
-            # x=10,
-            # y=WINDOW_HEIGHT-20,
             font_size=15,
             text="Hunger:",
             height=40,
-            width=len("Hunger:") + 10,
+            width=200,
             bold=True
         )
-        self.grid.add(self.hunger_lab, align_y=(WINDOW_HEIGHT//2)-90, align_x=(-WINDOW_WIDTH // 2)+65)
+        self.grid.add(self.hunger_lab, align_y=(WINDOW_HEIGHT//2)-85, align_x=(-WINDOW_WIDTH//2)+60)
         self.manager.add(self.hunger_lab)
+
+        self.stats_lab = arcade.gui.UILabel(
+            font_size=12,
+            text=f"Metabolism = {self.metabolism}\nSpeed = {round(self.stat_speed,ndigits=1)}\nDetectable Range = {self.range}",
+            height=40,
+            width=400,
+            bold=False,
+            italic=True,
+            multiline=True
+        )
+        self.grid.add(self.stats_lab, align_x=(-WINDOW_WIDTH // 2) + 100, align_y=(WINDOW_HEIGHT // 2) - 150)
+        self.manager.add(self.stats_lab)
 
     # def draw_health_bar(self, x=(WINDOW_WIDTH/-2)-100, y=(WINDOW_HEIGHT/2)+200, width=200, height=100):
     def draw_stamina_bar(self, x=(WINDOW_WIDTH // 40), y=WINDOW_HEIGHT - 50, width=None, height=25):
