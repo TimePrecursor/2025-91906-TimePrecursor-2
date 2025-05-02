@@ -3,7 +3,6 @@ from arcade.gui import *
 from arcade import gui
 import os
 import random
-
 #-----------------------
 codeVersion= "V 1.29.0.2"
 '''
