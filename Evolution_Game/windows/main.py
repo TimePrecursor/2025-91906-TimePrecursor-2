@@ -4,7 +4,7 @@ from arcade import gui
 import os
 import random
 #-----------------------
-codeVersion= "V 1.29.0.2"
+codeVersion= "V 1.30.2.1 - FROM HOME"
 '''
 Software versioning is now: (Finished Version, Major Rewrite, Bug fixing, Small changes)
 Keys:
@@ -88,7 +88,7 @@ class Orginismselectionveiw(UIView):
             texture_button = FirstButtons(
                 text="", width=300, height=300,
                 button_id=count,
-                ui_manager=self.manager  # ✅ Fixed: correct manager passed in
+                ui_manager=self.manager
             )
             file_path_list = []
             for x in range(3):

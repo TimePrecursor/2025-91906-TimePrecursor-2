@@ -7,7 +7,8 @@ predator_roles = {
             "normal_detectable_range": 30,
             "sneak_detectable_range": 15,
             "stamina": 50,
-            "metabolism": 9
+            "metabolism": 9,
+            "prey": ["Gazelle", "Rabbit", "Pig"]
         },
         {
             "name": "Cheetah",
@@ -16,7 +17,8 @@ predator_roles = {
             "normal_detectable_range": 30,
             "sneak_detectable_range": 15,
             "stamina": 50,
-            "metabolism": 9
+            "metabolism": 9,
+            "prey": ["Gazelle", "Rabbit", "Pig"]
         }
     ],
     "Ambush": [
@@ -27,7 +29,8 @@ predator_roles = {
             "normal_detectable_range": 20,
             "sneak_detectable_range": 5,
             "stamina": 60,
-            "metabolism": 7
+            "metabolism": 7,
+            "prey": ["Deer", "Pig", "Rabbit"]
         },
         {
             "name": "Lion",
@@ -36,7 +39,8 @@ predator_roles = {
             "normal_detectable_range": 25,
             "sneak_detectable_range": 10,
             "stamina": 55,
-            "metabolism": 7
+            "metabolism": 7,
+            "prey": ["Gazelle", "Deer", "Pig"]
         }
     ],
     "Persistence": [
@@ -47,7 +51,8 @@ predator_roles = {
             "normal_detectable_range": 15,
             "sneak_detectable_range": 5,
             "stamina": 70,
-            "metabolism": 6
+            "metabolism": 6,
+            "prey": ["Rabbit", "Mouse", "Pig"]
         },
         {
             "name": "Wolf",
@@ -56,7 +61,8 @@ predator_roles = {
             "normal_detectable_range": 30,
             "sneak_detectable_range": 12,
             "stamina": 80,
-            "metabolism": 6
+            "metabolism": 6,
+            "prey": ["Deer", "Rabbit", "Pig"]
         }
     ],
     "Scavenger": [
@@ -67,7 +73,8 @@ predator_roles = {
             "normal_detectable_range": 20,
             "sneak_detectable_range": 7,
             "stamina": 50,
-            "metabolism": 7
+            "metabolism": 7,
+            "prey": ["Mouse", "Rabbit", "Pig"]
         },
         {
             "name": "Hyena",
@@ -76,27 +83,8 @@ predator_roles = {
             "normal_detectable_range": 40,
             "sneak_detectable_range": 20,
             "stamina": 60,
-            "metabolism": 6
-        }
-    ],
-    "Pack": [
-        {
-            "name": "Wolf",
-            "sprint_speed": 7,
-            "normal_speed": 4,
-            "normal_detectable_range": 30,
-            "sneak_detectable_range": 12,
-            "stamina": 80,
-            "metabolism": 6
-        },
-        {
-            "name": "Meerkat",
-            "sprint_speed": 4,
-            "normal_speed": 2,
-            "normal_detectable_range": 25,
-            "sneak_detectable_range": 15,
-            "stamina": 30,
-            "metabolism": 8
+            "metabolism": 6,
+            "prey": ["Pig", "Rabbit", "Deer"]
         }
     ]
 }

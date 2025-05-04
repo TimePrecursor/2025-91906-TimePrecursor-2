@@ -1,2 +1,3 @@
 Wolf
-Pack
+Persistence
+Deer|Rabbit|Pig

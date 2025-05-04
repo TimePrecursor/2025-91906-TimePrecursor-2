@@ -4,6 +4,8 @@ from arcade import gui
 import random
 import os
 
+from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
+
 # cool thing!
 # from pymunk.examples.spiderweb import update
 
@@ -51,8 +53,8 @@ class PageView(arcade.View):
             "Speed",
             "Ambush",
             "Persistence",
-            "Scavenger",
-            "Pack"
+            "Scavenger"#,
+            # "Pack"
         ]
         # self.carni_choices = {
         #     # "Type" : {['Name', 'Name'],[Sprinting Speeds],[Sneak Stealth],[Detectable Range]},
@@ -80,11 +82,11 @@ class PageView(arcade.View):
             3: ["Scavenger",
                 "Carnivores with this hunting style usually find their food source in either dead or already killed prey.",
                 "\nPros: Easy food",
-                "\nCons: Can be a long time between feeds, especially in winter."],
-            4: ["Pack",
-                "Hunting in with pack can be both beneficial and a hindrance. More teeth means both easier and larger kills. While more mouths means less food per hunter.",
-                "\nPros: Great social benefits. Usually intelligent.",
-                "\nCons: Not an effective killer alone."]
+                "\nCons: Can be a long time between feeds, especially in winter."]#,
+            # 4: ["Pack",
+            #     "Hunting in with pack can be both beneficial and a hindrance. More teeth means both easier and larger kills. While more mouths means less food per hunter.",
+            #     "\nPros: Great social benefits. Usually intelligent.",
+            #     "\nCons: Not an effective killer alone."]
         }
 
         self.carni_title()
@@ -202,22 +204,29 @@ class PageView(arcade.View):
         # Call random_carnivore to handle the random selection
         # self.random_carnivore(choice)
 
+
+
+
+        from stage2_files.creature_stats import predator_roles
+        choice_stats = predator_roles[choice]
+        # Randomly select a predator from the chosen profession's list
+        random_predator = random.choice(choice_stats)
+        # Write the predator's name to the cache
+        carnivore = random_predator["name"]
+
+        if choice == carnivore:
+            self.cr_index = 0
+        elif choice != carnivore:
+            self.cr_index = 1
+        prey = predator_roles[choice][self.cr_index]["prey"]
+
         # Write the selected carnivore's name to the cache file
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
-
         with open(cache_file, "w") as f:
-            from stage2_files import creature_stats as stats
-            choice_stats = stats.predator_roles[choice]
-
-            # Randomly select a predator from the chosen profession's list
-            random_predator = random.choice(choice_stats)
-
-            # Write the predator's name to the cache
-            carnivore = random_predator["name"]
-            print(carnivore)
-            f.write(f"{carnivore}"+'\n')
-            f.write(self.dropdownmain.value)
+            f.write(f"{carnivore}" + '\n')
+            f.write(self.dropdownmain.value + '\n')
+            f.write(f'{prey[0]}|{prey[1]}|{prey[2]}')
 
         # Switch to the next view
         import stage2_files.keyboard_input as play_view
