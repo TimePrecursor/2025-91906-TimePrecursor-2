@@ -9,34 +9,48 @@ live_food_stats = [
         "name": "Deer",
         "speed": 7,
         "awareness": 6,
-        "nutritional_value": 8
+        "nutritional_value": 8,
+        "health": 60,
+        "vision_range": 25,
+        "stamina": 70
     },
     {
         "name": "Gazelle",
         "speed": 9,
         "awareness": 8,
-        "nutritional_value": 7
+        "nutritional_value": 7,
+        "health": 50,
+        "vision_range": 30,
+        "stamina": 80
     },
     {
         "name": "Mouse",
         "speed": 3,
         "awareness": 5,
-        "nutritional_value": 2
+        "nutritional_value": 2,
+        "health": 10,
+        "vision_range": 15,
+        "stamina": 25
     },
     {
         "name": "Rabbit",
         "speed": 6,
         "awareness": 7,
-        "nutritional_value": 4
+        "nutritional_value": 4,
+        "health": 30,
+        "vision_range": 20,
+        "stamina": 50
     },
     {
         "name": "Pig",
         "speed": 4,
         "awareness": 4,
-        "nutritional_value": 9
+        "nutritional_value": 9,
+        "health": 80,
+        "vision_range": 18,
+        "stamina": 40
     }
 ]
-
 
 class live_food(arcade.Sprite):
     def __init__(self,image, scale, window_width=1000,window_height=600):
@@ -63,17 +77,19 @@ class live_food_functions():
                     line.lstrip("|")
                     self.prey_choices = line.split("|")
                 else:
-                    print("error")
+                    print()
 
         self.prey_choices.pop(0)
         random_prey = random.choice(self.prey_choices)
         file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{random_prey}.png")
         self.food_sprite = live_food(file_path, scale=0.15)
-        self.food_sprite.center_x = 1000/2
-        self.food_sprite.center_y = 600/2
+        import Evolution_Game.windows.stage2_files.environmentSetupMkII as enviro_setup
+        select_randx = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
+        self.food_sprite.center_x = (select_randx["center_x"])
+        self.food_sprite.center_y = (select_randx["center_y"])
         # self.sprite_list.append(self.food_sprite)
         # print(self.prey_choices)
-        return self.food_sprite
+        return [self.food_sprite, random_prey]
 
 
 

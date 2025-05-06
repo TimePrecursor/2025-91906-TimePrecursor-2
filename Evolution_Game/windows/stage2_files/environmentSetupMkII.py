@@ -11,8 +11,9 @@ scenery_assets = [
     "bolder.png", "bush.png", "lake1.png", "lake3.png", "lake4.png", "meat.png",
     "rock1.png", "rock2.png", "rock3.png", "rock4.png", "rock5.png", "tree1.png"
 ]
-class EnvironmentSetup(arcade.Sprite):
 
+class EnvironmentSetup(arcade.Sprite):
+    tree_locations = []
     def asset_paths(self, name="tree1.png"):
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         path = os.path.join(project_root, "assets", "images", "scenery", f"{name}")
@@ -37,6 +38,7 @@ class EnvironmentSetup(arcade.Sprite):
                     tree = arcade.Sprite(tree_texture_path, scale=0.5)
                     tree.center_x = random_x
                     tree.center_y = random_y
+                    self.tree_locations.append({"center_x":tree.center_x,"center_y":tree.center_y})
                     tree_list.append(tree)
                     placed = True
                     break
@@ -45,6 +47,7 @@ class EnvironmentSetup(arcade.Sprite):
 
     def draw_trees(self):
         tree_list.draw()
+        # print(self.tree_locations)
 
 # window = arcade.Window(1280, 720, "Tree Spread Example")
 # environment = EnvironmentSetup()
