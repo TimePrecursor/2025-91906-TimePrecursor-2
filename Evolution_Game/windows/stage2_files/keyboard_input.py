@@ -98,7 +98,6 @@ class GameView1(UIView):
         self.max_hunger = 100
         self.max_hunger_ratio = (self.hunger/100)
         self.hunger_ratio = self.max_hunger_ratio
-        print(self.max_hunger_ratio)
         list = ["Stamina:", "Hunger:", f"Metabolism = {self.metabolism}\nSpeed = {round(self.stat_speed,ndigits=1)}\nDetectable Range = {self.range}"]
         self.top_right_info_add(3,list,300,40,bold=False)
 
@@ -194,6 +193,11 @@ class GameView1(UIView):
         elif key == arcade.key.LSHIFT:
             self.shift_pressed = True
             self.update_player_speed(x=True)
+        elif key == arcade.key.A:
+            import Evolution_Game.windows.stage2_files.live_food_stats as live
+            food = live.live_food_functions.load_image(self)
+            self.player_list.append(food)
+
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key."""

@@ -226,7 +226,7 @@ class PageView(arcade.View):
         with open(cache_file, "w") as f:
             f.write(f"{carnivore}" + '\n')
             f.write(self.dropdownmain.value + '\n')
-            f.write(f'{prey[0]}|{prey[1]}|{prey[2]}')
+            f.write(f'|{prey[0]}|{prey[1]}|{prey[2]}')
 
         # Switch to the next view
         import stage2_files.keyboard_input as play_view

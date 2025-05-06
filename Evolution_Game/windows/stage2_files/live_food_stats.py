@@ -1,3 +1,5 @@
+import random
+
 import arcade
 import os
 from arcade.gui import UIView
@@ -45,22 +47,33 @@ class live_food(arcade.Sprite):
         self.change_x = 0
         self.change_y = 0
 
-class live_food_functions(UIView):
+class live_food_functions():
     def __init__(self):
         super().__init__()
+
     def load_image(self):
+        self.prey_choices = []
         self.sprite_list = arcade.SpriteList()
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-        file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", "pig.png")
+        cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
+        with open(cache_file, "r") as cf:
+            for line in cf.readlines():
+                if line.startswith("|"):
+                    line.rstrip("\n")
+                    line.lstrip("|")
+                    self.prey_choices = line.split("|")
+                else:
+                    print("error")
+
+        self.prey_choices.pop(0)
+        random_prey = random.choice(self.prey_choices)
+        file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{random_prey}.png")
         self.food_sprite = live_food(file_path, scale=0.15)
         self.food_sprite.center_x = 1000/2
         self.food_sprite.center_y = 600/2
-        self.sprite_list.append(self.food_sprite)
-        self.sprite_list.draw()  # Draw player first
-
-
-    def on_draw(self):
-        self.sprite_list.draw()  # Draw player first
+        # self.sprite_list.append(self.food_sprite)
+        # print(self.prey_choices)
+        return self.food_sprite
 
 
 

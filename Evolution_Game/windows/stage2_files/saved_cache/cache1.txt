@@ -1,3 +1,3 @@
-Wolf
-Persistence
-Deer|Rabbit|Pig
+Hyena
+Scavenger
+|Pig|Rabbit|Deer
