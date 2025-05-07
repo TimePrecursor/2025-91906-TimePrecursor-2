@@ -132,7 +132,6 @@ class SimplePreyAI:
 
 import math
 import random
-
 import arcade
 
 
@@ -181,7 +180,7 @@ class PreySprite(arcade.Sprite):
 
     def custom_get_distance(self,sprite1, sprite2):
         """Calculate distance between two sprites."""
-        dx = sprite1.center_x- sprite2.center_x
+        dx = sprite1.center_x - sprite2.center_x
         dy = sprite1.center_y - sprite2.center_y
         return math.hypot(dx, dy)
 

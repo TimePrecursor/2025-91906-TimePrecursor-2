@@ -177,7 +177,7 @@ class GameView1(UIView):
     def on_update(self, delta_time):
         """ Movement and game logic """
         predator = self.player_sprite
-        prey_AI.PreySprite.update_ai(self=prey_AI.PreySprite, dt=delta_time, predators=self.player_sprite)
+        prey_AI.PreySprite.update_ai(self=prey_AI.PreySprite, dt=delta_time, predators=[self.player_sprite])
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
 
