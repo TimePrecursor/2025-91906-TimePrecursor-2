@@ -7,7 +7,7 @@ import arcade
 from arcade.gui import UIView, UIAnchorLayout
 from pyglet.math import clamp
 
-from Evolution_Game.windows.stage2_files import prey_AI
+from Evolution_Game.windows.stage2_files import prey_AI2
 
 
 # from arcade.gui import UIManager, UIView
@@ -32,6 +32,7 @@ class Player(arcade.Sprite):
 class GameView1(UIView):
     def __init__(self):
         super().__init__()
+        self.prey_is_alive = False
         self.selected_prey = None
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
 
@@ -49,13 +50,13 @@ class GameView1(UIView):
         self.up_pressed = False
         self.down_pressed = False
         self.shift_pressed = False
-
+        self.ctrl_pressed = False
         self.grid = UIAnchorLayout()
         self.manager.add(self.grid)
 
         # Set the background color
         self.background_color = arcade.color.AMAZON
-        # self.setup()
+        self.setup()
 
 
     def setup(self):
@@ -83,7 +84,7 @@ class GameView1(UIView):
         # self.player_sprite.center_y = WINDOW_HEIGHT/2
         self.player_sprite._angle = 0  # Start by facing up (90 degrees)
         self.player_list.append(self.player_sprite)
-        print(self.player_list)
+        # print(self.player_list)
 
         from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
         creature_type = predator_roles[self.creature_type]
@@ -94,6 +95,8 @@ class GameView1(UIView):
         self.stamina = (predator_roles[self.creature_type][self.cr_index]["stamina"])
         self.max_stamina = (predator_roles[self.creature_type][self.cr_index]["stamina"])
         self.range = (predator_roles[self.creature_type][self.cr_index]["normal_detectable_range"])
+        self.sneak_range = (predator_roles[self.creature_type][self.cr_index]["sneak_detectable_range"])
+        self.current_range = self.range
         self.stat_speed = (predator_roles[self.creature_type][self.cr_index]["sprint_speed"])
         self.sprint_speed = self.stat_speed / 2.5
         # implement metabolism and hunger
@@ -117,9 +120,9 @@ class GameView1(UIView):
         self.draw_stamina_bar(width=max_stam * 4)
 
 
-    def update_player_speed(self,x=False):
-        self.player_sprite.change_x = 0
-        self.player_sprite.change_y = 0
+    def update_player_speed(self):
+        Player.change_x = 0
+        Player.change_y = 0
 
         # Movement input and stamina/hunger effects
         if self.shift_pressed and self.stamina > 10 and self.hunger > 10:
@@ -177,7 +180,8 @@ class GameView1(UIView):
     def on_update(self, delta_time):
         """ Movement and game logic """
         predator = self.player_sprite
-        prey_AI.PreySprite.update_ai(self=prey_AI.PreySprite, dt=delta_time, predators=[self.player_sprite])
+        if self.prey_is_alive:
+            prey_AI2.PreySprite2.update_ai(self=prey_AI2.PreySprite2, dt=delta_time, detec_range=self.current_range)
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
 
@@ -201,6 +205,10 @@ class GameView1(UIView):
             self.update_player_speed(x=True)
         elif key == arcade.key.A:
             self.create_references()
+        elif key == arcade.key.LCTRL:
+            self.ctrl_pressed = True
+            self.current_range = self.sneak_range
+
         #     import Evolution_Game.windows.stage2_files.live_food_stats as live
         #     food = live.live_food_functions.load_image(self)
         #     self.player_list.append(food)
@@ -220,7 +228,7 @@ class GameView1(UIView):
 
     def create_references(self):
         import Evolution_Game.windows.stage2_files.live_food_stats as live
-        food = live.live_food_functions.load_image(self)
+        food = live.live_food_functions.load_image(live.live_food_functions)
         self.player_list.append(food[0])
 
         # Create references for an animal sprite and
@@ -243,7 +251,8 @@ class GameView1(UIView):
                 #     "vision_range": x["vision_range"],
                 #     "stamina": 70
                 # }
-                self.selected_prey = prey_AI.PreySprite(image_file=f"{self.file_path}",predator=self.player_list[0])
+                self.selected_prey = prey_AI2.PreySprite2(image_file=f"{self.file_path}",prey_name=food[1])
+                self.prey_is_alive = True
 
 
 
@@ -264,6 +273,9 @@ class GameView1(UIView):
         elif key == arcade.key.LSHIFT:
             self.shift_pressed = False
             self.update_player_speed()
+        elif key == arcade.key.LCTRL:
+            self.ctrl_pressed = False
+            self.current_range = self.range
 
 
     def top_right_info_add(self, amount=4, text=None, width=200, height=30, font_size=20, bold=True, y_val=(WINDOW_HEIGHT / 2) - 25):
@@ -349,7 +361,7 @@ class GameView1(UIView):
         # Correct the Y coordinates
         top = y + height / 2
         bottom = y - height / 2
-        # Stamina bar (colored based on health ratio)
+        # Stamina bar (colored based on a health ratio)
         hunger_ratio = self.hunger / 100
         hunger_right = x + (width * hunger_ratio)
         color = self.get_hunger_color()
@@ -364,6 +376,7 @@ class GameView1(UIView):
             return arcade.color.YELLOW
         elif self.stamina < 20:
             return arcade.color.RED
+        return None
 
     def get_hunger_color(self):
         if self.hunger >= 80:
@@ -372,6 +385,7 @@ class GameView1(UIView):
             return arcade.color.YELLOW
         elif self.hunger < 20:
             return arcade.color.RED
+        return None
 
     def check_key(self,key):
         if key == True:
@@ -392,7 +406,7 @@ def main():
     """ Main function """
     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT)
     game = GameView1()
-    game.setup()
+    # game.setup()
     window.show_view(game)
     arcade.run()
 

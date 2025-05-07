@@ -1,10 +1,13 @@
 import math
 import random
 import arcade
+from Evolution_Game.windows.stage2_files import keyboard_input
+from Evolution_Game.windows.stage2_files.keyboard_input import Player
+
 
 class PreySprite2(arcade.Sprite):
     def __init__(self, prey_name: str, image_file: str, scale=0.5):
-        super().__init__(image_file, scale)
+        super().__init__(image_file, scale,center_x=0,center_y=0)
         self.center_x = 1000 // 2  # Start in the middle of the screen
         self.center_y = 600 // 2
         self.change_y = 0
@@ -31,21 +34,32 @@ class PreySprite2(arcade.Sprite):
         self.flee_direction = (0, 0)
         self.alert_timer = 0
         self.graze_timer = random.uniform(3.0, 6.0)
+        from Evolution_Game.windows.stage2_files.keyboard_input import Player as currentPred
+        self.predator = currentPred
 
-    def update_ai(self, dt):
+    def update_ai(self, dt, detec_range):
         """Update AI logic"""
-        if self.detect_threats(self):
+        if self.detect_threats(pred_vis_dis=detec_range,self=PreySprite2):
             self.flee(dt)
-            return
         elif self.is_grazing is False and random.randint(0,10) == 1:
             self.graze()
             self.is_grazing = True
 
-    def flee(self, dt):
-        pass
+    def flee(self, angle):
+        self.angle = angle
+        self.is_fleeing = True
 
-    def detect_threats(self, predator):
-        pass
+    def detect_threats(self, pred_vis_dis):
+        prey_y = self.center_y
+        prey_x = self.center_x
+        predator_y = keyboard_input.Player.position
+        predator_x = keyboard_input.Player.position
+        distances_xy = (predator_y - prey_y, predator_x - prey_x)
+        angle_rad = math.atan2(distances_xy[0], distances_xy[1])
+        pred_distance = math.sqrt(distances_xy[0]+distances_xy[1])
+        pred_is_vis = (pred_vis_dis > pred_distance)
+        if pred_is_vis:# and not self.is_fleeing:
+            self.flee(angle_rad)
 
     def graze(self):
         pass
@@ -84,4 +98,6 @@ class PreySprite2(arcade.Sprite):
     #         self.change_x = math.cos(angle) * self.speed * 0.3
     #         self.change_y = math.sin(angle) * self.speed * 0.3
     #         self.graze_timer = random.uniform(3.0, 6.0)
+
+
 
