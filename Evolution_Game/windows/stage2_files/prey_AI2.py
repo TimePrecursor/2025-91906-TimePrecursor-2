@@ -1,13 +1,16 @@
 import math
 import random
 import arcade
-from Evolution_Game.windows.stage2_files import keyboard_input
-from Evolution_Game.windows.stage2_files.keyboard_input import Player
+
 
 
 class PreySprite2(arcade.Sprite):
-    def __init__(self, prey_name: str, image_file: str, scale=0.5):
+    def __init__(self, prey_name: str, image_file: str,predator, scale=0.5,):
         super().__init__(image_file, scale,center_x=0,center_y=0)
+        self.prey_x = self.center_x
+        self.prey_y = self.center_y
+        # self.predator_y = int
+        # self.predator_x = int
         self.center_x = 1000 // 2  # Start in the middle of the screen
         self.center_y = 600 // 2
         self.change_y = 0
@@ -39,7 +42,7 @@ class PreySprite2(arcade.Sprite):
 
     def update_ai(self, dt, detec_range):
         """Update AI logic"""
-        if self.detect_threats(pred_vis_dis=detec_range,self=PreySprite2):
+        if self.detect_threats(self=self,pred_vis_dis=detec_range):
             self.flee(dt)
         elif self.is_grazing is False and random.randint(0,10) == 1:
             self.graze()
@@ -52,9 +55,16 @@ class PreySprite2(arcade.Sprite):
     def detect_threats(self, pred_vis_dis):
         prey_y = self.center_y
         prey_x = self.center_x
-        predator_y = keyboard_input.Player.position
-        predator_x = keyboard_input.Player.position
-        distances_xy = (predator_y - prey_y, predator_x - prey_x)
+        from Evolution_Game.windows.stage2_files import keyboard_input
+        # predator_x, predator_y = map(int, keyboard_input.get_pos())
+        # distances_xy = (
+        #     int(predator_y - prey_y),
+        #     int(predator_x - prey_x)
+        # )
+        from keyboard_input import Player as currentPred
+        self.predator = currentPred
+        predator_x, predator_y = map(int, self.predator.get_pos())
+        distances_xy = (predator_y - self.center_y, predator_x - self.center_x)
         angle_rad = math.atan2(distances_xy[0], distances_xy[1])
         pred_distance = math.sqrt(distances_xy[0]+distances_xy[1])
         pred_is_vis = (pred_vis_dis > pred_distance)

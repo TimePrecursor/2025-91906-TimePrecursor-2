@@ -3,11 +3,11 @@ import math
 # from arcade import gui
 import os
 
+
 import arcade
 from arcade.gui import UIView, UIAnchorLayout
 from pyglet.math import clamp
 
-from Evolution_Game.windows.stage2_files import prey_AI2
 
 
 # from arcade.gui import UIManager, UIView
@@ -22,10 +22,17 @@ NORMAL_SPEED = 1
 class Player(arcade.Sprite):
     def __init__(self, image, scale):
         """ Initialize the player sprite """
+        super().__init__(scale=0.25)
         self.center_x = WINDOW_WIDTH // 2  # Start in the middle of the screen
         self.center_y = WINDOW_HEIGHT // 2
         self.change_y = 0
         self.change_x = 0
+
+    def get_pos(self):
+        y = Player.center_y
+        x = Player.center_x
+        return [y, x]
+
 
 
 
@@ -180,11 +187,11 @@ class GameView1(UIView):
     def on_update(self, delta_time):
         """ Movement and game logic """
         predator = self.player_sprite
-        if self.prey_is_alive:
+        if self.prey_is_alive and self.shift_pressed:
+            from Evolution_Game.windows.stage2_files import prey_AI2
             prey_AI2.PreySprite2.update_ai(self=prey_AI2.PreySprite2, dt=delta_time, detec_range=self.current_range)
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
-
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -202,7 +209,7 @@ class GameView1(UIView):
             self.update_player_speed()
         elif key == arcade.key.LSHIFT:
             self.shift_pressed = True
-            self.update_player_speed(x=True)
+            self.update_player_speed()
         elif key == arcade.key.A:
             self.create_references()
         elif key == arcade.key.LCTRL:
@@ -251,7 +258,8 @@ class GameView1(UIView):
                 #     "vision_range": x["vision_range"],
                 #     "stamina": 70
                 # }
-                self.selected_prey = prey_AI2.PreySprite2(image_file=f"{self.file_path}",prey_name=food[1])
+                from Evolution_Game.windows.stage2_files.prey_AI2 import PreySprite2
+                self.selected_prey = PreySprite2(image_file=f"{self.file_path}",prey_name=food[1],predator=self)
                 self.prey_is_alive = True
 
 
