@@ -20,7 +20,7 @@ WINDOW_HEIGHT = 600
 NORMAL_SPEED = 1
 
 class Player(arcade.Sprite):
-    def __init__(self, image, scale):
+    def __init__(self):
         """ Initialize the player sprite """
         super().__init__(scale=0.25)
         self.center_x = WINDOW_WIDTH // 2  # Start in the middle of the screen
@@ -29,18 +29,40 @@ class Player(arcade.Sprite):
         self.change_x = 0
 
     def get_pos(self):
-        y = Player.center_y
-        x = Player.center_x
+        y = self.center_y
+        x = self.center_x
         return [y, x]
 
-
-
+    # @property
+    # def center_x(self) -> float:
+    #     """Get or set the center x position of the sprite."""
+    #     return self._position[0]
+    #
+    # @center_x.setter
+    # def center_x(self, new_value: float):
+    #     if new_value == self._position[0]:
+    #         return
+    #
+    #     self.position = (new_value, self._position[1])
+    #
+    # @property
+    # def center_y(self) -> float:
+    #     """Get or set the center y position of the sprite."""
+    #     return self._position[1]
+    #
+    # @center_y.setter
+    # def center_y(self, new_value: float):
+    #     if new_value == self._position[1]:
+    #         return
+    #
+    #     self.position = (self._position[0], new_value)
+    #
 
 class GameView1(UIView):
     def __init__(self):
         super().__init__()
         self.prey_is_alive = False
-        self.selected_prey = None
+        self.selected_prey = str
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
 
         self.environment = EnvironmentSetup()
@@ -58,6 +80,7 @@ class GameView1(UIView):
         self.down_pressed = False
         self.shift_pressed = False
         self.ctrl_pressed = False
+        self.A_pressed = False
         self.grid = UIAnchorLayout()
         self.manager.add(self.grid)
 
@@ -126,7 +149,8 @@ class GameView1(UIView):
         self.draw_hunger_bar(width=max_hung * 2)
         self.draw_stamina_bar(width=max_stam * 4)
 
-
+    def getfoodname(self):
+        return self.selected_prey
     def update_player_speed(self):
         Player.change_x = 0
         Player.change_y = 0
@@ -186,10 +210,10 @@ class GameView1(UIView):
 
     def on_update(self, delta_time):
         """ Movement and game logic """
-        predator = self.player_sprite
         if self.prey_is_alive and self.shift_pressed:
-            from Evolution_Game.windows.stage2_files import prey_AI2
-            prey_AI2.PreySprite2.update_ai(self=prey_AI2.PreySprite2, dt=delta_time, detec_range=self.current_range)
+            from Evolution_Game.windows.stage2_files.prey_AI2 import PreySprite2
+            PreySprite4 = PreySprite2()
+            PreySprite2.update_ai(self=PreySprite4, dt=delta_time, detec_range=self.current_range)
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
 
@@ -258,8 +282,9 @@ class GameView1(UIView):
                 #     "vision_range": x["vision_range"],
                 #     "stamina": 70
                 # }
-                from Evolution_Game.windows.stage2_files.prey_AI2 import PreySprite2
-                self.selected_prey = PreySprite2(image_file=f"{self.file_path}",prey_name=food[1],predator=self)
+                from Evolution_Game.windows.stage2_files.prey_AI2 import animalSprite
+
+                self.selected_prey = animalSprite(image_file=f"{self.file_path}",prey_name=food[1],predator=self)
                 self.prey_is_alive = True
 
 
@@ -284,7 +309,10 @@ class GameView1(UIView):
         elif key == arcade.key.LCTRL:
             self.ctrl_pressed = False
             self.current_range = self.range
-
+        elif key == arcade.key.A:
+            self.A_pressed = False
+        elif key == arcade.key.LCTRL:
+            self.ctrl_pressed = False
 
     def top_right_info_add(self, amount=4, text=None, width=200, height=30, font_size=20, bold=True, y_val=(WINDOW_HEIGHT / 2) - 25):
         self.y2 = 60
@@ -414,7 +442,7 @@ def main():
     """ Main function """
     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT)
     game = GameView1()
-    # game.setup()
+    game.setup()
     window.show_view(game)
     arcade.run()
 
