@@ -8,6 +8,8 @@ import arcade
 from arcade.gui import UIView, UIAnchorLayout
 from pyglet.math import clamp
 
+from Evolution_Game.windows.stage2_files.live_food_stats import live_food_functions
+
 from Evolution_Game.windows.stage2_files.environmentSetupMkII import tree_list
 # from arcade.gui import UIManager, UIView
 
@@ -22,8 +24,8 @@ class Player(arcade.Sprite):
     def __init__(self):
         """ Initialize the player sprite """
         super().__init__(scale=0.25)
-        self.center_x = WINDOW_WIDTH // 2  # Start in the middle of the screen
-        self.center_y = WINDOW_HEIGHT // 2
+        # self.center_x = WINDOW_WIDTH // 2  # Start in the middle of the screen
+        # self.center_y = WINDOW_HEIGHT // 2
         self.change_y = 0
         self.change_x = 0
 
@@ -45,7 +47,8 @@ class GameView1(UIView):
         # Set up the player info
         self.player_sprite = None
 
-        # Track the current state of what key is pressed
+        # Track the current state of what key is press
+        self.movementkey_pressed = False
         self.left_pressed = False
         self.right_pressed = False
         self.up_pressed = False
@@ -58,7 +61,7 @@ class GameView1(UIView):
         self.chosen_animal = None
         # Set the background color
         self.background_color = arcade.color.AMAZON
-        self.NO_SETUP = bool
+        self.NO_SETUP = True
         if self.NO_SETUP == False:
             self.setup()
             self.chosen_animal = self.chosen_animal1
@@ -112,7 +115,8 @@ class GameView1(UIView):
         self.hunger_ratio = self.max_hunger_ratio
         list = ["Stamina:", "Hunger:", f"Metabolism = {self.metabolism}\nSpeed = {round(self.stat_speed,ndigits=1)}\nDetectable Range = {self.range}"]
         self.top_right_info_add(3,list,300,40,bold=False)
-
+        food_sprite = live_food_functions.load_image(live_food_functions())
+        self.player_list.append(food_sprite[0])
         self.setup_done = True
 
     def on_draw(self):
@@ -123,9 +127,9 @@ class GameView1(UIView):
         self.manager.draw()  # Draw UI (if you have any)
         max_stam = self.max_stamina
         max_hung = self.max_hunger
+        tree_list.draw()
         self.draw_hunger_bar(width=max_hung * 2)
         self.draw_stamina_bar(width=max_stam * 4)
-        tree_list.draw()
 
     def getfoodname(self):
         return self.chosen_animal
@@ -135,7 +139,7 @@ class GameView1(UIView):
         Player.change_y = 0
 
         # Movement input and stamina/hunger effects
-        if self.shift_pressed and self.stamina > 10 and self.hunger > 10:
+        if self.shift_pressed and self.stamina > 10 and self.hunger > 10 and not self.movementkey_pressed:
             final_speed = self.sprint_speed
             self.stamina -= 0.5
         elif self.shift_pressed and self.stamina > 10 and self.hunger < 20:
@@ -159,6 +163,8 @@ class GameView1(UIView):
             self.player_sprite.change_x -= final_speed
         if self.right_pressed and (self.player_sprite.center_x < (WINDOW_WIDTH-50)):
             self.player_sprite.change_x += final_speed
+
+
 
         # Normalize diagonal movement to fix faster diagonal speed
         magnitude = math.hypot(self.player_sprite.change_x, self.player_sprite.change_y)
@@ -192,31 +198,62 @@ class GameView1(UIView):
         if self.prey_is_alive and self.ctrl_pressed:
             from Evolution_Game.windows.stage2_files.prey_ai_3 import PreySprite3
             PreySprite3.update_ai(self=PreySprite3(), dt=delta_time)
-        self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
+        self.update_player_speed()  # Update speed and rotation here
+
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
         if key == arcade.key.UP:
             self.up_pressed = True
+            self.movementkey_pressed = True
             self.update_player_speed()
-        elif key == arcade.key.DOWN:
+        if key == arcade.key.DOWN:
             self.down_pressed = True
+            self.movementkey_pressed = True
             self.update_player_speed()
-        elif key == arcade.key.LEFT:
+        if key == arcade.key.LEFT:
             self.left_pressed = True
+            self.movementkey_pressed = True
             self.update_player_speed()
-        elif key == arcade.key.RIGHT:
+        if key == arcade.key.RIGHT:
             self.right_pressed = True
+            self.movementkey_pressed = True
             self.update_player_speed()
-        elif key == arcade.key.LSHIFT:
-            self.shift_pressed = True
+        # if key == arcade.key.LSHIFT:
+        #     self.shift_pressed = True
+        #     self.update_player_speed()
+        # if key == arcade.key.A:
+        #     self.create_references()
+        # if key == arcade.key.LCTRL:
+        #     self.ctrl_pressed = True
+        #     self.current_range = self.sneak_range
+    def on_key_release(self, key, modifiers):
+        """Called when the user releases a key."""
+        if key == arcade.key.UP:
+            self.up_pressed = False
+            self.movementkey_pressed = False
             self.update_player_speed()
-        elif key == arcade.key.A:
-            self.create_references()
-        elif key == arcade.key.LCTRL:
-            self.ctrl_pressed = True
-            self.current_range = self.sneak_range
+        if key == arcade.key.DOWN:
+            self.down_pressed = False
+            self.movementkey_pressed = False
+            self.update_player_speed()
+        if key == arcade.key.LEFT:
+            self.left_pressed = False
+            self.movementkey_pressed = False
+            self.update_player_speed()
+        if key == arcade.key.RIGHT:
+            self.right_pressed = False
+            self.movementkey_pressed = False
+            self.update_player_speed()
+        # if key == arcade.key.LSHIFT:
+        #     self.shift_pressed = False
+        #     self.update_player_speed()
+        # if key == arcade.key.A:
+        #     self.A_pressed = False
+        # if key == arcade.key.LCTRL:
+        #     self.ctrl_pressed = False
+        #     self.current_range = self.range
 
         #     import Evolution_Game.windows.stage2_files.live_food_stats as live
         #     food = live.live_food_functions.load_image(self)
@@ -263,29 +300,6 @@ class GameView1(UIView):
                 self.prey_is_alive = True
 
 
-
-    def on_key_release(self, key, modifiers):
-        """Called when the user releases a key."""
-        if key == arcade.key.UP:
-            self.up_pressed = False
-            self.update_player_speed()
-        elif key == arcade.key.DOWN:
-            self.down_pressed = False
-            self.update_player_speed()
-        elif key == arcade.key.LEFT:
-            self.left_pressed = False
-            self.update_player_speed()
-        elif key == arcade.key.RIGHT:
-            self.right_pressed = False
-            self.update_player_speed()
-        elif key == arcade.key.LSHIFT:
-            self.shift_pressed = False
-            self.update_player_speed()
-        elif key == arcade.key.A:
-            self.A_pressed = False
-        elif key == arcade.key.LCTRL:
-            self.ctrl_pressed = False
-            self.current_range = self.range
 
     def top_right_info_add(self, amount=4, text=None, width=200, height=30, font_size=20, bold=True, y_val=(WINDOW_HEIGHT / 2) - 25):
         self.y2 = 60
@@ -396,11 +410,11 @@ class GameView1(UIView):
             return arcade.color.RED
         return None
 
-    def check_key(self,key):
-        if key == True:
-            return True
-        else:
-            return False
+    # def check_key(self,key):
+    #     if key == True:
+    #         return True
+    #     else:
+    #         return False
 
 
 

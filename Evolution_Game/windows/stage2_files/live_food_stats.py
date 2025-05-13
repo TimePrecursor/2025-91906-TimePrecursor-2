@@ -64,10 +64,9 @@ class live_food(arcade.Sprite):
 class live_food_functions():
     def __init__(self):
         super().__init__()
-
+        self.sprite_list = arcade.SpriteList()
     def load_image(self):
         self.prey_choices = []
-        self.sprite_list = arcade.SpriteList()
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
         with open(cache_file, "r") as cf:
@@ -82,15 +81,14 @@ class live_food_functions():
         self.prey_choices.pop(0)
         random_prey = random.choice(self.prey_choices)
         file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{random_prey}.png")
-        self.food_sprite = live_food(file_path, scale=0.25)
+        self.food_sprite = live_food(file_path, scale=0.15)
         import Evolution_Game.windows.stage2_files.environmentSetupMkII as enviro_setup
         select_randxy = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
         print(select_randxy)
         live_food.center_x = (select_randxy["center_x"])
         live_food.center_y = (select_randxy["center_y"])
         self.sprite_list.append(self.food_sprite)
-        self.sprite_list.draw()
-        return [self.food_sprite, random_prey]
+        return self.food_sprite, random_prey
 
 
 
