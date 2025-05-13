@@ -1,13 +1,10 @@
 import math
 import random
 import arcade
-from conda.instructions import PRINT
-
-from Evolution_Game.windows.stage2_files.keyboard_input import GameView1
 
 
-class animalSprite(arcade.Sprite):
-    pass
+
+
 
 class PreySprite2:
     def __init__(self):
@@ -20,8 +17,8 @@ class PreySprite2:
         self.change_x = 0
         import Evolution_Game.windows.stage2_files.live_food_stats as live
         from Evolution_Game.windows.stage2_files import keyboard_input
-        gameveiw = GameView1()
-        prey_name = keyboard_input.GameView1.getfoodname(gameveiw)
+        # gameveiw = keyboard_input.GameView1
+        prey_name = keyboard_input.GameView1.getfoodname(keyboard_input.GameView1())
         print(prey_name, "== prey name")
         for x in enumerate(live.live_food_stats):
             if "name" == str(prey_name):
@@ -45,7 +42,7 @@ class PreySprite2:
 
         # AI behavior
         self.is_fleeing = False
-        self.is_grazing = False
+        self.is_grazing = True
         self.flee_direction = (0, 0)
         self.alert_timer = 0
         self.graze_timer = random.uniform(3.0, 6.0)
@@ -78,8 +75,7 @@ class PreySprite2:
 
     def update_ai(self, dt, detec_range):
         """Update AI logic"""
-        prey_ = PreySprite2()
-        graze_ = prey_.is_grazing
+        graze_ = self.is_grazing
         if self.detect_threats(pred_vis_dis=detec_range):
             self.flee(dt)
         elif graze_ is False and random.randint(0,10) == 1:
@@ -92,7 +88,7 @@ class PreySprite2:
 
     def detect_threats(self, pred_vis_dis=None):
         from Evolution_Game.windows.stage2_files.keyboard_input import Player as currentPred
-        prey_y = animalSprite()
+        prey_y = arcade.Sprite()
         lol1 = prey_y.center_y
         lol2 = prey_y.center_x
         from Evolution_Game.windows.stage2_files import keyboard_input
@@ -106,10 +102,10 @@ class PreySprite2:
         self.predator = currentPred
         angle_rad = math.atan2(distances_xy[0], distances_xy[1])
         self.angle = angle_rad
-        # pred_distance = math.sqrt(distances_xy[0]+distances_xy[1])
-        # pred_is_vis = (pred_vis_dis > pred_distance)
-        # if pred_is_vis:# and not self.is_fleeing:
-        #     self.flee(angle_rad)
+        pred_distance = math.sqrt(distances_xy[0]+distances_xy[1])
+        pred_is_vis = (pred_vis_dis > pred_distance)
+        if pred_is_vis:# and not self.is_fleeing:
+            self.flee(angle_rad)
 
     def graze(self):
         pass

@@ -27,27 +27,31 @@ class EnvironmentSetup(arcade.Sprite):
                 return False
         return True
 
-    def create_random_trees(self, tree_texture_path, x_max=990, y_max=590):
+    def create_random_trees(self, tree_texture_path, x_max=1000, y_max=600):
         """ Actually spawn the trees, nicely spread """
         for _ in range(NUMBER_OF_TREES):
             placed = False
             for attempt in range(MAX_ATTEMPTS_PER_TREE):
-                random_x = random.randint(10, x_max)
-                random_y = random.randint(10, y_max)
+                random_x = random.randint(10, x_max-10)
+                random_y = random.randint(10, y_max-10)
                 if self.is_far_enough(random_x, random_y):
-                    tree = arcade.Sprite(tree_texture_path, scale=0.5)
+                    tree = arcade.Sprite(tree_texture_path, scale=0.1)
                     tree.center_x = random_x
                     tree.center_y = random_y
-                    self.tree_locations.append({"center_x":tree.center_x,"center_y":tree.center_y})
+                    self.tree_locations.append({"center_x":random_x,"center_y":random_y})
                     tree_list.append(tree)
                     placed = True
+                    print("made a tree")
                     break
             if not placed:
                 print("Skipped a tree after too many attempts.")
 
-    def draw_trees(self):
-        tree_list.draw()
-        # print(self.tree_locations)
+
+
+    # def treelocations(self, tree_locations=None):
+    #     print(tree_locations)
+    #     return(tree_locations)
+    #     # print(self.tree_locations)
 
 # window = arcade.Window(1280, 720, "Tree Spread Example")
 # environment = EnvironmentSetup()

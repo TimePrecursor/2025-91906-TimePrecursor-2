@@ -8,8 +8,7 @@ import arcade
 from arcade.gui import UIView, UIAnchorLayout
 from pyglet.math import clamp
 
-
-
+from Evolution_Game.windows.stage2_files.environmentSetupMkII import tree_list
 # from arcade.gui import UIManager, UIView
 
 SPRITE_SCALING = 0.15
@@ -33,43 +32,16 @@ class Player(arcade.Sprite):
         x = self.center_x
         return [y, x]
 
-    # @property
-    # def center_x(self) -> float:
-    #     """Get or set the center x position of the sprite."""
-    #     return self._position[0]
-    #
-    # @center_x.setter
-    # def center_x(self, new_value: float):
-    #     if new_value == self._position[0]:
-    #         return
-    #
-    #     self.position = (new_value, self._position[1])
-    #
-    # @property
-    # def center_y(self) -> float:
-    #     """Get or set the center y position of the sprite."""
-    #     return self._position[1]
-    #
-    # @center_y.setter
-    # def center_y(self, new_value: float):
-    #     if new_value == self._position[1]:
-    #         return
-    #
-    #     self.position = (self._position[0], new_value)
-    #
 
 class GameView1(UIView):
     def __init__(self):
         super().__init__()
         self.prey_is_alive = False
-        self.selected_prey = str
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
-
         self.environment = EnvironmentSetup()
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
         # Variables that will hold sprite lists
-        self.player_list = arcade.SpriteList()
         # Set up the player info
         self.player_sprite = None
 
@@ -83,29 +55,32 @@ class GameView1(UIView):
         self.A_pressed = False
         self.grid = UIAnchorLayout()
         self.manager.add(self.grid)
-
+        self.chosen_animal = None
         # Set the background color
         self.background_color = arcade.color.AMAZON
-        self.setup()
+        self.NO_SETUP = bool
+        if self.NO_SETUP == False:
+            self.setup()
+            self.chosen_animal = self.chosen_animal1
 
 
     def setup(self):
+        self.NO_SETUP = True
         """ Set up the game and initialize the variables. """
         self.player_list = arcade.SpriteList()
-
         # Find the texture
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         cache_file_path = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
         with open(cache_file_path, "r") as f:
             line1 = f.readline().rstrip("\n")
             line2 = f.readline().rstrip("\n")
-        self.chosen_animal = line1
+        self.chosen_animal1 = line1
         self.creature_type = line2
         self.cr_index = 0
         # file_path1 = os.path.join(cache_file_path, str(file_val))
         # Set up the player
 
-        self.file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{self.chosen_animal}.png")
+        self.file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{self.chosen_animal1}.png")
         tree_texture_path = self.environment.asset_paths("tree1.png")
         self.environment.create_random_trees(tree_texture_path)
 
@@ -118,9 +93,9 @@ class GameView1(UIView):
 
         from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
         creature_type = predator_roles[self.creature_type]
-        if creature_type == self.chosen_animal:
+        if creature_type == self.chosen_animal1:
             pass
-        elif creature_type != self.chosen_animal:
+        elif creature_type != self.chosen_animal1:
             self.cr_index = 1
         self.stamina = (predator_roles[self.creature_type][self.cr_index]["stamina"])
         self.max_stamina = (predator_roles[self.creature_type][self.cr_index]["stamina"])
@@ -138,6 +113,8 @@ class GameView1(UIView):
         list = ["Stamina:", "Hunger:", f"Metabolism = {self.metabolism}\nSpeed = {round(self.stat_speed,ndigits=1)}\nDetectable Range = {self.range}"]
         self.top_right_info_add(3,list,300,40,bold=False)
 
+        self.setup_done = True
+
     def on_draw(self):
         """ Render the screen. """
         self.clear()
@@ -148,9 +125,11 @@ class GameView1(UIView):
         max_hung = self.max_hunger
         self.draw_hunger_bar(width=max_hung * 2)
         self.draw_stamina_bar(width=max_stam * 4)
+        tree_list.draw()
 
     def getfoodname(self):
-        return self.selected_prey
+        return self.chosen_animal
+
     def update_player_speed(self):
         Player.change_x = 0
         Player.change_y = 0
@@ -210,10 +189,9 @@ class GameView1(UIView):
 
     def on_update(self, delta_time):
         """ Movement and game logic """
-        if self.prey_is_alive and self.shift_pressed:
-            from Evolution_Game.windows.stage2_files.prey_AI2 import PreySprite2
-            PreySprite4 = PreySprite2()
-            PreySprite2.update_ai(self=PreySprite4, dt=delta_time, detec_range=self.current_range)
+        if self.prey_is_alive and self.ctrl_pressed:
+            from Evolution_Game.windows.stage2_files.prey_ai_3 import PreySprite3
+            PreySprite3.update_ai(self=PreySprite3(), dt=delta_time)
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
 
@@ -259,8 +237,7 @@ class GameView1(UIView):
 
     def create_references(self):
         import Evolution_Game.windows.stage2_files.live_food_stats as live
-        food = live.live_food_functions.load_image(live.live_food_functions)
-        self.player_list.append(food[0])
+        food = live.live_food_functions.load_image(live.live_food_functions())
 
         # Create references for an animal sprite and
         # create an animal sprite to hunt (will move later):
@@ -282,9 +259,7 @@ class GameView1(UIView):
                 #     "vision_range": x["vision_range"],
                 #     "stamina": 70
                 # }
-                from Evolution_Game.windows.stage2_files.prey_AI2 import animalSprite
 
-                self.selected_prey = animalSprite(image_file=f"{self.file_path}",prey_name=food[1],predator=self)
                 self.prey_is_alive = True
 
 
@@ -306,13 +281,11 @@ class GameView1(UIView):
         elif key == arcade.key.LSHIFT:
             self.shift_pressed = False
             self.update_player_speed()
-        elif key == arcade.key.LCTRL:
-            self.ctrl_pressed = False
-            self.current_range = self.range
         elif key == arcade.key.A:
             self.A_pressed = False
         elif key == arcade.key.LCTRL:
             self.ctrl_pressed = False
+            self.current_range = self.range
 
     def top_right_info_add(self, amount=4, text=None, width=200, height=30, font_size=20, bold=True, y_val=(WINDOW_HEIGHT / 2) - 25):
         self.y2 = 60
@@ -333,7 +306,7 @@ class GameView1(UIView):
             self.manager.add(y)
             self.chosen_label = arcade.gui.UILabel(
                 font_size=20,
-                text=self.chosen_animal,
+                text=self.chosen_animal1,
                 height=20,
                 width=200,
                 bold=True
@@ -442,9 +415,10 @@ def main():
     """ Main function """
     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT)
     game = GameView1()
-    game.setup()
     window.show_view(game)
+    game.setup()
     arcade.run()
+
 
 
 if __name__ == "__main__":

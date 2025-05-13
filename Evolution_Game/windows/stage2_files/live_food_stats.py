@@ -53,11 +53,11 @@ live_food_stats = [
 ]
 
 class live_food(arcade.Sprite):
-    def __init__(self,image, scale, window_width=1000,window_height=600):
+    def __init__(self,image=None, scale=1, window_width=1000,window_height=600):
         """ Initialize the live food sprite """
         super().__init__(image, scale)
-        self.center_x = window_width // 2  # Start in the middle of the screen
-        self.center_y = window_height // 2
+        # self.center_x = window_width // 2  # Start in the middle of the screen
+        # self.center_y = window_height // 2
         self.change_x = 0
         self.change_y = 0
 
@@ -77,18 +77,19 @@ class live_food_functions():
                     line.lstrip("|")
                     self.prey_choices = line.split("|")
                 else:
-                    print()
+                    print() # line Break in terminal
 
         self.prey_choices.pop(0)
         random_prey = random.choice(self.prey_choices)
         file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{random_prey}.png")
-        self.food_sprite = live_food(file_path, scale=0.15)
+        self.food_sprite = live_food(file_path, scale=0.25)
         import Evolution_Game.windows.stage2_files.environmentSetupMkII as enviro_setup
-        select_randx = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
-        self.food_sprite.center_x = (select_randx["center_x"])
-        self.food_sprite.center_y = (select_randx["center_y"])
-        # self.sprite_list.append(self.food_sprite)
-        # print(self.prey_choices)
+        select_randxy = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
+        print(select_randxy)
+        live_food.center_x = (select_randxy["center_x"])
+        live_food.center_y = (select_randxy["center_y"])
+        self.sprite_list.append(self.food_sprite)
+        self.sprite_list.draw()
         return [self.food_sprite, random_prey]
 
 
