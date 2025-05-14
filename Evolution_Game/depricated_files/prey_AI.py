@@ -1,5 +1,5 @@
 """
-live_food_stats = [
+live_food_stats_list = [
     {
         "name": "Deer",
         "speed": 7,
