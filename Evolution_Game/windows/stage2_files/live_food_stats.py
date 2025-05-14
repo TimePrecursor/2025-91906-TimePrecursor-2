@@ -4,7 +4,9 @@ import arcade
 import os
 from arcade.gui import UIView
 
-live_food_stats = [
+from Evolution_Game.windows.stage2_files import keyboard_input
+
+live_food_stats_list = [
     {
         "name": "Deer",
         "speed": 7,
@@ -56,15 +58,14 @@ class live_food(arcade.Sprite):
     def __init__(self,image=None, scale=1, window_width=1000,window_height=600):
         """ Initialize the live food sprite """
         super().__init__(image, scale)
-        # self.center_x = window_width // 2  # Start in the middle of the screen
-        # self.center_y = window_height // 2
+        self.center_x = window_width // 2 # Start in the middle of the screen
+        self.center_y = window_height // 2
         self.change_x = 0
         self.change_y = 0
 
 class live_food_functions():
     def __init__(self):
         super().__init__()
-        self.sprite_list = arcade.SpriteList()
     def load_image(self):
         self.prey_choices = []
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -76,20 +77,23 @@ class live_food_functions():
                     line.lstrip("|")
                     self.prey_choices = line.split("|")
                 else:
-                    print() # line Break in terminal
+                    pass
+                    # print() # line Break in terminal
 
         self.prey_choices.pop(0)
         random_prey = random.choice(self.prey_choices)
         file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{random_prey}.png")
-        self.food_sprite = live_food(file_path, scale=0.15)
+        print(file_path)
+        live_food(arcade.load_image(file_path), scale=1)
         import Evolution_Game.windows.stage2_files.environmentSetupMkII as enviro_setup
+        print(enviro_setup.EnvironmentSetup.tree_locations)
         select_randxy = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
-        print(select_randxy)
+        print(select_randxy, "select_randxy")
         live_food.center_x = (select_randxy["center_x"])
         live_food.center_y = (select_randxy["center_y"])
-        self.sprite_list.append(self.food_sprite)
-        return self.food_sprite, random_prey
+        live_food.angle = 45
 
+        # keyboard_input.GameView1.renamethis1(keyboard_input.GameView1(),file_path,100,100)
 
 
 

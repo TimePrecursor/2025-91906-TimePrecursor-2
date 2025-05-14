@@ -2,7 +2,7 @@ import math
 import random
 import arcade
 
-from Evolution_Game.windows.stage2_files.keyboard_input import GameView1
+from Evolution_Game.windows.stage2_files.keyboard_input import GameView1, Player
 import Evolution_Game.windows.stage2_files.live_food_stats as live
 
 class PreySprite3(arcade.Sprite):
@@ -15,12 +15,12 @@ class PreySprite3(arcade.Sprite):
         # gameveiw = keyboard_input.GameView1
         prey_name = keyboard_input.GameView1.getfoodname(keyboard_input.GameView1())
         print(prey_name, "== prey name")
-        for x in enumerate(live.live_food_stats):
+        for x in enumerate(live.live_food_stats_list):
             if "name" == str(prey_name):
                 print("YAY", x)
-                y = live.live_food_stats.index()
-        prey_data = (x for x in live.live_food_stats if x["name"] == prey_name)
-        prey_data = live.live_food_stats[0]
+                y = live.live_food_stats_list.index()
+        prey_data = (x for x in live.live_food_stats_list if x["name"] == prey_name)
+        prey_data = live.live_food_stats_list[0]
         # if prey_data is None:
         #     raise ValueError(f"Prey data not found for name: {prey_name}")
         # Core stats
@@ -51,6 +51,7 @@ class PreySprite3(arcade.Sprite):
         predator_x, predator_y = keyboard_input.Player.get_pos(lol0)
         lol3 = predator_y
         lol4 = predator_x
+        print(predator_y,predator_x)
         distances_xy = [
             lol1 - lol3,
             lol2 - lol4
