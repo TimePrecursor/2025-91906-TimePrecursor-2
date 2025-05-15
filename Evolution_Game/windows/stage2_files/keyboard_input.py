@@ -21,14 +21,41 @@ WINDOW_HEIGHT = 600
 
 NORMAL_SPEED = 1
 
+import arcade
+
+
 class Animal(arcade.Sprite):
-    def __init__(self, image, x, y, scale=1.0):
+    def __init__(self, image, x, y, z=0, scale=1.0):
         super().__init__()
         self.image = image
-        self.x = x
-        self.y = y
+        self.center_x = x
+        self.center_y = y
         self.scale = scale
         self.texture = arcade.load_texture(image)
+        self.angle = z
+        self.change_angle = 0
+
+    def update_angle(self, deg):
+        self.angle = deg
+
+    def detect_threats(self, pos):
+        threat_y = pos[0]
+        threat_x = pos[1]
+        print(threat_y, "threat_y")
+        # Example usage:
+
+        # Access the y_distance_from_food property to get the actual value
+        distance = self.y_distance_from_food  # This accesses the actual value, not the property object
+        print(distance, "y Distance from FOOD")
+
+    @property
+    def x_distance_from_food(self):
+        return self.center_x
+
+    @property
+    def y_distance_from_food(self):
+        return self.center_y
+
 
 
 
@@ -50,7 +77,7 @@ class Player(arcade.Sprite):
 class GameView1(UIView):
     def __init__(self):
         super().__init__()
-        self.prey_is_alive = False
+        self.prey_is_alive = True
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
         self.environment = EnvironmentSetup()
         self.manager = arcade.gui.UIManager()
@@ -84,8 +111,9 @@ class GameView1(UIView):
 
     def renamethis1(self):
         self.load_image()
-        sprite = Animal(self.filefood_path, 100,100,0.15)
+        sprite = Animal(self.filefood_path, 500,300,scale=0.15)
         self.player_list.append(sprite)
+
 
     def load_image(self):
         self.prey_choices = []
@@ -174,22 +202,8 @@ class GameView1(UIView):
         food_sprite.center_y = 100
         self.setup_done = True
 
-    def on_draw(self):
-        """ Render the screen. """
-        self.clear()
-        self.player_list.draw()  # Draw player first
-        # self.environment.draw_trees()  # Draw trees afterward
-        self.manager.draw()  # Draw UI (if you have any)
-        max_stam = self.max_stamina
-        max_hung = self.max_hunger
-        tree_list.draw()
-        self.draw_hunger_bar(width=max_hung * 2)
-        self.draw_stamina_bar(width=max_stam * 4)
-        x = Player()
-        print(x.center_x)
-        Animal.change_x = 10
-
-
+    def getfoodfile(self):
+        return self.filefood_path
 
     def getfoodname(self):
         return self.chosen_animal
@@ -259,13 +273,27 @@ class GameView1(UIView):
         elif self.down_pressed and self.right_pressed:
             self.player_sprite.angle = 315  # Down-Right
 
+
+    def on_draw(self):
+        """ Render the screen. """
+        self.clear()
+        self.player_list.draw()  # Draw player first
+        # self.environment.draw_trees()  # Draw trees afterward
+        self.manager.draw()  # Draw UI (if you have any)
+        max_stam = self.max_stamina
+        max_hung = self.max_hunger
+        tree_list.draw()
+        self.draw_hunger_bar(width=max_hung * 2)
+        self.draw_stamina_bar(width=max_stam * 4)
+
     def on_update(self, delta_time):
         """ Movement and game logic """
-        if self.prey_is_alive and self.ctrl_pressed:
-            from Evolution_Game.windows.stage2_files.prey_ai_3 import PreySprite3
-            PreySprite3.update_ai(self=PreySprite3(), dt=delta_time)
+        if self.ctrl_pressed:
+            Animal.detect_threats(Animal(self.filefood_path, Animal.center_x, Animal.center_y), pos=[Player().position[1],Player().position[0]])
+
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
+
 
 
     def on_key_press(self, key, modifiers):
