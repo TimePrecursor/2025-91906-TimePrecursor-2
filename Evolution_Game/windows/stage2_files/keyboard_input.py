@@ -211,7 +211,9 @@ class GameView1(UIView):
         condition = (self.up_pressed or self.down_pressed or self.left_pressed or self.right_pressed)
         modifiers_condition = (self.shift_pressed or self.ctrl_pressed)
 
+
         # Movement input and stamina/hunger effects
+        # SPRINTING
         if self.shift_pressed and self.stamina >= 10 and self.hunger > 10 and condition:
             final_speed = self.sprint_speed
             self.stamina -= 0.4
@@ -221,11 +223,20 @@ class GameView1(UIView):
         elif (not self.shift_pressed) and self.stamina >= 10 and self.hunger >= 10 and condition:
             final_speed = NORMAL_SPEED
 
-        if (not self.shift_pressed or not condition) and self.stamina < self.max_stamina and self.hunger > 20:
+        # SNEAKING
+        if self.ctrl_pressed and self.stamina >= 10 and self.hunger > 10 and condition:
+            final_speed = NORMAL_SPEED/2
+            self.stamina -= 0.2
+        elif (not self.ctrl_pressed) and self.stamina >= 10 and self.hunger >= 10 and condition:
+            final_speed = NORMAL_SPEED
+
+        # "NORMAL" SPEED
+        if (not (self.shift_pressed or self.ctrl_pressed) or not condition) and self.stamina < self.max_stamina and self.hunger > 20:
             self.stamina += (self.sprint_speed/20)
             self.stamina = clamp(self.stamina,0,self.max_stamina)
             self.hunger -= (self.sprint_speed/15)
             self.hunger = clamp(self.hunger,0,100)
+
 
 
         if self.up_pressed and (self.player_sprite.center_y < (WINDOW_HEIGHT-50)):
