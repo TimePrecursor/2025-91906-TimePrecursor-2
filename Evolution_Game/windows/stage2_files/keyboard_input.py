@@ -7,6 +7,7 @@ import random
 import arcade
 from arcade.gui import UIView, UIAnchorLayout
 from pyglet.math import clamp
+from pyglet.window.key import modifiers_string
 
 # from Evolution_Game.windows.stage2_files.live_food_stats import live_food_functions, live_food_stats_list
 import Evolution_Game.windows.stage2_files.live_food_stats as live
@@ -20,15 +21,42 @@ WINDOW_HEIGHT = 600
 
 NORMAL_SPEED = 1
 
+import arcade
+
+
 class Animal(arcade.Sprite):
-    def __init__(self, image, x, y, scale=1, angle=0):
+    def __init__(self, image, x, y, z=0, scale=1.0):
         super().__init__()
         self.image = image
-        self.x = x
-        self.y = y
+        self.center_x = x
+        self.center_y = y
         self.scale = scale
         self.texture = arcade.load_texture(image)
-        self.angle = angle
+        self.angle = z
+        self.change_angle = 0
+
+    def update_angle(self, deg):
+        self.angle = deg
+
+    def detect_threats(self, pos):
+        th_x = pos[0]
+        th_y = pos[1]
+
+        # Access the y_distance_from_food property to get the actual value
+        y_coord = self.y_food_coord  # This accesses the actual value, not the property object
+        print(y_coord - th_y, "y dist from 'Prey'")
+
+
+    @property
+    def x_food_coord(self):
+        return self.center_x
+
+    @property
+    def y_food_coord(self):
+        return self.center_y
+
+
+
 
 class Player(arcade.Sprite):
     def __init__(self):
@@ -39,16 +67,11 @@ class Player(arcade.Sprite):
         self.change_y = 0
         self.change_x = 0
 
-    def get_pos(self):
-        y = self.center_y
-        x = self.center_x
-        return [y, x]
-
 
 class GameView1(UIView):
     def __init__(self):
         super().__init__()
-        self.prey_is_alive = False
+        self.prey_is_alive = True
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
         self.environment = EnvironmentSetup()
         self.manager = arcade.gui.UIManager()
@@ -59,10 +82,8 @@ class GameView1(UIView):
         GET RID OF SPRITE LISTS!
              self.player_sprite = None
         """
-        Animal.scale = 2
-        Animal.center_y=100
-        Animal.center_x=100
-        Animal.angle=100
+
+
         # Track the current state of what key is press
         # self.movementkey_pressed = False
         self.left_pressed = False
@@ -81,13 +102,12 @@ class GameView1(UIView):
         if self.NO_SETUP == False:
             self.setup()
             self.chosen_animal = self.chosen_animal1
-            self.player_list._update_angle(self.player_list._next_slot())
 
     def renamethis1(self):
         self.load_image()
-        sprite = Animal(self.filefood_path, 100,100,0.15)
-        self.player_list.append(sprite)
-        self.player_list.update()
+        self.Animalsprite = Animal(self.filefood_path, 500,300,scale=0.15)
+        self.player_list.append(self.Animalsprite)
+
 
     def load_image(self):
         self.prey_choices = []
@@ -106,15 +126,15 @@ class GameView1(UIView):
         self.prey_choices.pop(0)
         random_prey = random.choice(self.prey_choices)
         self.filefood_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{random_prey}.png")
-        # print(self.filefood_path)
+        print(self.filefood_path)
         live.live_food(arcade.load_image(self.filefood_path), scale=1)
         import Evolution_Game.windows.stage2_files.environmentSetupMkII as enviro_setup
-        # print(enviro_setup.EnvironmentSetup.tree_locations)
+        print(enviro_setup.EnvironmentSetup.tree_locations)
         select_randxy = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
-        # print(select_randxy, "select_randxy")
-        Animal.center_x = (select_randxy["center_x"])
-        Animal.center_y = (select_randxy["center_y"])
-        Animal.angle = 45
+        print(select_randxy, "select_randxy")
+        live.live_food.center_x = (select_randxy["center_x"])
+        live.live_food.center_y = (select_randxy["center_y"])
+        live.live_food.angle = 45
 
         # keyboard_input.GameView1.renamethis1(keyboard_input.GameView1(),self.filefood_path,100,100)
 
@@ -176,67 +196,35 @@ class GameView1(UIView):
         food_sprite.center_y = 100
         self.setup_done = True
 
-    def on_draw(self):
-        """ Render the screen. """
-        self.clear()
-        self.player_list.update()
-        self.player_list.draw()  # Draw player first
-        # self.environment.draw_trees()  # Draw trees afterward
-        self.manager.draw()  # Draw UI (if you have any)
-        max_stam = self.max_stamina
-        max_hung = self.max_hunger
-        tree_list.draw()
-        self.draw_hunger_bar(width=max_hung * 2)
-        self.draw_stamina_bar(width=max_stam * 4)
-        x = Player()
-        # print(x.center_x)
+    def getfoodfile(self):
+        return self.filefood_path
 
-    # def getfoodname(self):
-    #     x = self.chosen_animal1
-    #     return x
+    def getfoodname(self):
+        return self.chosen_animal
 
-    def detect_threats(self):
-        # print(lol1, "= 'live_food.center_y'")
-        player = Player()
-        animal = Animal(image=self.filefood_path, x=100, y=100)
-        lol3 = animal.center_x
-        lol4 = animal.center_y
-        # print(predator_y,predator_x)
-        distances_xy = [
-            lol3 - player.center_x,
-            lol4 - player.center_y
-        ]
-        angle_rad = math.atan2(distances_xy[0], distances_xy[1])
-        Animal.angle = (angle_rad*(180/math.pi))
-
-    def updatefood_ai(self, dt):
-        """Update AI logic"""
-        self.detect_threats()
-
-    def update_player_speed(self):
+    def update_player_speed(self): # Speed and Movement processing
         Player.change_x = 0
         Player.change_y = 0
         final_speed = 0
+
         # Conditions
         condition = (self.up_pressed or self.down_pressed or self.left_pressed or self.right_pressed)
         modifiers_condition = (self.shift_pressed or self.ctrl_pressed)
+
         # Movement input and stamina/hunger effects
-        if self.shift_pressed and self.stamina > 10 and self.hunger > 10 and condition:
+        if self.shift_pressed and self.stamina >= 10 and self.hunger > 10 and condition:
             final_speed = self.sprint_speed
-            self.stamina -= 0.5
-        elif self.shift_pressed and self.stamina > 10 and self.hunger < 20 and condition:
-            final_speed = self.sprint_speed-1
-            self.stamina -= 0.5
-        # elif self.shift_pressed is False and self.stamina > 10 and self.hunger > 10
-        elif not self.shift_pressed and self.stamina > 10 and self.hunger > 10 and condition:
+            self.stamina -= 0.4
+        elif self.shift_pressed and self.stamina >= 10 and self.hunger < 20 and condition:
+            final_speed = self.sprint_speed-2
+            self.stamina -= 0.4
+        elif (not self.shift_pressed) and self.stamina >= 10 and self.hunger >= 10 and condition:
             final_speed = NORMAL_SPEED
 
-
-
         if (not self.shift_pressed or not condition) and self.stamina < self.max_stamina and self.hunger > 20:
-            self.stamina += (self.sprint_speed/2.5)
+            self.stamina += (self.sprint_speed/20)
             self.stamina = clamp(self.stamina,0,self.max_stamina)
-            self.hunger -= (self.sprint_speed/3)
+            self.hunger -= (self.sprint_speed/15)
             self.hunger = clamp(self.hunger,0,100)
 
 
@@ -278,12 +266,30 @@ class GameView1(UIView):
         elif self.down_pressed and self.right_pressed:
             self.player_sprite.angle = 315  # Down-Right
 
+
+    def on_draw(self):
+        """ Render the screen. """
+        self.clear()
+        self.player_list.draw()  # Draw player first
+        # self.environment.draw_trees()  # Draw trees afterward
+        self.manager.draw()  # Draw UI (if you have any)
+        max_stam = self.max_stamina
+        max_hung = self.max_hunger
+        tree_list.draw()
+        self.draw_hunger_bar(width=max_hung * 2)
+        self.draw_stamina_bar(width=max_stam * 4)
+
     def on_update(self, delta_time):
         """ Movement and game logic """
         if self.ctrl_pressed:
-            self.updatefood_ai(dt=delta_time)
+            animal = Animal(self.filefood_path, 200, 300)
+            player = self.player_sprite
+            animal.detect_threats(pos=[player.center_x,player.center_y])
+
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
+
+
 
 
     def on_key_press(self, key, modifiers):
@@ -309,10 +315,11 @@ class GameView1(UIView):
             self.update_player_speed()
         if key == arcade.key.A:
             self.renamethis1()
-            # self.create_references()
+            # live.live_food_functions.load_image(live.live_food_functions)
+            live.live_food()
         if key == arcade.key.LCTRL:
             self.ctrl_pressed = True
-            # self.current_range = self.sneak_range
+            self.current_range = self.sneak_range
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key."""
@@ -358,34 +365,6 @@ class GameView1(UIView):
         #         "stamina": 70
         #     }
         #     deer = PreySprite(deer_data, "deer_image.png")
-
-    def create_references(self):
-        import Evolution_Game.windows.stage2_files.live_food_stats as live
-        # food = live.live_food_functions.load_image(live.live_food_functions())
-
-        # Create references for an animal sprite and
-        # create an animal sprite to hunt (will move later):
-        for x in live.live_food_stats_list:
-            if x["name"] == food:
-                # name = x["name"]
-                # speed = x["speed"]
-                # awareness = x["awareness"]
-                # nutritional_value = x["nutritional_value"]
-                # health = x["health"]
-                # vision_range = x["vision_range"]
-
-                # deer_data = {
-                #     "name": x["name"],
-                #     "speed": x["speed"],
-                #     "awareness": x["awareness"],
-                #     "nutritional_value": x["nutritional_value"],
-                #     "health": x["health"],
-                #     "vision_range": x["vision_range"],
-                #     "stamina": 70
-                # }
-
-                self.prey_is_alive = True
-
 
 
     def top_right_info_add(self, amount=4, text=None, width=200, height=30, font_size=20, bold=True, y_val=(WINDOW_HEIGHT / 2) - 25):
