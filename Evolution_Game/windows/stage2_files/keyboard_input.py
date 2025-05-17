@@ -3,6 +3,7 @@ import math
 # from arcade import gui
 import os
 import random
+from math import atan2
 
 import arcade
 from arcade.gui import UIView, UIAnchorLayout
@@ -44,7 +45,12 @@ class Animal(arcade.Sprite):
 
         # Access the y_distance_from_food property to get the actual value
         y_coord = self.y_food_coord  # This accesses the actual value, not the property object
-        print(y_coord - th_y, "y dist from 'Prey'")
+        x_coord = self.x_food_coord  # This accesses the actual value, not the property object
+        # print(y_coord - th_y, "y dist from 'Prey'")
+        dist = [x_coord - th_x, y_coord - th_y]
+        angle = atan2(dist[0],dist[1])
+        angle *= (180/math.pi)
+        return angle
 
 
     @property
@@ -107,6 +113,7 @@ class GameView1(UIView):
         self.load_image()
         self.Animalsprite = Animal(self.filefood_path, 500,300,scale=0.15)
         self.player_list.append(self.Animalsprite)
+
 
 
     def load_image(self):
@@ -295,11 +302,11 @@ class GameView1(UIView):
         if self.ctrl_pressed:
             animal = Animal(self.filefood_path, 200, 300)
             player = self.player_sprite
-            animal.detect_threats(pos=[player.center_x,player.center_y])
+            angle = animal.detect_threats(pos=[player.center_x,player.center_y])
+            self.Animalsprite.angle = angle
 
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
-
 
 
 
