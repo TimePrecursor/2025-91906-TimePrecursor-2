@@ -3,7 +3,7 @@ import math
 # from arcade import gui
 import os
 import random
-from math import atan2
+
 
 import arcade
 from arcade.gui import UIView, UIAnchorLayout
@@ -33,33 +33,41 @@ class Animal(arcade.Sprite):
         self.center_y = y
         self.scale = scale
         self.texture = arcade.load_texture(image)
-        self.angle = z
         self.change_angle = 0
-
-    def update_angle(self, deg):
-        self.angle = deg
+    #
+    # def update_angle(self, deg):
+    #     self.angle = deg
 
     def detect_threats(self, pos):
-        th_x = pos[0]
-        th_y = pos[1]
+        x2 = (pos[0] - WINDOW_WIDTH/2)
+        y2 = (pos[1] - WINDOW_HEIGHT/2)
+        #
+        # # Access the y_distance_from_food property to get the actual value
+        x1 = self.center_x - WINDOW_WIDTH/2 # This accesses the actual value, not the property object
+        y1 = self.center_y -  WINDOW_HEIGHT/2  # This accesses the actual value, not the property object
+        # # print(y_coord - th_y, "y dist from 'Prey'")
+        # dist = [th_y-y_coord,th_x-x_coord]
+        # angle = math.atan2(dist[0],dist[1])
+        # angle_deg = math.degrees(angle)
+        dx = x2 - x1
+        dy = y2 - y1
+        def get_angle_deg(x1, y1, x2, y2):
+            dx = x2 - x1
+            dy = y2 - y1
+            return math.degrees(math.atan2(dy, dx))
+        # Get angle in degrees
+        # angle_rad = math.atan2(dy, dx)
+        angle_deg = (get_angle_deg(x1, y1, x2, y2) + 180) % 360
+        return angle_deg
 
-        # Access the y_distance_from_food property to get the actual value
-        y_coord = self.y_food_coord  # This accesses the actual value, not the property object
-        x_coord = self.x_food_coord  # This accesses the actual value, not the property object
-        # print(y_coord - th_y, "y dist from 'Prey'")
-        dist = [x_coord - th_x, y_coord - th_y]
-        angle = atan2(dist[0],dist[1])
-        angle *= (180/math.pi)
-        return angle
 
-
-    @property
-    def x_food_coord(self):
-        return self.center_x
-
-    @property
-    def y_food_coord(self):
-        return self.center_y
+    # @property
+    # def x_food_coord(self):
+    #     return self.center_x
+    #
+    # @property
+    # def y_food_coord(self):
+    #     return self.center_y
 
 
 
@@ -68,8 +76,8 @@ class Player(arcade.Sprite):
     def __init__(self):
         """ Initialize the player sprite """
         super().__init__(scale=0.2)
-        # self.center_x = WINDOW_WIDTH // 2  # Start in the middle of the screen
-        # self.center_y = WINDOW_HEIGHT // 2
+        self.center_x = 0
+        self.center_y = 0
         self.change_y = 0
         self.change_x = 0
 
@@ -139,9 +147,8 @@ class GameView1(UIView):
         print(enviro_setup.EnvironmentSetup.tree_locations)
         select_randxy = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
         print(select_randxy, "select_randxy")
-        live.live_food.center_x = (select_randxy["center_x"])
-        live.live_food.center_y = (select_randxy["center_y"])
-        live.live_food.angle = 45
+        # live.live_food.center_x = (select_randxy["center_x"])
+        # live.live_food.center_y = (select_randxy["center_y"])
 
         # keyboard_input.GameView1.renamethis1(keyboard_input.GameView1(),self.filefood_path,100,100)
 
@@ -227,17 +234,18 @@ class GameView1(UIView):
         elif self.shift_pressed and self.stamina >= 10 and self.hunger < 20 and condition:
             final_speed = self.sprint_speed-2
             self.stamina -= 0.4
-        elif (not self.shift_pressed) and self.stamina >= 10 and self.hunger >= 10 and condition:
+        elif (not (self.shift_pressed and self.ctrl_pressed)) and self.stamina > 9 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED
+
 
         # SNEAKING
         if self.ctrl_pressed and self.stamina >= 10 and self.hunger > 10 and condition:
             final_speed = NORMAL_SPEED/2
-            self.stamina -= 0.2
-        elif (not self.ctrl_pressed) and self.stamina >= 10 and self.hunger >= 10 and condition:
+            self.stamina -= 0.1
+        elif (not (self.shift_pressed and self.ctrl_pressed)) and self.stamina > 9 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED
 
-        # "NORMAL" SPEED
+        # NORMAL SPEED
         if (not (self.shift_pressed or self.ctrl_pressed) or not condition) and self.stamina < self.max_stamina and self.hunger > 20:
             self.stamina += (self.sprint_speed/20)
             self.stamina = clamp(self.stamina,0,self.max_stamina)
