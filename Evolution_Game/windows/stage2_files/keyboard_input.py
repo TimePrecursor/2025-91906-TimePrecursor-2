@@ -227,36 +227,40 @@ class GameView1(UIView):
 
 
         # Movement input and stamina/hunger effects
-        # SPRINTING
+        #MOVEMENT
 
-        condition2 = (self.shift_pressed and not self.ctrl_pressed)
+        a_andnot_b = (self.shift_pressed and not self.ctrl_pressed)
 
-        if condition2 and self.stamina > 19 and self.hunger > 19 and condition:
-            final_speed = self.sprint_speed
+        if a_andnot_b and self.stamina > 20 and self.hunger > 9 and condition:
+            final_speed = self.sprint_speed/1.25
             self.stamina -= 0.4
-        elif condition2 and self.stamina < 20 and self.hunger > 9 and condition:
-            final_speed = self.sprint_speed/0.25
+        elif a_andnot_b and self.stamina > 10 and self.hunger > 9 and condition:
+            final_speed = self.sprint_speed/2
             self.stamina -= 0.4
-        elif (not (self.shift_pressed and self.ctrl_pressed)) and self.stamina > 9 and self.hunger > 9 and condition:
+        elif a_andnot_b and self.stamina <= 10 and self.hunger > 9 and condition:
+            final_speed = NORMAL_SPEED
+        elif (not(self.shift_pressed or self.ctrl_pressed)) and self.stamina > 9 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED
 
 
         # SNEAKING
-        if self.ctrl_pressed and self.stamina > 9 and self.hunger > 9 and condition:
+        if self.ctrl_pressed and self.stamina > 20 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED/2
-            self.stamina -= 0.1
-        elif self.ctrl_pressed and self.stamina < 20 and self.hunger > 9 and condition:
-            final_speed = NORMAL_SPEED/2.2
-            self.stamina -= 0.1
-        # elif (not (self.shift_pressed and self.ctrl_pressed)) and self.stamina > 19 and self.hunger > 19 and condition:
+            self.stamina -= 0.2
+        elif self.ctrl_pressed and self.stamina > 10 and self.hunger > 9 and condition:
+            final_speed = NORMAL_SPEED/2.5
+            self.stamina -= 0.2
+
+        # elif (not (self.shift_pressed and self.ctrl_pressed)) and self.stamina > 20 and self.hunger > 20 and condition:
         #     final_speed = NORMAL_SPEED
 
         # NORMAL SPEED
-        if (not (self.shift_pressed and self.ctrl_pressed and condition)) and self.stamina < self.max_stamina and self.hunger > 19:
-            self.stamina += (self.sprint_speed/20)
-            self.stamina = clamp(self.stamina,0,self.max_stamina)
-            self.hunger -= (self.sprint_speed/15)
-            self.hunger = clamp(self.hunger,0,100)
+        if ((not (self.shift_pressed or self.ctrl_pressed))or not condition) and self.hunger > 10 and self.stamina < self.max_stamina:
+            self.stamina += self.sprint_speed/15
+            self.stamina = clamp(self.stamina,10,self.max_stamina)
+        # if ((not (self.shift_pressed or self.ctrl_pressed))or not condition) and self.hunger > 10 and self.stamina < self.max_stamina:
+            self.hunger -= self.sprint_speed/10
+            self.hunger = clamp(self.hunger,10,100)
 
 
 
@@ -313,12 +317,12 @@ class GameView1(UIView):
 
     def on_update(self, delta_time):
         """ Movement and game logic """
-        if self.ctrl_pressed:
-            animal = Animal(self.filefood_path, 200, 300)
-            player = self.player_sprite
-            poslist = [player.center_x,player.center_y]
-            angle = animal.detect_threats(pos=poslist,preypos=self.Animalsprite.position)
-            self.Animalsprite.angle = angle
+        # if self.ctrl_pressed:
+        #     animal = Animal(self.filefood_path, 200, 300)
+        #     player = self.player_sprite
+        #     poslist = [player.center_x,player.center_y]
+        #     angle = animal.detect_threats(pos=poslist,preypos=self.Animalsprite.position)
+        #     self.Animalsprite.angle = angle
 
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
