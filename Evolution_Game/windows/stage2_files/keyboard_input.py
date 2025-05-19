@@ -57,7 +57,6 @@ class Animal(arcade.Sprite):
         # In update or movement logic
         angle = get_angle_deg(x1, y1, x2, y2)
         angle_deg = (angle - 90) % 360
-        print(angle_deg)
         return angle_deg
 
 
@@ -229,25 +228,31 @@ class GameView1(UIView):
 
         # Movement input and stamina/hunger effects
         # SPRINTING
-        if self.shift_pressed and self.stamina >= 10 and self.hunger > 10 and condition:
+
+        condition2 = (self.shift_pressed and not self.ctrl_pressed)
+
+        if condition2 and self.stamina > 19 and self.hunger > 19 and condition:
             final_speed = self.sprint_speed
             self.stamina -= 0.4
-        elif self.shift_pressed and self.stamina >= 10 and self.hunger < 20 and condition:
-            final_speed = self.sprint_speed-2
+        elif condition2 and self.stamina < 20 and self.hunger > 9 and condition:
+            final_speed = self.sprint_speed/0.25
             self.stamina -= 0.4
         elif (not (self.shift_pressed and self.ctrl_pressed)) and self.stamina > 9 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED
 
 
         # SNEAKING
-        if self.ctrl_pressed and self.stamina >= 10 and self.hunger > 10 and condition:
+        if self.ctrl_pressed and self.stamina > 9 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED/2
             self.stamina -= 0.1
-        elif (not (self.shift_pressed and self.ctrl_pressed)) and self.stamina > 9 and self.hunger > 9 and condition:
-            final_speed = NORMAL_SPEED
+        elif self.ctrl_pressed and self.stamina < 20 and self.hunger > 9 and condition:
+            final_speed = NORMAL_SPEED/2.2
+            self.stamina -= 0.1
+        # elif (not (self.shift_pressed and self.ctrl_pressed)) and self.stamina > 19 and self.hunger > 19 and condition:
+        #     final_speed = NORMAL_SPEED
 
         # NORMAL SPEED
-        if (not (self.shift_pressed or self.ctrl_pressed) or not condition) and self.stamina < self.max_stamina and self.hunger > 20:
+        if (not (self.shift_pressed and self.ctrl_pressed and condition)) and self.stamina < self.max_stamina and self.hunger > 19:
             self.stamina += (self.sprint_speed/20)
             self.stamina = clamp(self.stamina,0,self.max_stamina)
             self.hunger -= (self.sprint_speed/15)
@@ -313,8 +318,6 @@ class GameView1(UIView):
             player = self.player_sprite
             poslist = [player.center_x,player.center_y]
             angle = animal.detect_threats(pos=poslist,preypos=self.Animalsprite.position)
-            print(self.Animalsprite.angle)
-            # print(*poslist)
             self.Animalsprite.angle = angle
 
         self.update_player_speed()  # Update speed and rotation here

@@ -4,7 +4,7 @@ from arcade import gui
 import os
 import random
 #-----------------------
-codeVersion= "V 1.35.10.0 - From School"
+codeVersion= "V 1.35.11.0 - From School"
 '''
 Software versioning is now: (Finished Version, Major Rewrite, Bug fixing, Small changes)
 Keys:
