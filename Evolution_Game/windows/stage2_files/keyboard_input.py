@@ -26,7 +26,7 @@ import arcade
 
 
 class Animal(arcade.Sprite):
-    def __init__(self, image, x, y, z=0, scale=1.0):
+    def __init__(self, image, x, y, scale=1.0):
         super().__init__()
         self.image = image
         self.center_x = x
@@ -38,26 +38,26 @@ class Animal(arcade.Sprite):
     # def update_angle(self, deg):
     #     self.angle = deg
 
-    def detect_threats(self, pos):
-        x2 = (pos[0] - WINDOW_WIDTH/2)
-        y2 = (pos[1] - WINDOW_HEIGHT/2)
-        #
+    def detect_threats(self, pos, preypos):
+        x2 = (pos[0])# - WINDOW_WIDTH/2)
+        y2 = (pos[1])# - WINDOW_HEIGHT/2)
+
         # # Access the y_distance_from_food property to get the actual value
-        x1 = self.center_x - WINDOW_WIDTH/2 # This accesses the actual value, not the property object
-        y1 = self.center_y -  WINDOW_HEIGHT/2  # This accesses the actual value, not the property object
+        x1 = preypos[0]# - WINDOW_WIDTH/2 # This accesses the actual value, not the property object
+        y1 = preypos[1]# -  WINDOW_HEIGHT/2  # This accesses the actual value, not the property object
         # # print(y_coord - th_y, "y dist from 'Prey'")
         # dist = [th_y-y_coord,th_x-x_coord]
         # angle = math.atan2(dist[0],dist[1])
         # angle_deg = math.degrees(angle)
-        dx = x2 - x1
-        dy = y2 - y1
         def get_angle_deg(x1, y1, x2, y2):
             dx = x2 - x1
             dy = y2 - y1
-            return math.degrees(math.atan2(dy, dx))
-        # Get angle in degrees
-        # angle_rad = math.atan2(dy, dx)
-        angle_deg = (get_angle_deg(x1, y1, x2, y2) + 180) % 360
+            return math.degrees(math.atan2(-dy, dx))
+
+        # In update or movement logic
+        angle = get_angle_deg(x1, y1, x2, y2)
+        angle_deg = (angle - 90) % 360
+        print(angle_deg)
         return angle_deg
 
 
@@ -121,6 +121,7 @@ class GameView1(UIView):
         self.load_image()
         self.Animalsprite = Animal(self.filefood_path, 500,300,scale=0.15)
         self.player_list.append(self.Animalsprite)
+
 
 
 
@@ -310,7 +311,10 @@ class GameView1(UIView):
         if self.ctrl_pressed:
             animal = Animal(self.filefood_path, 200, 300)
             player = self.player_sprite
-            angle = animal.detect_threats(pos=[player.center_x,player.center_y])
+            poslist = [player.center_x,player.center_y]
+            angle = animal.detect_threats(pos=poslist,preypos=self.Animalsprite.position)
+            print(self.Animalsprite.angle)
+            # print(*poslist)
             self.Animalsprite.angle = angle
 
         self.update_player_speed()  # Update speed and rotation here
