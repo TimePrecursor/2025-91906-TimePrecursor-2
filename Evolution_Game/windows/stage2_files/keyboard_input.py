@@ -234,22 +234,32 @@ class GameView1(UIView):
         if a_andnot_b and self.stamina > 20 and self.hunger > 9 and condition:
             final_speed = self.sprint_speed/1.25
             self.stamina -= 0.4
-        elif a_andnot_b and self.stamina > 10 and self.hunger > 9 and condition:
+        if a_andnot_b and self.stamina > 10 and self.hunger > 9 and condition:
             final_speed = self.sprint_speed/2
             self.stamina -= 0.4
-        elif a_andnot_b and self.stamina <= 10 and self.hunger > 9 and condition:
-            final_speed = NORMAL_SPEED
-        elif (not(self.shift_pressed or self.ctrl_pressed)) and self.stamina > 9 and self.hunger > 9 and condition:
-            final_speed = NORMAL_SPEED
-
-
-        # SNEAKING
         if self.ctrl_pressed and self.stamina > 20 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED/2
             self.stamina -= 0.2
-        elif self.ctrl_pressed and self.stamina > 10 and self.hunger > 9 and condition:
-            final_speed = NORMAL_SPEED/2.5
+        if self.ctrl_pressed and self.stamina > 10 and self.hunger > 9 and condition:
+            final_speed = NORMAL_SPEED/2.2
             self.stamina -= 0.2
+        if a_andnot_b and self.stamina <= 10 and self.hunger > 9 and condition:
+            final_speed = NORMAL_SPEED
+        if (not(self.shift_pressed or self.ctrl_pressed)) and self.stamina > 9 and self.hunger > 9 and condition:
+            final_speed = NORMAL_SPEED
+        if self.ctrl_pressed and self.stamina <= 10 and self.hunger > 9 and condition:
+            final_speed = NORMAL_SPEED/2.2
+            self.hunger -= 0.1
+            self.hunger = clamp(self.hunger, 10, 100)
+
+
+        # SNEAKING
+        # elif self.ctrl_pressed and self.stamina > 20 and self.hunger > 9 and condition:
+        #     final_speed = NORMAL_SPEED/2
+        #     self.stamina -= 0.2
+        # elif self.ctrl_pressed and self.stamina > 10 and self.hunger > 9 and condition:
+        #     final_speed = NORMAL_SPEED/2.2
+        #     self.stamina -= 0.2
 
         # elif (not (self.shift_pressed and self.ctrl_pressed)) and self.stamina > 20 and self.hunger > 20 and condition:
         #     final_speed = NORMAL_SPEED
