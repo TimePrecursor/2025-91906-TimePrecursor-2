@@ -5,7 +5,7 @@ import os
 
 tree_list = arcade.SpriteList()
 TREE_SPREAD_DISTANCE = 100  # how far apart trees must be
-NUMBER_OF_TREES = 5  # how many trees
+NUMBER_OF_TREES = 8  # how many trees
 MAX_ATTEMPTS_PER_TREE = 5  # tries before skipping
 scenery_assets = [
     "bolder.png", "bush.png", "lake1.png", "lake3.png", "lake4.png", "meat.png",
@@ -35,7 +35,7 @@ class EnvironmentSetup(arcade.Sprite):
                 random_x = random.randint(10, x_max-10)
                 random_y = random.randint(10, y_max-10)
                 if self.is_far_enough(random_x, random_y):
-                    tree = arcade.Sprite(tree_texture_path, scale=0.1)
+                    tree = arcade.Sprite(tree_texture_path, scale=0.35)
                     tree.center_x = random_x
                     tree.center_y = random_y
                     self.tree_locations.append({"center_x":random_x,"center_y":random_y})

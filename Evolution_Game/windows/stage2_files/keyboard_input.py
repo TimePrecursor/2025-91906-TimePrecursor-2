@@ -46,9 +46,7 @@ class Animal(arcade.Sprite):
         x1 = preypos[0]# - WINDOW_WIDTH/2 # This accesses the actual value, not the property object
         y1 = preypos[1]# -  WINDOW_HEIGHT/2  # This accesses the actual value, not the property object
         # # print(y_coord - th_y, "y dist from 'Prey'")
-        # dist = [th_y-y_coord,th_x-x_coord]
-        # angle = math.atan2(dist[0],dist[1])
-        # angle_deg = math.degrees(angle)
+
         def get_angle_deg(x1, y1, x2, y2):
             dx = x2 - x1
             dy = y2 - y1
@@ -84,6 +82,7 @@ class Player(arcade.Sprite):
 class GameView1(UIView):
     def __init__(self):
         super().__init__()
+        self.logic_timer = 0.0  # Accumulated time
         self.prey_is_alive = True
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
         self.environment = EnvironmentSetup()
@@ -92,7 +91,7 @@ class GameView1(UIView):
         # Variables that will hold sprite lists
         # Set up the player info
         """
-        GET RID OF SPRITE LISTS!
+        GET RID OF SPRITE LISTS!?
              self.player_sprite = None
         """
 
@@ -118,7 +117,9 @@ class GameView1(UIView):
 
     def renamethis1(self):
         self.load_image()
-        self.Animalsprite = Animal(self.filefood_path, 500,300,scale=0.15)
+        import Evolution_Game.windows.stage2_files.environmentSetupMkII as enviro_setup
+        select_randxy = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
+        self.Animalsprite = Animal(self.filefood_path, select_randxy["center_x"],select_randxy["center_y"],scale=0.15)
         self.player_list.append(self.Animalsprite)
 
 
@@ -141,12 +142,7 @@ class GameView1(UIView):
         self.prey_choices.pop(0)
         random_prey = random.choice(self.prey_choices)
         self.filefood_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{random_prey}.png")
-        print(self.filefood_path)
         live.live_food(arcade.load_image(self.filefood_path), scale=1)
-        import Evolution_Game.windows.stage2_files.environmentSetupMkII as enviro_setup
-        print(enviro_setup.EnvironmentSetup.tree_locations)
-        select_randxy = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
-        print(select_randxy, "select_randxy")
         # live.live_food.center_x = (select_randxy["center_x"])
         # live.live_food.center_y = (select_randxy["center_y"])
 
@@ -203,11 +199,6 @@ class GameView1(UIView):
         self.hunger_ratio = self.max_hunger_ratio
         list = ["Stamina:", "Hunger:", f"Metabolism = {self.metabolism}\nSpeed = {round(self.stat_speed,ndigits=1)}\nDetectable Range = {self.range}"]
         self.top_right_info_add(3,list,300,40,bold=False)
-        from Evolution_Game.windows.stage2_files import live_food_stats
-        food_sprite = live_food_stats.live_food
-        # self.player_list.append(food_sprite[0])
-        food_sprite.center_x = 100
-        food_sprite.center_y = 100
         self.setup_done = True
 
     def getfoodfile(self):
@@ -233,16 +224,16 @@ class GameView1(UIView):
 
         if a_andnot_b and self.stamina > 20 and self.hunger > 9 and condition:
             final_speed = self.sprint_speed/1.25
-            self.stamina -= 0.4
+            self.stamina -= 0.15
         if a_andnot_b and self.stamina > 10 and self.hunger > 9 and condition:
-            final_speed = self.sprint_speed/2
-            self.stamina -= 0.4
+            final_speed = self.sprint_speed/1.5
+            self.stamina -= 0.15
         if self.ctrl_pressed and self.stamina > 20 and self.hunger > 9 and condition:
-            final_speed = NORMAL_SPEED/2
-            self.stamina -= 0.2
+            final_speed = NORMAL_SPEED/1.5
+            self.stamina -= 0.05
         if self.ctrl_pressed and self.stamina > 10 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED/2.2
-            self.stamina -= 0.2
+            self.stamina -= 0.1
         if a_andnot_b and self.stamina <= 10 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED
         if (not(self.shift_pressed or self.ctrl_pressed)) and self.stamina > 9 and self.hunger > 9 and condition:
@@ -269,7 +260,7 @@ class GameView1(UIView):
             self.stamina += self.sprint_speed/15
             self.stamina = clamp(self.stamina,10,self.max_stamina)
         # if ((not (self.shift_pressed or self.ctrl_pressed))or not condition) and self.hunger > 10 and self.stamina < self.max_stamina:
-            self.hunger -= self.sprint_speed/10
+            self.hunger -= self.sprint_speed/30
             self.hunger = clamp(self.hunger,10,100)
 
 
@@ -317,15 +308,22 @@ class GameView1(UIView):
         """ Render the screen. """
         self.clear()
         self.player_list.draw()  # Draw player first
+        tree_list.draw()
         # self.environment.draw_trees()  # Draw trees afterward
         self.manager.draw()  # Draw UI (if you have any)
         max_stam = self.max_stamina
         max_hung = self.max_hunger
-        tree_list.draw()
         self.draw_hunger_bar(width=max_hung * 2)
         self.draw_stamina_bar(width=max_stam * 4)
 
+
     def on_update(self, delta_time):
+        self.logic_timer += delta_time
+
+        if self.logic_timer >= 0.5:
+            self.logic_timer = 0.0  # Reset timer
+            animal = Animal(self.filefood_path,0,0)
+            Animal.detect_threats(animal,self.Animalsprite.position, self.player_sprite.position)
         """ Movement and game logic """
         # if self.ctrl_pressed:
         #     animal = Animal(self.filefood_path, 200, 300)
