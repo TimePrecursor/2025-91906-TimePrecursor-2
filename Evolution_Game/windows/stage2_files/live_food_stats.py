@@ -6,8 +6,9 @@ from arcade.gui import UIView
 
 from Evolution_Game.windows.stage2_files import keyboard_input
 
-live_food_stats_list = [
-    {
+live_food_stats_list = {
+
+    "Deer":{
         "name": "Deer",
         "speed": 7,
         "awareness": 6,
@@ -16,7 +17,7 @@ live_food_stats_list = [
         "vision_range": 25,
         "stamina": 70
     },
-    {
+    "Gazelle":{
         "name": "Gazelle",
         "speed": 9,
         "awareness": 8,
@@ -25,7 +26,7 @@ live_food_stats_list = [
         "vision_range": 30,
         "stamina": 80
     },
-    {
+    "Mouse":{
         "name": "Mouse",
         "speed": 3,
         "awareness": 5,
@@ -34,7 +35,7 @@ live_food_stats_list = [
         "vision_range": 15,
         "stamina": 25
     },
-    {
+    "Rabbit":{
         "name": "Rabbit",
         "speed": 6,
         "awareness": 7,
@@ -43,7 +44,7 @@ live_food_stats_list = [
         "vision_range": 20,
         "stamina": 50
     },
-    {
+    "Pig":{
         "name": "Pig",
         "speed": 4,
         "awareness": 4,
@@ -52,7 +53,7 @@ live_food_stats_list = [
         "vision_range": 18,
         "stamina": 40
     }
-]
+}
 
 class live_food(arcade.Sprite):
     def __init__(self,image=None, scale=1, window_width=1000,window_height=600):
