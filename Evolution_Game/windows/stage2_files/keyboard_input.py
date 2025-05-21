@@ -59,13 +59,13 @@ class Animal(arcade.Sprite):
         distance = arcade.get_distance_between_sprites(prey_spr,pred_spr)
         if distance < (prey_sight*awareness):
             print("PREDATOR DETECTED!")
-            self.flee(angle_deg)
+            # self.flee(angle_deg)
         self.angle = angle_deg
         return angle_deg
-
-    def flee(self, angle_deg):
-        (-angle_deg)
-        Animal.change_x = 10
+    #
+    # def flee(self, angle_deg):
+    #     (-angle_deg)
+    #     Animal.change_x = 10
 
 
 
