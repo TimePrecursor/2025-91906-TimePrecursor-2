@@ -59,15 +59,19 @@ class Animal(arcade.Sprite):
         angle_deg = self.detect_threats(predpos, preypos)
         distance = arcade.get_distance_between_sprites(prey_spr,pred_spr)
         if distance < (prey_sight*awareness):
-            print("PREDATOR DETECTED!")
+            # print("PREDATOR DETECTED!")
             game = GameView1()
-            game.prey_flee()
+            changex,changey = self.get_adj_and_opp(angle_deg,10)
+            game.prey_flee(prey_spr, angle_deg, changex, changey)
             # self.flee(angle_deg)
         self.angle = angle_deg
         return angle_deg
 
-
-
+    def get_adj_and_opp(self,angle_degrees, h):
+        angle_radians = math.radians(angle_degrees)
+        opposite = h * math.sin(angle_radians)
+        adjacent = h * math.cos(angle_radians)
+        return [opposite,adjacent]
 
 
 
@@ -85,21 +89,14 @@ class GameView1(UIView):
     def __init__(self):
         super().__init__()
         self.logic_timer = 0.0  # Accumulated time
+        self.prey_logic_timer = 0.0  # Accumulated time
         self.prey_is_alive = True
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
         self.environment = EnvironmentSetup()
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
-        # Variables that will hold sprite lists
-        # Set up the player info
-        """
-        GET RID OF SPRITE LISTS!?
-             self.player_sprite = None
-        """
-
 
         # Track the current state of what key is press
-        # self.movementkey_pressed = False
         self.left_pressed = False
         self.right_pressed = False
         self.up_pressed = False
@@ -124,6 +121,7 @@ class GameView1(UIView):
         import Evolution_Game.windows.stage2_files.environmentSetupMkII as enviro_setup
         select_randxy = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
         self.animalsprite = Animal(self.filefood_path, select_randxy["center_x"], select_randxy["center_y"], scale=0.15)
+        print("animalsprite")
         self.player_list.append(self.animalsprite)
 
 
@@ -212,9 +210,46 @@ class GameView1(UIView):
     def getfoodfile(self):
         return self.filefood_path
 
-    def prey_flee(self):
-        self.animalsprite.change_x = 10
-        print("LOL")
+    def prey_flee(self,prey_spr,angle, changex, changey):
+        """
+        :param prey_spr:  Prey sprite
+        :param angle:     Previously calculated angle for the prey to point towards
+        :param changex:   The calculated x step amount (amount to change per second on the x-axis)
+        :param changey:   The calculated y step amount (amount to change per second on the y-axis)
+        """
+        up = (prey_spr.center_y < (WINDOW_HEIGHT - 20))
+        down = (prey_spr.center_y > 20)
+        left = (prey_spr.center_x < (WINDOW_WIDTH - 20))
+        right = (prey_spr.center_x > 20)
+        all = (up and down and left and right)
+        angle -= 180
+
+        if all:
+            prey_spr.angle = angle
+            prey_spr.change_x = changex / 10
+            prey_spr.change_y = changey / 10
+        elif not all:
+            prey_spr.angle -= 180
+            prey_spr.change_x = changex / 10
+            prey_spr.change_y = changey / 10
+        else:
+            print("ERROR: not enough space")
+        # if ((angle > 90) and (angle < 270)) and ((down and left) or (down and right)):
+        #     prey_spr.angle = angle
+        #     prey_spr.change_x = changex / 10
+        #     prey_spr.change_y = changey / 10
+        # elif not ((down and left) or (down and right)):
+        #     prey_spr.angle -= 180
+
+        # if (angle > 90) and (angle < 270) and down:
+        # if (angle > 90) and (angle < 270) and left:
+        # if (angle > 90) and (angle < 270) and right:
+        prey_spr.angle = angle
+
+
+    def stopflee(self,prey_spr):
+        prey_spr.change_y = 0
+        prey_spr.change_x = 0
 
     def update_player_speed(self): # Speed and Movement processing
         Player.change_x = 0
@@ -342,9 +377,14 @@ class GameView1(UIView):
     def on_update(self, delta_time):
         """ Movement and game logic """
         self.logic_timer += delta_time
+        self.prey_logic_timer += delta_time
         if self.logic_timer >= 1:
             self.logic_timer = 0.0  # Reset timer
             self.update_constant_logic()
+        chsn_prey = self.chosen_prey
+        if self.prey_logic_timer >= (self.prey_data[chsn_prey]["awareness"]/1.5):
+            self.prey_logic_timer = 0.0
+            self.stopflee(self.animalsprite)
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
 
