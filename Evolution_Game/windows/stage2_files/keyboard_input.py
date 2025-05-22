@@ -35,6 +35,7 @@ class Animal(arcade.Sprite):
         self.scale = scale
         self.texture = arcade.load_texture(image)
         self.angle = 0
+        self.main = GameView1()
     #
     # def update_angle(self, deg):
     #     self.angle = deg
@@ -59,13 +60,12 @@ class Animal(arcade.Sprite):
         distance = arcade.get_distance_between_sprites(prey_spr,pred_spr)
         if distance < (prey_sight*awareness):
             print("PREDATOR DETECTED!")
+            game = GameView1()
+            game.prey_flee()
             # self.flee(angle_deg)
         self.angle = angle_deg
         return angle_deg
-    #
-    # def flee(self, angle_deg):
-    #     (-angle_deg)
-    #     Animal.change_x = 10
+
 
 
 
@@ -123,8 +123,8 @@ class GameView1(UIView):
         self.load_image()
         import Evolution_Game.windows.stage2_files.environmentSetupMkII as enviro_setup
         select_randxy = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
-        self.Animalsprite = Animal(self.filefood_path, select_randxy["center_x"],select_randxy["center_y"],scale=0.15)
-        self.player_list.append(self.Animalsprite)
+        self.animalsprite = Animal(self.filefood_path, select_randxy["center_x"], select_randxy["center_y"], scale=0.15)
+        self.player_list.append(self.animalsprite)
 
 
 
@@ -211,6 +211,10 @@ class GameView1(UIView):
 
     def getfoodfile(self):
         return self.filefood_path
+
+    def prey_flee(self):
+        self.animalsprite.change_x = 10
+        print("LOL")
 
     def update_player_speed(self): # Speed and Movement processing
         Player.change_x = 0
@@ -323,23 +327,24 @@ class GameView1(UIView):
 
 
 
+    def update_constant_logic(self):
+        pred = self.player_sprite
+        prey = self.animalsprite
+        chsn_prey = self.chosen_prey
+        Animal.simple_prey_Ai(self.animal,
+                              pred.position,
+                              prey.position,
+                              prey,
+                              pred,
+                              self.prey_data[chsn_prey]["vision_range"],
+                              self.prey_data[chsn_prey]["awareness"])
 
     def on_update(self, delta_time):
         """ Movement and game logic """
         self.logic_timer += delta_time
         if self.logic_timer >= 1:
             self.logic_timer = 0.0  # Reset timer
-            pred = self.player_sprite
-            prey = self.Animalsprite
-            chsn_prey = self.chosen_prey
-            angle = Animal.simple_prey_Ai(self.animal,
-                                          pred.position,
-                                          prey.position,
-                                          prey,
-                                          pred,
-                                          self.prey_data[chsn_prey]["vision_range"],
-                                          self.prey_data[chsn_prey]["awareness"])
-            self.Animalsprite.angle = angle
+            self.update_constant_logic()
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
 
