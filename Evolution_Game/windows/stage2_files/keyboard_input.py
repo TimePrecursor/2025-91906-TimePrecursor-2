@@ -7,6 +7,7 @@ import random
 
 import arcade
 from arcade.gui import UIView, UIAnchorLayout
+from pycparser.c_ast import Return
 from pyglet.math import clamp
 from pyglet.window.key import modifiers_string
 
@@ -95,7 +96,7 @@ class GameView1(UIView):
         self.environment = EnvironmentSetup()
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
-
+        self.physic_engine = None
         # Track the current state of what key is press
         self.left_pressed = False
         self.right_pressed = False
@@ -221,17 +222,21 @@ class GameView1(UIView):
         down = (prey_spr.center_y > 20)
         left = (prey_spr.center_x < (WINDOW_WIDTH - 20))
         right = (prey_spr.center_x > 20)
+
         all = (up and down and left and right)
         angle -= 180
 
-        if all:
+        if self.check_bounds([prey_spr.center_x,prey_spr.center_y]) is True:
             prey_spr.angle = angle
-            prey_spr.change_x = changex / 10
-            prey_spr.change_y = changey / 10
-        elif not all:
-            prey_spr.angle -= 180
-            prey_spr.change_x = changex / 10
-            prey_spr.change_y = changey / 10
+            prey_spr.center_x += 1
+            prey_spr.center_y += 1
+
+
+        elif not self.check_bounds([prey_spr.center_x,prey_spr.center_y]):
+            print("turning around")
+            prey_spr.angle = angle+180
+            prey_spr.center_x += 1
+            prey_spr.center_y += 1
         else:
             print("ERROR: not enough space")
         # if ((angle > 90) and (angle < 270)) and ((down and left) or (down and right)):
@@ -243,13 +248,18 @@ class GameView1(UIView):
 
         # if (angle > 90) and (angle < 270) and down:
         # if (angle > 90) and (angle < 270) and left:
-        # if (angle > 90) and (angle < 270) and right:
+        # if (angle > 90) and (angle < 270) and right: # <- expandable
         prey_spr.angle = angle
 
+    def check_bounds(self, pos) -> bool:
+        if (pos[0] > 20) and (pos[1] > 20) and (pos[0] < WINDOW_WIDTH-20) and (pos[1] < WINDOW_HEIGHT-20):
+            return True
+        else:
+            return False
 
-    def stopflee(self,prey_spr):
-        prey_spr.change_y = 0
-        prey_spr.change_x = 0
+    # def stopflee(self,prey_spr):
+    #     prey_spr.change_y = 0
+    #     prey_spr.change_x = 0
 
     def update_player_speed(self): # Speed and Movement processing
         Player.change_x = 0
@@ -286,18 +296,6 @@ class GameView1(UIView):
             final_speed = NORMAL_SPEED/2.2
             self.hunger -= 0.1
             self.hunger = clamp(self.hunger, 10, 100)
-
-
-        # SNEAKING
-        # elif self.ctrl_pressed and self.stamina > 20 and self.hunger > 9 and condition:
-        #     final_speed = NORMAL_SPEED/2
-        #     self.stamina -= 0.2
-        # elif self.ctrl_pressed and self.stamina > 10 and self.hunger > 9 and condition:
-        #     final_speed = NORMAL_SPEED/2.2
-        #     self.stamina -= 0.2
-
-        # elif (not (self.shift_pressed and self.ctrl_pressed)) and self.stamina > 20 and self.hunger > 20 and condition:
-        #     final_speed = NORMAL_SPEED
 
         # NORMAL SPEED
         if ((not (self.shift_pressed or self.ctrl_pressed))or not condition) and self.hunger > 10 and self.stamina < self.max_stamina:
@@ -382,9 +380,9 @@ class GameView1(UIView):
             self.logic_timer = 0.0  # Reset timer
             self.update_constant_logic()
         chsn_prey = self.chosen_prey
-        if self.prey_logic_timer >= (self.prey_data[chsn_prey]["awareness"]/1.5):
-            self.prey_logic_timer = 0.0
-            self.stopflee(self.animalsprite)
+        # if self.prey_logic_timer >= (self.prey_data[chsn_prey]["awareness"]/1.5):
+        #     self.prey_logic_timer = 0.0
+            # self.stopflee(self.animalsprite)
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
 
@@ -423,19 +421,15 @@ class GameView1(UIView):
         """Called when the user releases a key."""
         if key == arcade.key.UP:
             self.up_pressed = False
-            # self.movementkey_pressed = False
             self.update_player_speed()
         if key == arcade.key.DOWN:
             self.down_pressed = False
-            # self.movementkey_pressed = False
             self.update_player_speed()
         if key == arcade.key.LEFT:
             self.left_pressed = False
-            # self.movementkey_pressed = False
             self.update_player_speed()
         if key == arcade.key.RIGHT:
             self.right_pressed = False
-            # self.movementkey_pressed = False
             self.update_player_speed()
         if key == arcade.key.LSHIFT:
             self.shift_pressed = False
@@ -445,24 +439,6 @@ class GameView1(UIView):
         if key == arcade.key.LCTRL:
             self.ctrl_pressed = False
             self.current_range = self.range
-
-
-        #     import Evolution_Game.windows.stage2_files.live_food_stats_list as live
-        #     food = live.live_food_functions.load_image(self)
-        #     self.player_list.append(food)
-        #     # Create references foranaimal sprite
-        #
-        #     # Create an animal sprite to hunt (will move later):
-        #     deer_data = {
-        #         "name": live.live_food_stats_list[],
-        #         "speed": 7,
-        #         "awareness": 6,
-        #         "nutritional_value": 8,
-        #         "health": 60,
-        #         "vision_range": 25,
-        #         "stamina": 70
-        #     }
-        #     deer = PreySprite(deer_data, "deer_image.png")
 
 
     def top_right_info_add(self, amount=4, text=None, width=200, height=30, font_size=20, bold=True, y_val=(WINDOW_HEIGHT / 2) - 25):
