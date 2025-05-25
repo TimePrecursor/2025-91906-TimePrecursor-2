@@ -3,6 +3,9 @@ import math
 # from arcade import gui
 import os
 import random
+from time import sleep
+
+import numpy
 
 
 import arcade
@@ -22,7 +25,7 @@ SPRITE_SCALING = 0.15
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 600
 
-NORMAL_SPEED = 1
+NORMAL_SPEED = 2
 
 import arcade
 
@@ -37,6 +40,7 @@ class Animal(arcade.Sprite):
         self.texture = arcade.load_texture(image)
         self.angle = 0
         self.main = GameView1()
+        self.fleeing = False
     #
     # def update_angle(self, deg):
     #     self.angle = deg
@@ -56,17 +60,21 @@ class Animal(arcade.Sprite):
         angle_deg = (angle - 90) % 360
         return angle_deg
 
-    def simple_prey_Ai(self, predpos, preypos, prey_spr, pred_spr, prey_sight, awareness):
+    def simple_prey_Ai(self, predpos, preypos, prey_spr, pred_spr, prey_sight, awareness, dt):
         angle_deg = self.detect_threats(predpos, preypos)
         distance = arcade.get_distance_between_sprites(prey_spr,pred_spr)
-        if distance < (prey_sight*awareness):
-            # print("PREDATOR DETECTED!")
+
+        if distance < (prey_sight * awareness):
+            self.fleeing = True
             game = GameView1()
             changex,changey = self.get_adj_and_opp(angle_deg,10)
+            first_pos = prey_spr._position
             game.prey_flee(prey_spr, angle_deg, changex, changey)
-            # self.flee(angle_deg)
-        self.angle = angle_deg
-        return angle_deg
+            return True
+        else:
+            self.wander()
+            return False
+
 
     def get_adj_and_opp(self,angle_degrees, h):
         angle_radians = math.radians(angle_degrees)
@@ -74,6 +82,8 @@ class Animal(arcade.Sprite):
         adjacent = h * math.cos(angle_radians)
         return [opposite,adjacent]
 
+    def wander(self):
+        x = numpy.random.normal(scale=1)
 
 
 class Player(arcade.Sprite):
@@ -90,7 +100,7 @@ class GameView1(UIView):
     def __init__(self):
         super().__init__()
         self.logic_timer = 0.0  # Accumulated time
-        self.prey_logic_timer = 0.0  # Accumulated time
+        self.prey_logic_timer = 0  # Accumulated time
         self.prey_is_alive = True
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
         self.environment = EnvironmentSetup()
@@ -109,6 +119,7 @@ class GameView1(UIView):
         self.manager.add(self.grid)
         self.chosen_animal = None
         self.chosen_prey = None
+        self.fleeing = False
         # Set the background color
         self.background_color = arcade.color.AMAZON
         self.NO_SETUP = True
@@ -212,146 +223,134 @@ class GameView1(UIView):
         return self.filefood_path
 
     def prey_flee(self,prey_spr,angle, changex, changey):
-        """
-        :param prey_spr:  Prey sprite
-        :param angle:     Previously calculated angle for the prey to point towards
-        :param changex:   The calculated x step amount (amount to change per second on the x-axis)
-        :param changey:   The calculated y step amount (amount to change per second on the y-axis)
-        """
-        up = (prey_spr.center_y < (WINDOW_HEIGHT - 20))
-        down = (prey_spr.center_y > 20)
-        left = (prey_spr.center_x < (WINDOW_WIDTH - 20))
-        right = (prey_spr.center_x > 20)
+        """ The 'Flee' mechanic for prey """
+        # up = (prey_spr.center_y < (WINDOW_HEIGHT - 20))
+        # down = (prey_spr.center_y > 20)
+        # left = (prey_spr.center_x < (WINDOW_WIDTH - 20))
+        # right = (prey_spr.center_x > 20)
+        # all = (up and down and left and right)
 
-        all = (up and down and left and right)
         angle -= 180
 
-        if self.check_bounds([prey_spr.center_x,prey_spr.center_y]) is True:
-            prey_spr.angle = angle
-            prey_spr.center_x += 1
-            prey_spr.center_y += 1
-
-
-        elif not self.check_bounds([prey_spr.center_x,prey_spr.center_y]):
-            print("turning around")
-            prey_spr.angle = angle+180
-            prey_spr.center_x += 1
-            prey_spr.center_y += 1
-        else:
-            print("ERROR: not enough space")
-        # if ((angle > 90) and (angle < 270)) and ((down and left) or (down and right)):
+        # if self.check_bounds(prey_spr._position):
         #     prey_spr.angle = angle
-        #     prey_spr.change_x = changex / 10
-        #     prey_spr.change_y = changey / 10
-        # elif not ((down and left) or (down and right)):
-        #     prey_spr.angle -= 180
-
-        # if (angle > 90) and (angle < 270) and down:
-        # if (angle > 90) and (angle < 270) and left:
-        # if (angle > 90) and (angle < 270) and right: # <- expandable
+        #     prey_spr.change_x = changex/8
+        #     prey_spr.change_y = changey/8
+        # elif not self.check_bounds(prey_spr._position):
+        #     print("turning around")
+        #     prey_spr.angle = angle-180
+        #     prey_spr.change_x = -changex/8
+        #     prey_spr.change_y = -changey/8
+        pos = prey_spr._position
         prey_spr.angle = angle
 
+        if (WINDOW_WIDTH-200) and changex > 0:
+            prey_spr.change_x = changex/5
+        if (WINDOW_HEIGHT-200) and changey > 0:
+            prey_spr.change_y = changey/5
+
+        if 200 > (pos[0]+changex) and changex < 0:
+            prey_spr.change_x = changex/5
+        if 200 > (pos[1]+changey) and changey < 0:
+            prey_spr.change_y = changey/5
+
+
     def check_bounds(self, pos) -> bool:
-        if (pos[0] > 20) and (pos[1] > 20) and (pos[0] < WINDOW_WIDTH-20) and (pos[1] < WINDOW_HEIGHT-20):
+        if ((pos[0] > 20) and (pos[1] > 20)) and (pos[0] < WINDOW_WIDTH-20) and (pos[1] < WINDOW_HEIGHT-20):
+            print("ERROR: not enough space")
             return True
         else:
             return False
 
-    # def stopflee(self,prey_spr):
-    #     prey_spr.change_y = 0
-    #     prey_spr.change_x = 0
+    def stopflee(self,prey_spr):
+        prey_spr.change_y = 0
+        prey_spr.change_x = 0
+        self.fleeing = False
 
-    def update_player_speed(self): # Speed and Movement processing
-        Player.change_x = 0
-        Player.change_y = 0
+    import math
+
+    def update_player_speed(self):  # Speed and Movement processing
+        move_x = 0
+        move_y = 0
         final_speed = 0
 
-        # Conditions
+        # Movement condition
         condition = (self.up_pressed or self.down_pressed or self.left_pressed or self.right_pressed)
-        modifiers_condition = (self.shift_pressed or self.ctrl_pressed)
-
-
-        # Movement input and stamina/hunger effects
-        #MOVEMENT
-
         a_andnot_b = (self.shift_pressed and not self.ctrl_pressed)
 
+        # Movement input and stamina/hunger effects
         if a_andnot_b and self.stamina > 20 and self.hunger > 9 and condition:
-            final_speed = self.sprint_speed/1.25
+            final_speed = self.sprint_speed / 1.25
             self.stamina -= 0.15
-        if a_andnot_b and self.stamina > 10 and self.hunger > 9 and condition:
-            final_speed = self.sprint_speed/1.5
+        elif a_andnot_b and self.stamina > 10 and self.hunger > 9 and condition:
+            final_speed = self.sprint_speed / 1.5
             self.stamina -= 0.15
-        if self.ctrl_pressed and self.stamina > 20 and self.hunger > 9 and condition:
-            final_speed = NORMAL_SPEED/1.5
+        elif self.ctrl_pressed and self.stamina > 20 and self.hunger > 9 and condition:
+            final_speed = NORMAL_SPEED / 1.5
             self.stamina -= 0.05
-        if self.ctrl_pressed and self.stamina > 10 and self.hunger > 9 and condition:
-            final_speed = NORMAL_SPEED/2.2
+        elif self.ctrl_pressed and self.stamina > 10 and self.hunger > 9 and condition:
+            final_speed = NORMAL_SPEED / 2.2
             self.stamina -= 0.1
-        if a_andnot_b and self.stamina <= 10 and self.hunger > 9 and condition:
+        elif a_andnot_b and self.stamina <= 10 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED
-        if (not(self.shift_pressed or self.ctrl_pressed)) and self.stamina > 9 and self.hunger > 9 and condition:
+        elif not (self.shift_pressed or self.ctrl_pressed) and self.stamina > 9 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED
-        if self.ctrl_pressed and self.stamina <= 10 and self.hunger > 9 and condition:
-            final_speed = NORMAL_SPEED/2.2
+        elif self.ctrl_pressed and self.stamina <= 10 and self.hunger > 9 and condition:
+            final_speed = NORMAL_SPEED / 2.2
             self.hunger -= 0.1
             self.hunger = clamp(self.hunger, 10, 100)
 
-        # NORMAL SPEED
-        if ((not (self.shift_pressed or self.ctrl_pressed))or not condition) and self.hunger > 10 and self.stamina < self.max_stamina:
-            self.stamina += self.sprint_speed/15
-            self.stamina = clamp(self.stamina,10,self.max_stamina)
-        # if ((not (self.shift_pressed or self.ctrl_pressed))or not condition) and self.hunger > 10 and self.stamina < self.max_stamina:
-            self.hunger -= self.sprint_speed/30
-            self.hunger = clamp(self.hunger,10,100)
+        # Regenerate stamina/hunger if not sprinting
+        if not (self.shift_pressed or self.ctrl_pressed) or not condition:
+            if self.hunger > 10 and self.stamina < self.max_stamina:
+                self.stamina += self.sprint_speed / 15
+                self.stamina = clamp(self.stamina, 10, self.max_stamina)
+                self.hunger -= self.sprint_speed / 30
+                self.hunger = clamp(self.hunger, 10, 100)
 
+        # Raw movement input (no clamping yet)
+        if self.up_pressed and self.player_sprite.center_y < (WINDOW_HEIGHT - 50):
+            move_y += 1
+        if self.down_pressed and self.player_sprite.center_y > 50:
+            move_y -= 1
+        if self.left_pressed and self.player_sprite.center_x > 50:
+            move_x -= 1
+        if self.right_pressed and self.player_sprite.center_x < (WINDOW_WIDTH - 50):
+            move_x += 1
 
+        # Normalize direction vector
+        magnitude = math.hypot(move_x, move_y)
+        if magnitude > 0:
+            move_x /= magnitude
+            move_y /= magnitude
 
-        if self.up_pressed and (self.player_sprite.center_y < (WINDOW_HEIGHT-50)):
-            self.player_sprite.change_y += final_speed
-        if self.down_pressed and (self.player_sprite.center_y > 50):
-            self.player_sprite.change_y -= final_speed
-        if self.left_pressed and (self.player_sprite.center_x > 50):
-            self.player_sprite.change_x -= final_speed
-        if self.right_pressed and (self.player_sprite.center_x < (WINDOW_WIDTH-50)):
-            self.player_sprite.change_x += final_speed
+        # Apply final movement
+        self.player_sprite.change_x = move_x * final_speed
+        self.player_sprite.change_y = move_y * final_speed
 
-
-
-        # Normalize diagonal movement to fix faster diagonal speed
-        magnitude = math.hypot(self.player_sprite.change_x, self.player_sprite.change_y)
-        if magnitude > final_speed:
-            scale = final_speed / magnitude
-            self.player_sprite.change_x *= scale
-            self.player_sprite.change_y *= scale
-
-
-
-        # Set angle manually based on keys
-        if self.up_pressed and not self.down_pressed and not self.left_pressed and not self.right_pressed:
+        # Set angle manually
+        if move_x == 0 and move_y > 0:
             self.player_sprite.angle = 180  # Up
-        elif self.down_pressed and not self.up_pressed and not self.left_pressed and not self.right_pressed:
+        elif move_x == 0 and move_y < 0:
             self.player_sprite.angle = 0  # Down
-        elif self.left_pressed and not self.right_pressed and not self.up_pressed and not self.down_pressed:
+        elif move_x < 0 and move_y == 0:
             self.player_sprite.angle = 90  # Left
-        elif self.right_pressed and not self.left_pressed and not self.up_pressed and not self.down_pressed:
+        elif move_x > 0 and move_y == 0:
             self.player_sprite.angle = 270  # Right
-        elif self.up_pressed and self.right_pressed:
+        elif move_x > 0 and move_y > 0:
             self.player_sprite.angle = 225  # Up-Right
-        elif self.up_pressed and self.left_pressed:
+        elif move_x < 0 and move_y > 0:
             self.player_sprite.angle = 135  # Up-Left
-        elif self.down_pressed and self.left_pressed:
+        elif move_x < 0 and move_y < 0:
             self.player_sprite.angle = 45  # Down-Left
-        elif self.down_pressed and self.right_pressed:
+        elif move_x > 0 and move_y < 0:
             self.player_sprite.angle = 315  # Down-Right
-
 
     def on_draw(self):
         """ Render the screen. """
         self.clear()
         tree_list.draw()
         self.player_list.draw()  # Draw player first
-        # self.environment.draw_trees()  # Draw trees afterward
         self.manager.draw()  # Draw UI (if you have any)
         max_stam = self.max_stamina
         max_hung = self.max_hunger
@@ -359,30 +358,35 @@ class GameView1(UIView):
         self.draw_stamina_bar(width=max_stam * 4)
 
 
-
     def update_constant_logic(self):
         pred = self.player_sprite
         prey = self.animalsprite
         chsn_prey = self.chosen_prey
-        Animal.simple_prey_Ai(self.animal,
-                              pred.position,
-                              prey.position,
-                              prey,
-                              pred,
-                              self.prey_data[chsn_prey]["vision_range"],
-                              self.prey_data[chsn_prey]["awareness"])
+        if Animal.simple_prey_Ai(self.animal,
+          pred.position,
+          prey.position,
+          prey,
+          pred,
+          self.prey_data[chsn_prey]["vision_range"],
+          self.prey_data[chsn_prey]["awareness"],
+          self.logic_timer):
+            self.fleeing = True
+            print("fleeing1")
 
     def on_update(self, delta_time):
         """ Movement and game logic """
         self.logic_timer += delta_time
-        self.prey_logic_timer += delta_time
-        if self.logic_timer >= 1:
-            self.logic_timer = 0.0  # Reset timer
+        if self.logic_timer >= 0.25 and not self.fleeing:
             self.update_constant_logic()
-        chsn_prey = self.chosen_prey
-        # if self.prey_logic_timer >= (self.prey_data[chsn_prey]["awareness"]/1.5):
-        #     self.prey_logic_timer = 0.0
-            # self.stopflee(self.animalsprite)
+            self.logic_timer = 0.0
+        if self.fleeing:
+            self.prey_logic_timer += 1
+            if self.prey_logic_timer >= 50:
+                self.stopflee(self.animalsprite)
+                self.fleeing = False
+                self.prey_logic_timer = 0
+                print("STOP")
+
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
 
