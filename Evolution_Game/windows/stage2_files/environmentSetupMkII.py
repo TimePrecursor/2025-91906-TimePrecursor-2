@@ -6,7 +6,7 @@ import os
 tree_list = arcade.SpriteList()
 TREE_SPREAD_DISTANCE = 100  # how far apart trees must be
 NUMBER_OF_TREES = 8  # how many trees
-MAX_ATTEMPTS_PER_TREE = 5  # tries before skipping
+MAX_ATTEMPTS_PER_TREE = 2  # tries before skipping
 scenery_assets = [
     "bolder.png", "bush.png", "lake1.png", "lake3.png", "lake4.png", "meat.png",
     "rock1.png", "rock2.png", "rock3.png", "rock4.png", "rock5.png", "tree1.png"
@@ -29,6 +29,7 @@ class EnvironmentSetup(arcade.Sprite):
 
     def create_random_trees(self, tree_texture_path, x_max=1000, y_max=600):
         """ Actually spawn the trees, nicely spread """
+        print("create_random_trees")
         for _ in range(NUMBER_OF_TREES):
             placed = False
             for attempt in range(MAX_ATTEMPTS_PER_TREE):
@@ -45,6 +46,7 @@ class EnvironmentSetup(arcade.Sprite):
                     break
             if not placed:
                 print("Skipped a tree after too many attempts.")
+
 
 
 

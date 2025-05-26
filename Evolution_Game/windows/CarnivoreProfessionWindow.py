@@ -106,9 +106,10 @@ class PageView(arcade.View):
         self.window.show_view(orgwindow())
 
     def on_hide_view(self):
+        print("LOL")
         self.grid.clear()
-        self.manager.disable()
         self.manager.clear()
+        self.manager.disable()
 
 
     def carni_title(self):
@@ -201,12 +202,6 @@ class PageView(arcade.View):
         choice = self.dropdownmain.value
 
 
-        # Call random_carnivore to handle the random selection
-        # self.random_carnivore(choice)
-
-
-
-
         from stage2_files.creature_stats import predator_roles
         choice_stats = predator_roles[choice]
         # Randomly select a predator from the chosen profession's list
@@ -227,10 +222,17 @@ class PageView(arcade.View):
             f.write(f"{carnivore}" + '\n')
             f.write(self.dropdownmain.value + '\n')
             f.write(f'|{prey[0]}|{prey[1]}|{prey[2]}')
-
         # Switch to the next view
-        import stage2_files.keyboard_input as play_view
-        self.window.show_view(play_view.GameView1())
+        # self.window.hide_view()
+
+        from Evolution_Game.windows.stage2_files import keyboard_input as nextfile
+        # nextfile.GameView1.setup(self=nextfile.GameView1())
+        self.window.show_view(nextfile.GameView1())
+        # self.window.hide_view()
+
+
+        # import stage2_files.keyboard_input as play_view
+        # self.window.show_view(play_view.GameView1())
 
 
         # if I want to resize -----
