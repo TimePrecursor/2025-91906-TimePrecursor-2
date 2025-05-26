@@ -68,11 +68,10 @@ class Animal(arcade.Sprite):
             self.fleeing = True
             game = GameView1()
             changex,changey = self.get_adj_and_opp(angle_deg,10)
-            first_pos = prey_spr._position
             game.prey_flee(prey_spr, angle_deg, changex, changey)
             return True
         else:
-            self.wander()
+            # self.wander(prey_spr)
             return False
 
 
@@ -82,8 +81,14 @@ class Animal(arcade.Sprite):
         adjacent = h * math.cos(angle_radians)
         return [opposite,adjacent]
 
-    def wander(self):
-        x = numpy.random.normal(scale=1)
+    # def wander(self,prey_spr):
+    #     x = numpy.random.normal(scale=1)
+    #     print(x)
+    #     y = random.choice(["x","y"])
+    #     if y == "x":
+    #         prey_spr.change_x += x/10
+    #     if y == "y":
+    #         prey_spr.change_y += x/10
 
 
 class Player(arcade.Sprite):
@@ -133,7 +138,6 @@ class GameView1(UIView):
         import Evolution_Game.windows.stage2_files.environmentSetupMkII as enviro_setup
         select_randxy = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
         self.animalsprite = Animal(self.filefood_path, select_randxy["center_x"], select_randxy["center_y"], scale=0.15)
-        print("animalsprite")
         self.player_list.append(self.animalsprite)
 
 
@@ -217,6 +221,7 @@ class GameView1(UIView):
         self.top_right_info_add(3,list,300,40,bold=False)
         self.center_function()
         self.animal = Animal(self.filefood_path,0,0)
+        self.nutritional_value = self.prey_data[self.chosen_prey]["nutritional_value"]
         self.setup_done = True
 
     def getfoodfile(self):
@@ -252,7 +257,6 @@ class GameView1(UIView):
 
     def check_bounds(self, pos) -> bool:
         if ((pos[0] > 20) and (pos[1] > 20)) and (pos[0] < WINDOW_WIDTH-20) and (pos[1] < WINDOW_HEIGHT-20):
-            print("ERROR: not enough space")
             return True
         else:
             return False
@@ -375,12 +379,12 @@ class GameView1(UIView):
           self.prey_data[chsn_prey]["awareness"],
           self.logic_timer):
             self.fleeing = True
-            print("fleeing1")
+
 
     def on_update(self, delta_time):
         """ Movement and game logic """
         self.logic_timer += delta_time
-        if self.logic_timer >= 0.25 and not self.fleeing:
+        if self.logic_timer >= 0.1 and not self.fleeing:
             self.update_constant_logic()
             self.logic_timer = 0.0
         if self.fleeing:
@@ -389,7 +393,6 @@ class GameView1(UIView):
                 self.stopflee(self.animalsprite)
                 self.fleeing = False
                 self.prey_logic_timer = 0
-                print("STOP")
 
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
@@ -564,44 +567,38 @@ class GameView1(UIView):
     #     else:
     #         return False
 
-    def handle_prey_collision(self, prey):
-        # Call a helper to execute the async function using asyncio
-        self.run_async_task(self.shrink_and_remove_prey(prey))
+    # def handle_prey_collision(self, prey):
+    #     # Call a helper to execute the async function using asyncio
+    #     self.run_async_task(self.shrink_and_remove_prey(prey))
+    #
+    # def run_async_task(self, coro):
+    #     """Run an async task inside Arcade using the event loop."""
+    #     import asyncio
+    #
+    #     # Create or get an existing event loop
+    #     try:
+    #         loop = asyncio.get_running_loop()
+    #         print("try loop")
+    #     except RuntimeError:  # No running loop
+    #         loop = asyncio.new_event_loop()
+    #         asyncio.set_event_loop(loop)
+    #         print("try loop failed")
+    #
+    #
+    #     # Run the coroutine as a task
+    #     loop.create_task(coro)
+    # def shrink_prey(self):
+    #     # Store original scale
+    #     # original_scale = self.animalsprite.scale
 
-    def run_async_task(self, coro):
-        """Run an async task inside Arcade using the event loop."""
-        import asyncio
-
-        # Create or get an existing event loop
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:  # No running loop
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-
-        # Run the coroutine as a task
-        loop.create_task(coro)
-        
-    async def shrink_and_remove_prey(self, prey):
+    def remove_prey(self):
         # Store original scale
-        original_scale = self.animalsprite.scale
         # Gradually shrink over 2 seconds
-        shrink_duration = 2  # seconds
-        start_time = time.time()
-        
-        while time.time() - start_time < shrink_duration:
-            elapsed = time.time() - start_time
-            progress = elapsed / shrink_duration
-            # Calculate new scale (linear interpolation from original to 0)
-            prey.scale = original_scale * (1 - progress)
-            # Wait for next frame
-            await arcade.sleep(1/60)
         
         # Remove the prey and update hunger
-        nutritional_value = self.prey_data[prey.creature_type]["nutritional_value"]
-        self.hunger = min(self.max_hunger, self.hunger + nutritional_value)
+        self.hunger = min(self.max_hunger, self.hunger + self.nutritional_value)
         # Remove prey from sprite lists
-        prey.remove_from_sprite_lists()
+        self.player_list.remove(self.animalsprite)
 
     def check_prey_collision(self):
         # Get list of all prey that collided with player
@@ -609,12 +606,13 @@ class GameView1(UIView):
             self.animalsprite,
             self.player_list
         )
-        
+
         # Handle each collision
         for prey in hit_list:
             if not hasattr(prey, 'is_being_eaten'):  # Prevent multiple collision handling
                 prey.is_being_eaten = True
-                self.handle_prey_collision(prey)
+                self.remove_prey()
+                # self.check_prey_collision(prey)
 
 
 
