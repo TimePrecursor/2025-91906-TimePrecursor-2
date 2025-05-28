@@ -20,13 +20,13 @@ class PageView(arcade.View):
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
-        self.grid = UIGridLayout(
-            column_count=5,
-            row_count=5,
-            vertical_spacing=0,
-            horizontal_spacing=10,
-        )
-        self.grid.add(UIGridLayout(children=[self.grid]))
+        # self.grid = UIGridLayout(
+        #     column_count=5,
+        #     row_count=5,
+        #     vertical_spacing=0,
+        #     horizontal_spacing=10,
+        # )
+        # self.grid.add(UIGridLayout(children=[self.grid]))
 
         self.background_color = arcade.color.ATOMIC_TANGERINE
 
@@ -106,7 +106,7 @@ class PageView(arcade.View):
         self.window.show_view(orgwindow())
 
     def on_hide_view(self):
-        self.grid.clear()
+        # self.grid.clear()
         self.manager.disable()
         self.manager.clear()
 

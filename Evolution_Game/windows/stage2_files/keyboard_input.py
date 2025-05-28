@@ -25,13 +25,13 @@ SPRITE_SCALING = 0.15
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 600
 
-NORMAL_SPEED = 3
+NORMAL_SPEED = 1
 
 import arcade
 
 
 class Animal(arcade.Sprite):
-    def __init__(self, image, x, y, scale=1.0):
+    def __init__(self, image, x, y, scale=1.0, game_view=None):
         super().__init__()
         self.image = image
         self.center_x = x
@@ -39,7 +39,6 @@ class Animal(arcade.Sprite):
         self.scale = scale
         self.texture = arcade.load_texture(image)
         self.angle = 0
-        self.main = GameView1()
         self.fleeing = False
     #
     # def update_angle(self, deg):
@@ -64,7 +63,7 @@ class Animal(arcade.Sprite):
         angle_deg = self.detect_threats(predpos, preypos)
         distance = arcade.get_distance_between_sprites(prey_spr,pred_spr)
 
-        if distance < (prey_sight * awareness):
+        if distance < ((prey_sight * awareness)*1.2):
             self.fleeing = True
             game = GameView1()
             changex,changey = self.get_adj_and_opp(angle_deg,10)
@@ -128,16 +127,14 @@ class GameView1(UIView):
         # Set the background color
         self.background_color = arcade.color.AMAZON
         self.NO_SETUP = True
-        if self.NO_SETUP == False:
-            self.setup()
-            self.chosen_animal = self.chosen_animal1
 
     def center_function(self):
         """ central function """
         self.load_image()
         import Evolution_Game.windows.stage2_files.environmentSetupMkII as enviro_setup
         select_randxy = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
-        self.animalsprite = Animal(self.filefood_path, select_randxy["center_x"], select_randxy["center_y"], scale=0.15)
+        self.animalsprite = Animal(self.filefood_path, select_randxy["center_x"], select_randxy["center_y"], scale=0.15,
+                                   game_view=self)
         self.player_list.append(self.animalsprite)
 
 
@@ -169,7 +166,6 @@ class GameView1(UIView):
 
 
     def setup(self):
-        self.NO_SETUP = True
         """ Set up the game and initialize the variables. """
         self.player_list = arcade.SpriteList()
         # Find the texture
@@ -288,10 +284,10 @@ class GameView1(UIView):
 
         # Movement input and stamina/hunger effects
         if a_andnot_b and self.stamina > 20 and self.hunger > 9 and condition:
-            final_speed = self.sprint_speed / 1.25
+            final_speed = self.sprint_speed
             self.stamina -= 0.15
         elif a_andnot_b and self.stamina > 10 and self.hunger > 9 and condition:
-            final_speed = self.sprint_speed / 1.5
+            final_speed = self.sprint_speed
             self.stamina -= 0.15
         elif self.ctrl_pressed and self.stamina > 20 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED / 1.5
@@ -313,7 +309,7 @@ class GameView1(UIView):
             if self.hunger > 10 and self.stamina < self.max_stamina:
                 self.stamina += self.sprint_speed / 15
                 self.stamina = clamp(self.stamina, 10, self.max_stamina)
-                self.hunger -= self.sprint_speed / 30
+                self.hunger -= self.sprint_speed / 25
                 self.hunger = clamp(self.hunger, 10, 100)
 
         # Raw movement input (no clamping yet)
@@ -379,6 +375,9 @@ class GameView1(UIView):
           self.prey_data[chsn_prey]["awareness"],
           self.logic_timer):
             self.fleeing = True
+
+    def on_show_view(self):
+        self.setup()
 
 
     def on_update(self, delta_time):
@@ -614,24 +613,15 @@ class GameView1(UIView):
                 self.remove_prey()
                 # self.check_prey_collision(prey)
 
-
-
-
-
-
-
-
-
-
-def main():
-    """ Main function """
-    window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT)
-    game = GameView1()
-    window.show_view(game)
-    game.setup()
-    arcade.run()
-
-
-
-if __name__ == "__main__":
-    main()
+# def main():
+#     """ Main function """
+#     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT)
+#     game = GameView1()
+#     window.show_view(game)
+#     game.setup()
+#     arcade.run()
+#
+#
+#
+# if __name__ == "__main__":
+#     main()
