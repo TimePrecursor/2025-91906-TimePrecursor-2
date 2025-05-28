@@ -7,7 +7,7 @@ predator_roles = {
             "normal_detectable_range": 30,
             "sneak_detectable_range": 15,
             "stamina": 50,
-            "metabolism": 9,
+            "metabolism": 8.5,
             "prey": ["Gazelle", "Rabbit", "Pig"]
         },
         {
@@ -17,7 +17,7 @@ predator_roles = {
             "normal_detectable_range": 30,
             "sneak_detectable_range": 15,
             "stamina": 50,
-            "metabolism": 9,
+            "metabolism": 8.5,
             "prey": ["Gazelle", "Rabbit", "Pig"]
         }
     ],

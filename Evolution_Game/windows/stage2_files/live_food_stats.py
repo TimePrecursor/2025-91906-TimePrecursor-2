@@ -5,55 +5,54 @@ import os
 from arcade.gui import UIView
 
 from Evolution_Game.windows.stage2_files import keyboard_input
-
 live_food_stats_list = {
-
-    "Deer":{
+    "Deer": {
         "name": "Deer",
         "speed": 7,
         "awareness": 6,
-        "nutritional_value": 8,
+        "nutritional_value": 40,  # 8/10 -> 40/50
         "health": 60,
         "vision_range": 25,
         "stamina": 70
     },
-    "Gazelle":{
+    "Gazelle": {
         "name": "Gazelle",
         "speed": 9,
         "awareness": 8,
-        "nutritional_value": 7,
+        "nutritional_value": 35,  # 7/10 -> 35/50
         "health": 50,
         "vision_range": 30,
         "stamina": 80
     },
-    "Mouse":{
+    "Mouse": {
         "name": "Mouse",
         "speed": 3,
         "awareness": 5,
-        "nutritional_value": 2,
+        "nutritional_value": 10,  # 2/10 -> 10/50
         "health": 10,
         "vision_range": 15,
         "stamina": 25
     },
-    "Rabbit":{
+    "Rabbit": {
         "name": "Rabbit",
         "speed": 6,
         "awareness": 7,
-        "nutritional_value": 4,
+        "nutritional_value": 20,  # 4/10 -> 20/50
         "health": 30,
         "vision_range": 20,
         "stamina": 50
     },
-    "Pig":{
+    "Pig": {
         "name": "Pig",
         "speed": 4,
         "awareness": 4,
-        "nutritional_value": 9,
+        "nutritional_value": 45,  # 9/10 -> 45/50
         "health": 80,
         "vision_range": 18,
         "stamina": 40
     }
 }
+
 
 class live_food(arcade.Sprite):
     def __init__(self,image=None, scale=1, window_width=1000,window_height=600):
