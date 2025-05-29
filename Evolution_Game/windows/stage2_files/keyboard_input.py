@@ -59,12 +59,12 @@ class Animal(arcade.Sprite):
         angle_deg = (angle - 90) % 360
         return angle_deg
 
-    def simple_prey_Ai(self, predpos, preypos, prey_spr, pred_spr, prey_sight, awareness, range):
+    def simple_prey_Ai(self, predpos, preypos, prey_spr, pred_spr, prey_sight, range):
         angle_deg = self.detect_threats(predpos, preypos)
         distance = arcade.get_distance_between_sprites(prey_spr,pred_spr)
 
 
-        if distance < (range*prey_sight)/awareness:
+        if distance < ((range*1.5)*prey_sight)/5:
             self.fleeing = True
             game = GameView1()
             changex,changey = self.get_adj_and_opp(angle_deg,10)
@@ -161,8 +161,6 @@ class GameView1(UIView):
         self.chosen_prey = random_prey
         self.filefood_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{random_prey}.png")
         # live.live_food(arcade.load_image(self.filefood_path), scale=1)
-        print("IMAGE LOADED")
-
 
     def setup(self):
         """ Set up the game and initialize the variables. """
@@ -250,7 +248,7 @@ class GameView1(UIView):
             prey_spr.change_y = changey/5
 
     def check_bounds(self, pos) -> bool:
-        if ((pos[0] > 20) and (pos[1] > 20)) and (pos[0] < WINDOW_WIDTH-20) and (pos[1] < WINDOW_HEIGHT-20):
+        if ((pos[0] > 80) and (pos[1] > 80)) and (pos[0] < WINDOW_WIDTH-10) and (pos[1] < WINDOW_HEIGHT-10):
             return True
         else:
             return False
@@ -288,7 +286,7 @@ class GameView1(UIView):
             final_speed = self.sprint_speed
             self.stamina -= 0.15
         elif self.ctrl_pressed and self.stamina > 20 and self.hunger > 9 and condition:
-            final_speed = NORMAL_SPEED / 2
+            final_speed = NORMAL_SPEED / 1.5
             self.stamina -= 0.05
         elif self.ctrl_pressed and self.stamina > 10 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED / 1.5
@@ -299,7 +297,7 @@ class GameView1(UIView):
             final_speed = NORMAL_SPEED * 1.5
         elif self.ctrl_pressed and self.stamina <= 10 and self.hunger > 9 and condition:
             final_speed = NORMAL_SPEED / 2.5
-            self.hunger -= 0.15
+            self.hunger -= 0.1
             self.hunger = clamp(self.hunger, 10, 100)
 
         # Regenerate stamina/hunger if not sprinting
@@ -307,7 +305,7 @@ class GameView1(UIView):
             if self.hunger > 10 and self.stamina < self.max_stamina:
                 self.stamina += self.sprint_speed / 15
                 self.stamina = clamp(self.stamina, 10, self.max_stamina)
-                self.hunger -= (self.metabolism ** 2) / 100
+                self.hunger -= (self.metabolism ** 1.75) / 100
                 self.hunger = clamp(self.hunger, 10, 100)
 
         # Raw movement input (no clamping yet)
@@ -370,8 +368,8 @@ class GameView1(UIView):
           prey,
           pred,
           self.prey_data[chsn_prey]["vision_range"],
-          self.prey_data[chsn_prey]["awareness"],
-          self.logic_timer):
+          # self.prey_data[chsn_prey]["awareness"],
+          self.current_range):
             self.fleeing = True
 
     def on_show_view(self):
@@ -552,17 +550,3 @@ class GameView1(UIView):
         # Handle each collision
         if hit_list:
             self.remove_prey()
-
-
-# def main():
-#     """ Main function """
-#     window = arcade.Window(WINDOW_WIDTH, WINDOW_HEIGHT)
-#     game = GameView1()
-#     window.show_view(game)
-#     game.setup()
-#     arcade.run()
-#
-#
-#
-# if __name__ == "__main__":
-#     main()
