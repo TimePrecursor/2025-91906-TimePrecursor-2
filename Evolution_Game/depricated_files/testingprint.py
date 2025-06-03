@@ -24,22 +24,24 @@ def power1(n,value):
 
 # Name: [function, sign]
 lvl_signs = {
-    "1": {'add': ["+","+"], 'subtract': ["-","-"]},
-    "2": {'times': ["*", "×"], 'divide': ["/", "÷"]},
-    "3": {'sqrt1': ["sqrt1","√"], 'power': ["^","power1"]}
+    1: {'add': ["+","+"], 'subtract': ["-","-"]},
+    2: {'times': ["*", "×"], 'divide': ["/", "÷"]},
+    3: {'sqrt1': ["sqrt1","√"], 'power': ["^","power1"]}
     }
-
+lvl_signs2 = ["add","subtract","times","divide","sqrt1","power"]
 def getsign(x):
-    y = lvl_signs[x]
+    y = lvl_signs[str(x)]
     print(y)
 
-getsign(difficulty)
-print(power1(2,10))
+# getsign(difficulty)
+# print(power1(2,10))
 
-def question1():
+def question1(diff):
     questionlist = [
         random.randint(1,10),
-        random.choice()
-        random.gauss
+        random.choice(lvl_signs[1]["add"]),
+        random.randint(1, 10)
     ]
-    print("What is ",x)
+    print(f"What is {questionlist[0]}",questionlist[diff],f"{questionlist[2]}")
+
+question1(difficulty)
