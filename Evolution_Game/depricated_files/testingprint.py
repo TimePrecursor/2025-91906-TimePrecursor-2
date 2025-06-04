@@ -2,13 +2,6 @@ import random
 import math
 import numpy
 
-difficulty = input("Choose your difficulty: ")
-num_float = float(difficulty)  # Convert string to float
-num_rounded = round(num_float)  # Round the float number
-difficulty = int(num_rounded)    # Convert the rounded number to int
-
-print(f"Chosen difficulty is {difficulty}")
-
 
 def sqrt1(n, value):
     return value ** (1 / n)
@@ -28,20 +21,44 @@ lvl_signs = {
     2: {'times': ["*", "×"], 'divide': ["/", "÷"]},
     3: {'sqrt1': ["sqrt1","√"], 'power': ["^","power1"]}
     }
-lvl_signs2 = ["add","subtract","times","divide","sqrt1","power"]
-def getsign(x):
-    y = lvl_signs[str(x)]
-    print(y)
+lvl3_signs = [["add","subtract"],["times","divide"],["sqrt1","power"]]
 
-# getsign(difficulty)
-# print(power1(2,10))
+def ri_args(min, max):
+    return random.randint(min,max)
 
-def question1(diff):
-    questionlist = [
-        random.randint(1,10),
-        random.choice(lvl_signs[1]["add"]),
-        random.randint(1, 10)
-    ]
-    print(f"What is {questionlist[0]}",questionlist[diff],f"{questionlist[2]}")
+def ri_10():
+    return random.randint(0, 10)
 
-question1(difficulty)
+def print_question(*args,**kwargs):
+    list1 = []
+
+    for i, sign in enumerate(kwargs):
+        list1.insert(int(i*2),str(kwargs[sign]))
+    for i, val in enumerate(args):
+        list1.insert(i+i,str(val))
+
+    print("What is", *list1)
+
+def level_all():
+    signs_dict = {}
+
+    difficulty = numpy.clip(int(round(float(input("Choose your difficulty: ")))),0,3)
+    print(f"Chosen difficulty is {difficulty}\n")
+
+    index = lvl3_signs[difficulty-1][ri_args(0, 1)]
+    sign1 = str(random.choice(lvl_signs[difficulty][index]))
+
+    # Make random questions:
+    for x in range(3):
+        if difficulty == 3:
+            power = power1(ri_args(0,3),ri_10())
+            sqrt = sqrt1(ri_args(1,3),ri_args(0,100))
+            sign1 = random.choice([power,sqrt])
+            print(sign1)
+
+
+    input(f"What is {ri_10()} {sign1} {ri_10()}")
+    print_question(1,2,3,4,a1=1,a2=2,a3=3)
+
+
+level_all()
