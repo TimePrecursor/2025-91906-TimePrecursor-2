@@ -37,9 +37,11 @@ def print_question(*args,**kwargs):
     list1 = []
 
     for i, sign in enumerate(kwargs):
-        list1.insert(int(i*2),str(kwargs[sign]))
+        list1.insert(int(i*2),str(kwargs[sign[0]]))
     for i, val in enumerate(args):
-        list1.insert(i+i,str(val))
+        if val[0] == "sqrt1":
+            pass
+        list1.insert(i+i,str(f"{val[0]}"))
 
     print("What is", *list1)
 
@@ -47,12 +49,13 @@ def print_question(*args,**kwargs):
 def level_all():
     signs_dict = {}
 
-    def rand_sign(diff):
+    def rand_sign():
         index = lvl3_signs[difficulty - 1][ri_args(0, 1)]
         sign2 = str(random.choice(lvl_signs[difficulty][index]))
-        if diff == 3:
-
-        return sign2
+        sign_val = random.choice(lvl_signs[difficulty][index])
+        # if diff == 3:
+        #     pass
+        return sign2,sign_val
 
     difficulty = numpy.clip(int(round(float(input("Choose your difficulty: ")))),0,3)
     print(f"Chosen difficulty is {difficulty}\n")
@@ -66,7 +69,7 @@ def level_all():
         # print(sign1, "sign1")
 
 
-    input(f"What is {ri_10()} {rand_sign()} {ri_10()}")
+    # input(f"What is {ri_10()} {rand_sign()} {ri_10()}")
     print_question(ri_10(), ri_10(), ri_10(), ri_10(), q=rand_sign(), w=rand_sign(), e=rand_sign())
 
 
