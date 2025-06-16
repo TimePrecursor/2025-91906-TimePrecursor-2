@@ -3,7 +3,7 @@ import math
 # from arcade import gui
 import os
 import random
-from time import sleep
+from datetime import date
 
 import numpy
 
@@ -104,9 +104,10 @@ class Player(arcade.Sprite):
 class GameView1(UIView):
     def __init__(self):
         super().__init__()
+        self.username = "None"
         self.logic_timer = 0.0  # Accumulated time
         self.prey_logic_timer = 0  # Accumulated time
-        self.spawnprey_Timer = 0
+        self.alivetimer = 0.0
         self.prey_is_alive = True
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
         self.environment = EnvironmentSetup()
@@ -305,7 +306,7 @@ class GameView1(UIView):
             if self.hunger > 10 and self.stamina < self.max_stamina:
                 self.stamina += self.sprint_speed / 15
                 self.stamina = clamp(self.stamina, 10, self.max_stamina)
-                self.hunger -= (self.metabolism ** 1.75) / 100
+                self.hunger -= (self.metabolism ** 1.75) / 10
                 self.hunger = clamp(self.hunger, 10, 100)
 
         # Raw movement input (no clamping yet)
@@ -371,14 +372,26 @@ class GameView1(UIView):
           # self.prey_data[chsn_prey]["awareness"],
           self.current_range):
             self.fleeing = True
+        if self.hunger < 21:
+            self.player_died()
 
-    def on_show_view(self):
-        self.setup()
+    def player_died(self):
+        # print("You lived for: ", round(self.alivetimer, 1))
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        # print(project_root)
+        logins_path = os.path.join(project_root, "windows", "stage2_files", "secrets", "Logins.txt")
+        with open(logins_path,"a+") as logins:
+            logins.write(f'Date: {date.today()} | Username: {self.username} | Creature: {self.chosen_animal1} | Score: {round(self.alivetimer, 1)}')
 
+            # for line in logins:
+            #     print(line, end='')
+
+        arcade.exit()
 
     def on_update(self, delta_time):
         """ Movement and game logic """
         self.logic_timer += delta_time
+        self.alivetimer += delta_time
         if self.logic_timer >= 0.1 and not self.fleeing:
             self.update_constant_logic()
             self.logic_timer = 0.0
@@ -399,7 +412,6 @@ class GameView1(UIView):
         self.update_player_speed()  # Update speed and rotation here
         self.player_list.update(delta_time)  # Make sure this is updating the sprite
         self.check_prey_collision()
-
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -452,6 +464,8 @@ class GameView1(UIView):
         if key == arcade.key.LCTRL:
             self.ctrl_pressed = False
 
+    def on_show_view(self):
+        self.setup()
 
     def top_right_info_add(self, amount=4, text=None, width=200, height=30, font_size=20, bold=True, y_val=(WINDOW_HEIGHT / 2) - 25):
         self.y2 = 60

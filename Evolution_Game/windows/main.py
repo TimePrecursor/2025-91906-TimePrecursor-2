@@ -4,7 +4,7 @@ from arcade import gui
 import os
 import random
 #-----------------------
-codeVersion= "V 1.39.1.0 - School"
+codeVersion= "V 1.40.3.0 - School"
 '''
 Software versioning is now: (Finished Version, Major Rewrite, Bug fixing, Small changes)
 Keys:
@@ -146,11 +146,6 @@ class Orginismselectionveiw(UIView):
 
     def showveiwfunc(self, viewselected):
         self.window.show_view(viewselected)
-
-
-
-
-
 
 def main():
     """ Main function """

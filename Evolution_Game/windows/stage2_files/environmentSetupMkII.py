@@ -41,31 +41,6 @@ class EnvironmentSetup(arcade.Sprite):
                     self.tree_locations.append({"center_x":random_x,"center_y":random_y})
                     tree_list.append(tree)
                     placed = True
-                    print("made a tree")
                     break
             if not placed:
                 print("Skipped a tree after too many attempts.")
-
-
-
-    # def treelocations(self, tree_locations=None):
-    #     print(tree_locations)
-    #     return(tree_locations)
-    #     # print(self.tree_locations)
-
-# window = arcade.Window(1280, 720, "Tree Spread Example")
-# environment = EnvironmentSetup()
-# window.background_color = arcade.color.AMAZON
-# # Where your tree image is
-# tree_image_path = "tree1.png"  # Or wherever you store it
-#
-# # Call this ONCE to create the trees
-# environment.create_random_trees(EnvironmentSetup.asset_paths(EnvironmentSetup))
-#
-# @window.event
-# def on_draw():
-#     window.clear()
-#     environment.draw_trees()
-#
-# arcade.run()
-
