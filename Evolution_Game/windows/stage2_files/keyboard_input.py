@@ -3,7 +3,7 @@ import math
 # from arcade import gui
 import os
 import random
-from datetime import date
+import datetime
 
 import numpy
 
@@ -108,6 +108,7 @@ class GameView1(UIView):
         self.logic_timer = 0.0  # Accumulated time
         self.prey_logic_timer = 0  # Accumulated time
         self.alivetimer = 0.0
+        self.kills = 0
         self.prey_is_alive = True
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
         self.environment = EnvironmentSetup()
@@ -381,7 +382,7 @@ class GameView1(UIView):
         # print(project_root)
         logins_path = os.path.join(project_root, "windows", "stage2_files", "secrets", "Logins.txt")
         with open(logins_path,"a+") as logins:
-            logins.write(f'Date: {date.today()} | Username: {self.username} | Creature: {self.chosen_animal1} | Score: {round(self.alivetimer, 1)}')
+            logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")} | Username: {self.username} | Creature: {self.chosen_animal1} | Score: {round(self.alivetimer, 1)} | Kills: {self.kills}\n')
 
             # for line in logins:
             #     print(line, end='')
@@ -563,4 +564,5 @@ class GameView1(UIView):
 
         # Handle each collision
         if hit_list:
+            self.kills += 1
             self.remove_prey()
