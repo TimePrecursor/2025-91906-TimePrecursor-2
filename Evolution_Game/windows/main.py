@@ -27,7 +27,6 @@ class FirstButtons(arcade.gui.UITextureButton):
         super().__init__(text=text, width=width, height=height)
         self.button_id = button_id
         self.ui_manager = ui_manager
-
     def errormessage(self):
         message_box = UIMessageBox(
             width=500,
@@ -83,6 +82,17 @@ class Orginismselectionveiw(UIView):
         self.setup_buttons()
         self.label_making1()
 
+    def username2(self):
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        cache_file = os.path.join(project_root, "Evolution_Game", "windows", "stage2_files", "saved_cache",
+                                  "cache1.txt")
+        print(cache_file)
+        with open(cache_file, "a") as cf:
+            x = str(self.usernametext)
+            print(x, " = username")
+            cf.write(x)
+        return self.usernametext
+
     def setup_buttons(self):
         for count in self.sprite_list.keys():
             texture_button = FirstButtons(
@@ -124,6 +134,35 @@ class Orginismselectionveiw(UIView):
         self.title.center_on_screen()
         self.title.move(dy=200)
 
+        self.hintlabel = arcade.gui.UILabel(
+            bold=True,
+            text="Enter a Username! (optional)",
+            text_color=arcade.color.WHITE,
+            font_name=("Times New Roman", "Times", "Liberation Serif"),
+            x=100,
+            font_size=20
+        )
+        self.hintlabel.add(self.anchor)
+        self.manager.add(self.hintlabel)
+        self.hintlabel.center_on_screen()
+        self.hintlabel.move(dy=130)
+
+        self.username = arcade.gui.UIInputText(
+            bold=True,
+            width=325,
+            border_color=arcade.color.BLACK,
+            border_width=4,
+            text_color=arcade.color.WHITE,
+            font_name=("Times New Roman", "Times", "Liberation Serif"),
+            x=100,
+            font_size=12
+        )
+        self.username.add(self.anchor)
+        self.manager.add(self.username)
+        self.username.center_on_screen()
+        self.username.move(dy=100)
+        self.usernametext = self.username.text
+
         for i in range(3):
             label = arcade.gui.UILabel(
                 text=self.sprite_list[i][3],
@@ -139,6 +178,7 @@ class Orginismselectionveiw(UIView):
         self.manager.draw()  # ✅ Draw UI elements here
 
     def on_hide_view(self):
+        self.username2()
         self.grid.clear()
         self.anchor.clear()
         self.manager.clear()

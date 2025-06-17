@@ -377,16 +377,21 @@ class GameView1(UIView):
             self.player_died()
 
     def player_died(self):
-        # print("You lived for: ", round(self.alivetimer, 1))
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-        # print(project_root)
         logins_path = os.path.join(project_root, "windows", "stage2_files", "secrets", "Logins.txt")
+        cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
+        with open(cache_file, "r") as cf:
+            for line in cf.readlines():
+                if line.startswith("User:"):
+                    line.rstrip("\n")
+                    line.lstrip("User:")
+                    self.username = line
+                else:
+                    pass
         with open(logins_path,"a+") as logins:
-            logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")} | Username: {self.username} | Creature: {self.chosen_animal1} | Score: {round(self.alivetimer, 1)} | Kills: {self.kills}\n')
-
-            # for line in logins:
-            #     print(line, end='')
-
+            logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")}'
+                         f' | Username: {self.username} | Creature: {self.chosen_animal1}'
+                         f' | Score: {round(self.alivetimer, 1)} | Kills: {self.kills}\n')
         arcade.exit()
 
     def on_update(self, delta_time):
