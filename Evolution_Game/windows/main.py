@@ -84,14 +84,34 @@ class Orginismselectionveiw(UIView):
 
     def username2(self):
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-        cache_file = os.path.join(project_root, "Evolution_Game", "windows", "stage2_files", "saved_cache",
-                                  "cache1.txt")
-        print(cache_file)
-        with open(cache_file, "a") as cf:
-            x = str(self.usernametext)
-            print(x, " = username")
-            cf.write(x)
-        return self.usernametext
+        cache_file = os.path.join(project_root, "Evolution_Game", "windows",
+                                  "stage2_files", "saved_cache", "cache1.txt")
+        tempcache = []
+        with open(cache_file) as cf:
+            try:
+                if self.username.text != ("" or " "):
+                    x = str(self.username.text)
+                    cf.write(f"\nUsername: {x}")
+                else:
+                    cf.write(f"\nUsername: None")
+            except:
+                print("error in try expression!")
+            finally:
+                print("done")
+                Lines = cf.readlines()
+
+        print(Lines)
+        self.writeovercache(Lines,cache_file)
+
+
+    def writeovercache(self, Lines, cache):
+
+        # joinedlist = ' \n'.join(Lines)
+        # print(joinedlist)
+        with open(cache, "w") as cf:
+            cf.writelines(Lines)
+
+
 
     def setup_buttons(self):
         for count in self.sprite_list.keys():
@@ -161,7 +181,6 @@ class Orginismselectionveiw(UIView):
         self.manager.add(self.username)
         self.username.center_on_screen()
         self.username.move(dy=100)
-        self.usernametext = self.username.text
 
         for i in range(3):
             label = arcade.gui.UILabel(
