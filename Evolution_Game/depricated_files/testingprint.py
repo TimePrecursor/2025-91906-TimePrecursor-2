@@ -2,7 +2,6 @@ import random
 import math
 import numpy
 
-
 def sqrt1(n, value):
     return value ** (1 / n)
 
@@ -71,6 +70,5 @@ def level_all():
 
     # input(f"What is {ri_10()} {rand_sign()} {ri_10()}")
     print_question(ri_10(), ri_10(), ri_10(), ri_10(), q=rand_sign(), w=rand_sign(), e=rand_sign())
-
 
 level_all()

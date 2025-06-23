@@ -381,13 +381,8 @@ class GameView1(UIView):
         logins_path = os.path.join(project_root, "windows", "stage2_files", "secrets", "Logins.txt")
         cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
         with open(cache_file, "r") as cf:
-            for line in cf.readlines():
-                if line.startswith("User:"):
-                    line.rstrip("\n")
-                    line.lstrip("User:")
-                    self.username = line
-                else:
-                    pass
+            self.username = cf.readlines(-1)
+            cf.close()
         with open(logins_path,"a+") as logins:
             logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")}'
                          f' | Username: {self.username} | Creature: {self.chosen_animal1}'
