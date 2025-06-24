@@ -1,16 +1,16 @@
-# GUI and system imports
 import arcade
 from arcade.gui import *
 from arcade import gui
 import random
 import os
 
-# Predator data
 from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
+
+# cool thing!
+# from pymunk.examples.spiderweb import update
 
 WINDOW_TITLE = f"Evolution Game - Carnivore Selection"
 
-# Main view for profession selection
 class PageView(arcade.View):
     def __init__(self):
         super().__init__()
@@ -20,9 +20,16 @@ class PageView(arcade.View):
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
 
+        # self.grid = UIGridLayout(
+        #     column_count=5,
+        #     row_count=5,
+        #     vertical_spacing=0,
+        #     horizontal_spacing=10,
+        # )
+        # self.grid.add(UIGridLayout(children=[self.grid]))
+
         self.background_color = arcade.color.ATOMIC_TANGERINE
 
-        # Back button setup
         self.back_button = arcade.gui.UIFlatButton(
             text="Back to Menu",
             width=self.WINDOW_WIDTH,
@@ -30,17 +37,35 @@ class PageView(arcade.View):
         )
         self.back_button.on_click = self.go_back
         self.manager.add(self.back_button)
+        # self.ui = UIManager()
 
         self.fontdefaults = (
-            "Times New Roman", "Times", "Liberation Serif"
+            "Times New Roman",  # Comes with Windows
+            "Times",  # MacOS may sometimes have this variant
+            "Liberation Serif"  # Common on Linux systems
         )
-
-        # List of professions available
+        # "Speed" - Cheetah
+        # "Ambush" - Tiger / Lion
+        # "Persistence" - Snow Leopard / Wolf
+        # "Scavenger" - Fox / Hyena
+        # "Pack" - Wolf / Meerkat
         self.carni_professions_list = [
-            "Speed", "Ambush", "Persistence", "Scavenger"
+            "Speed",
+            "Ambush",
+            "Persistence",
+            "Scavenger"#,
+            # "Pack"
         ]
+        # self.carni_choices = {
+        #     # "Type" : {['Name', 'Name'],[Sprinting Speeds],[Sneak Stealth],[Detectable Range]},
+        # "Speed" : {['Cheetah', 'Cheetah'],[10,10],[]},
+        # "Ambush" : {['Tiger', 'Lion'],[7,8],[]},
+        # "Persistence" : {['SnowLeopard', 'Wolf'],[6,7],[]},
+        # "Scavenger" : {['Fox', 'Hyena'],[6,7],[]},
+        # "Pack" : {['Wolf', 'Meerkat'],[7,8],[]}
+        # }
 
-        # Descriptions for each profession (index-matched)
+        # Index : [Name, Description, Pros, Cons]
         self.carni_profession_desc = {
             0: ["Speed",
                 "These are lighting fast sprinters, able to run faster than 100km/h, but only for short periods of time.",
@@ -67,55 +92,62 @@ class PageView(arcade.View):
         self.carni_title()
         self.choose_carni_profession()
         self.choosebutton()
-        self.choose_button.visible = False  # Only visible once an option is selected
+        self.choose_button.visible = False
+
 
     def on_draw(self):
-        self.clear(color=arcade.color.CORDOVAN)
+        self.clear(color=arcade.color.CORDOVAN) #CHINESE_RED #CHESTNUT
         self.manager.draw()
+
+
 
     def go_back(self, event):
         from main import Orginismselectionveiw as orgwindow
         self.window.show_view(orgwindow())
 
     def on_hide_view(self):
+        # self.grid.clear()
         self.manager.disable()
         self.manager.clear()
 
+
     def carni_title(self):
-        text = "C A R N I V O R E S"
+        text="C A R N I V O R E S",
+
         self.title = arcade.gui.UILabel(
-            text=text,
+            text=str(*text),
             bold=True,
             text_color=arcade.color.WHITE,
             font_name=self.fontdefaults,
-            x=(self.WINDOW_WIDTH/3.9)-(len(text)*self.fontsize),
-            y=(self.WINDOW_HEIGHT)-(self.fontsize*1.8),
+            x=((self.WINDOW_WIDTH/3.9)-(len(text)*self.fontsize)),
+            y=((self.WINDOW_HEIGHT)-(self.fontsize*1.8)),
             font_size=self.fontsize)
+        # self.grid.add(self.title)
         self.manager.add(self.title)
 
+
     def choose_carni_profession(self):
-        # Dropdown label
-        text = "Choose your hunting style!"
+        text="Choose your hunting style!"
         self.carni_profession_text = arcade.gui.UILabel(
-            text=text,
+            text=str(text),
             font_name=self.fontdefaults,
-            x=(self.WINDOW_WIDTH/3.25)-len(text),
+            x=((self.WINDOW_WIDTH/3.25)-(len(text))),
             y=(self.WINDOW_HEIGHT/2.5)+(self.WINDOW_HEIGHT/2.8),
             font_size=30,
         )
+        # self.grid.add(self.carni_profession_text)
         self.manager.add(self.carni_profession_text)
 
-        # Dropdown menu
         self.dropdownmain = arcade.gui.UIDropdown(
-            x=self.WINDOW_WIDTH/4,
-            y=self.WINDOW_HEIGHT/1.5,
-            width=self.WINDOW_WIDTH/2,
+            x= (self.WINDOW_WIDTH/4),
+            y= (self.WINDOW_HEIGHT/1.5),
+            width= (self.WINDOW_WIDTH/2),
             height=50,
             options=self.carni_professions_list)
 
+        # self.grid.add(self.dropdownmain)
         self.manager.add(self.dropdownmain)
 
-        # Description area
         self.profession_desc_area = arcade.gui.UILabel(
             width=self.WINDOW_WIDTH/1.25,
             height=self.WINDOW_WIDTH/4,
@@ -128,16 +160,29 @@ class PageView(arcade.View):
         )
         self.manager.add(self.profession_desc_area)
 
-        # Event handler for dropdown
-        @self.dropdownmain.event()
+        dropdown = self.dropdownmain
+        @dropdown.event()
         def on_change(event: UIOnChangeEvent):
-            index = self.carni_professions_list.index(event.new_value)
-            desc = '\n'.join(self.carni_profession_desc[index][1:4])
-            self.profession_desc_area.text = desc
+            x = self.carni_professions_list.index(event.new_value)
+            y = '\n'.join(self.carni_profession_desc[x][1:4])
+            self.profession_desc_area.text = y
             self.choose_button.visible = True
 
+    # def random_carnivore(self, choice):
+    #     try:
+    #         from stage2_files import creature_stats as stats
+    #         choice_stats = stats.predator_roles[choice]  # Access the list for the chosen role
+    #
+    #         # Pick a random predator from the list
+    #         random_predator = random.choice(choice_stats)
+    #
+    #         # Print the predator's name (and optionally other stats)
+    #         carnivore = random_predator["name"]
+    #         print(f"Chosen carnivore: {carnivore}")
+    #     except Exception as e:
+    #         print(f"Error: {e}")
+
     def choosebutton(self):
-        # Confirm button
         self.choose_button = arcade.gui.UIFlatButton(
             x=(self.WINDOW_WIDTH/2)-(self.WINDOW_WIDTH/8),
             y=self.WINDOW_HEIGHT/8,
@@ -145,29 +190,61 @@ class PageView(arcade.View):
             height=50,
             text="Confirm!",
         )
+
         self.choose_button.on_click = self.click
         self.manager.add(self.choose_button)
 
+
+
     def click(self, event):
-        # Get dropdown choice
+        # Get the selected profession
         choice = self.dropdownmain.value
 
-        # Get predator stats from cache
+
+        # Call random_carnivore to handle the random selection
+        # self.random_carnivore(choice)
+
+
+
+
+        from stage2_files.creature_stats import predator_roles
         choice_stats = predator_roles[choice]
+        # Randomly select a predator from the chosen profession's list
         random_predator = random.choice(choice_stats)
+        # Write the predator's name to the cache
         carnivore = random_predator["name"]
 
-        # Determine index for prey info
-        self.cr_index = 0 if choice == carnivore else 1
+        if choice == carnivore:
+            self.cr_index = 0
+        elif choice != carnivore:
+            self.cr_index = 1
         prey = predator_roles[choice][self.cr_index]["prey"]
 
-        # Save selection to cache file
+        # Write the selected carnivore's name to the cache file
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
-        with open(cache_file, "w+") as f:
-            username = f.read()
-            f.write(f"{carnivore}\n{choice}\n|{prey[0]}|{prey[1]}|{prey[2]}\n{username}")
+        with open(cache_file, "w") as f:
+            f.write(f"{carnivore}" + '\n')
+            f.write(self.dropdownmain.value + '\n')
+            f.write(f'|{prey[0]}|{prey[1]}|{prey[2]}')
 
-        # Move to next view
+        # Switch to the next view
         import stage2_files.keyboard_input as play_view
         self.window.show_view(play_view.GameView1())
+
+
+        # if I want to resize -----
+
+        # self.title.move(dy=float((self.height/2)-(self.fontsize)))
+    #
+    # def on_resize(self, width: int, height: int):
+    #     super().on_resize(width, height)
+    #     self.WINDOW_WIDTH = width
+    #     self.WINDOW_HEIGHT = height
+    #     # self.title.x = float((self.width/2)-(self.fontsize*6))
+    #     # self.title.y = float((self.height/2)-(self.fontsize*4))
+    #     self.title.center_on_screen()
+    #     self.title.move(dy=float((self.height/2)-(self.fontsize)))
+    #     print(self.WINDOW_WIDTH)
+
+        # if I want to resize -----

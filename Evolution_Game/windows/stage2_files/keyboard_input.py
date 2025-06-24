@@ -104,7 +104,7 @@ class Player(arcade.Sprite):
 class GameView1(UIView):
     def __init__(self):
         super().__init__()
-        # self.username = "None"
+        self.username = "None"
         self.logic_timer = 0.0  # Accumulated time
         self.prey_logic_timer = 0  # Accumulated time
         self.alivetimer = 0.0
@@ -156,6 +156,7 @@ class GameView1(UIView):
                     self.prey_choices = line.split("|")
                 else:
                     pass
+                    # print() # line Break in terminal
 
         self.prey_choices.pop(0)
         random_prey = random.choice(self.prey_choices)
@@ -213,11 +214,9 @@ class GameView1(UIView):
         self.hunger_ratio = self.max_hunger_ratio
         list = ["Stamina:", "Hunger:", f"Metabolism = {self.metabolism}\nSpeed = {round(self.stat_speed,ndigits=1)}\nDetectable Range = {self.range}"]
         self.top_right_info_add(3,list,300,40,bold=False)
+        self.center_function()
         self.animal = Animal(self.filefood_path,0,0)
         self.nutritional_value = self.prey_data[self.chosen_prey]["nutritional_value"]
-        self.project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-        self.logins_path = os.path.join(self.project_root, "windows", "stage2_files", "secrets", "Logins.txt")
-        self.center_function()
 
     def getfoodfile(self):
         return self.filefood_path
@@ -260,6 +259,8 @@ class GameView1(UIView):
         prey_spr.change_y = 0
         prey_spr.change_x = 0
         self.fleeing = False
+
+    import math
 
     def update_player_speed(self):
         # Add stamina regeneration rate as a class attribute
@@ -362,9 +363,8 @@ class GameView1(UIView):
     def update_constant_logic(self):
         pred = self.player_sprite
         prey = self.animalsprite
-        animal = self.animal
         chsn_prey = self.chosen_prey
-        if Animal.simple_prey_Ai(animal,
+        if Animal.simple_prey_Ai(self.animal,
           pred.position,
           prey.position,
           prey,
@@ -377,20 +377,28 @@ class GameView1(UIView):
             self.player_died()
 
     def player_died(self):
-        cache_file = os.path.join(self.project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        logins_path = os.path.join(project_root, "windows", "stage2_files", "secrets", "Logins.txt")
+        cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
         with open(cache_file, "r") as cf:
-            self.username = cf.read()
-            cf.close()
-        with open(self.logins_path,"a+") as logins:
-            logins.write(f' | Score: {round(10/self.alivetimer, 2)} | Kills: {self.kills}\n')
-            logins.flush()
+            for line in cf.readlines():
+                if line.startswith("User:"):
+                    line.rstrip("\n")
+                    line.lstrip("User:")
+                    self.username = line
+                else:
+                    pass
+        with open(logins_path,"a+") as logins:
+            logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")}'
+                         f' | Username: {self.username} | Creature: {self.chosen_animal1}'
+                         f' | Score: {round(self.alivetimer, 1)} | Kills: {self.kills}\n')
         arcade.exit()
 
     def on_update(self, delta_time):
         """ Movement and game logic """
         self.logic_timer += delta_time
         self.alivetimer += delta_time
-        if self.logic_timer > 0.1 and not self.fleeing:
+        if self.logic_timer >= 0.1 and not self.fleeing:
             self.update_constant_logic()
             self.logic_timer = 0.0
         if self.fleeing:
@@ -464,9 +472,6 @@ class GameView1(UIView):
 
     def on_show_view(self):
         self.setup()
-        with open(self.logins_path, "a+") as logins:
-            logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")}'
-                         f' | Username: {self.username} | Creature: {self.chosen_animal1}')
 
     def top_right_info_add(self, amount=4, text=None, width=200, height=30, font_size=20, bold=True, y_val=(WINDOW_HEIGHT / 2) - 25):
         self.y2 = 60

@@ -86,30 +86,30 @@ class Orginismselectionveiw(UIView):
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         cache_file = os.path.join(project_root, "Evolution_Game", "windows",
                                   "stage2_files", "saved_cache", "cache1.txt")
-        self.lines = []
-        with open(cache_file, "w") as cf:
+        tempcache = []
+        with open(cache_file) as cf:
             try:
-                if self.username.text:
-                    x = self.username.text
-                    print(x)
-                    cf.write(str(x))
+                if self.username.text != ("" or " "):
+                    x = str(self.username.text)
+                    cf.write(f"\nUsername: {x}")
                 else:
-                    cf.write("None")
+                    cf.write(f"\nUsername: None")
             except:
                 print("error in try expression!")
             finally:
                 print("done")
-                cf.close()
-        # self.writeovercache(username)
+                Lines = cf.readlines()
+
+        print(Lines)
+        self.writeovercache(Lines,cache_file)
 
 
-    # def writeovercache(self, username):
-    #
-    #     # joinedlist = ' \n'.join(Lines)
-    #     # print(joinedlist)
-    #     with open(cache, "w") as cf:
-    #         print(lines)
-    #         cf.writelines(username)
+    def writeovercache(self, Lines, cache):
+
+        # joinedlist = ' \n'.join(Lines)
+        # print(joinedlist)
+        with open(cache, "w") as cf:
+            cf.writelines(Lines)
 
 
 
