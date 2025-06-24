@@ -165,7 +165,7 @@ class PageView(arcade.View):
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
         with open(cache_file, "w+") as f:
-            username = f.readline().strip()
+            username = f.read()
             f.write(f"{carnivore}\n{choice}\n|{prey[0]}|{prey[1]}|{prey[2]}\n{username}")
 
         # Move to next view

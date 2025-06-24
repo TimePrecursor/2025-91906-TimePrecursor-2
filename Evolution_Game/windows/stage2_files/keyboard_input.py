@@ -191,6 +191,7 @@ class GameView1(UIView):
         self.player_sprite._angle = 0  # Start by facing up (90 degrees)
         self.player_list.append(self.player_sprite)
         # print(self.player_list)
+        self.center_function()
 
         from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
         creature_type = predator_roles[self.creature_type]
@@ -214,9 +215,10 @@ class GameView1(UIView):
         self.hunger_ratio = self.max_hunger_ratio
         list = ["Stamina:", "Hunger:", f"Metabolism = {self.metabolism}\nSpeed = {round(self.stat_speed,ndigits=1)}\nDetectable Range = {self.range}"]
         self.top_right_info_add(3,list,300,40,bold=False)
-        self.center_function()
         self.animal = Animal(self.filefood_path,0,0)
         self.nutritional_value = self.prey_data[self.chosen_prey]["nutritional_value"]
+        self.project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        self.logins_path = os.path.join(self.project_root, "windows", "stage2_files", "secrets", "Logins.txt")
 
     def getfoodfile(self):
         return self.filefood_path
@@ -377,16 +379,13 @@ class GameView1(UIView):
             self.player_died()
 
     def player_died(self):
-        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-        logins_path = os.path.join(project_root, "windows", "stage2_files", "secrets", "Logins.txt")
-        cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
+        cache_file = os.path.join(self.project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
         with open(cache_file, "r") as cf:
             self.username = cf.readlines(-1)
             cf.close()
-        with open(logins_path,"a+") as logins:
-            logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")}'
-                         f' | Username: {self.username} | Creature: {self.chosen_animal1}'
-                         f' | Score: {round(self.alivetimer, 1)} | Kills: {self.kills}\n')
+        with open(self.logins_path,"a+") as logins:
+            logins.write(f' | Score: {round(1/self.alivetimer, 2)} | Kills: {self.kills}\n')
+            logins.flush()
         arcade.exit()
 
     def on_update(self, delta_time):
@@ -467,6 +466,9 @@ class GameView1(UIView):
 
     def on_show_view(self):
         self.setup()
+        with open(self.logins_path, "a+") as logins:
+            logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")}'
+                         f' | Username: {self.username} | Creature: {self.chosen_animal1}')
 
     def top_right_info_add(self, amount=4, text=None, width=200, height=30, font_size=20, bold=True, y_val=(WINDOW_HEIGHT / 2) - 25):
         self.y2 = 60
