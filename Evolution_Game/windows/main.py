@@ -144,7 +144,7 @@ class Orginismselectionveiw(UIView):
             )
             file_path_list = []
             project_root = pathlib.Path(__file__).resolve().parents[2]
-            image_folder = project_root / "assets" / "images"
+            image_folder = project_root / "Evolution_Game" / "assets" / "images"
             for x in range(3):
                 file_name = self.sprite_list[count][x]
                 file_path = image_folder / file_name
