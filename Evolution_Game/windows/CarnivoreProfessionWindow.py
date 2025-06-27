@@ -1,3 +1,5 @@
+import pathlib
+import json
 import arcade
 from arcade.gui import *
 from arcade import gui
@@ -14,6 +16,8 @@ WINDOW_TITLE = f"Evolution Game - Carnivore Selection"
 class PageView(arcade.View):
     def __init__(self):
         super().__init__()
+        project_root = pathlib.Path(__file__).resolve().parents[2]  # go up 2 levels
+        self.cache_file_path = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
         self.fontsize = 50
         self.WINDOW_WIDTH = 1000
         self.WINDOW_HEIGHT = 600
@@ -194,19 +198,55 @@ class PageView(arcade.View):
         self.choose_button.on_click = self.click
         self.manager.add(self.choose_button)
 
+    def load_cache_username(self):
+        project_root = pathlib.Path(__file__).resolve().parents[2]  # go up 2 levels
+        self.cache_file_path = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
+        if self.cache_file_path.exists():
+            with open(self.cache_file_path, 'r') as f:
+                return json.load(f)
+        else:
+            return "none"
 
+    def load_cache(self):
+        if self.cache_file_path.exists():
+            with self.cache_file_path.open("r") as f:
+                return json.load(f)
+        return {"fifo_cache": []}
+
+    # Save cache
+    def save_cache(self,cache):
+        self.cache_file_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.cache_file_path.open("w") as f:
+            json.dump(cache, f, indent=4)
+
+    # # Add play session to FIFO cache
+    # def add_play_session(self,creature_name, creature_type, prey_list):
+    #     cache = self.load_cache()
+    #     fifo = cache.get("fifo_cache", [])
+    #
+    #     entry = {
+    #         "creature_name": carnivore,
+    #         "creature_type": self.dropdownmain.value,
+    #         "prey": [prey[0], prey[1], prey[2]],
+    #         "username": self.load_cache_username()
+    #     }
+    #
+    #     fifo.append(entry)
+    #
+    #     # Enforce FIFO size limit
+    #     if len(fifo) > 1:
+    #         fifo.pop(0)
+    #
+    #     cache["fifo_cache"] = fifo
+    #     save_cache(cache)
+    #
+    #     print(f"Added creature: {creature_name} | Current FIFO ({len(fifo)}):")
+    #     for e in fifo:
+    #         print("-", e["creature_name"], "by", e["username"])
 
     def click(self, event):
         # Get the selected profession
         choice = self.dropdownmain.value
-
-
-        # Call random_carnivore to handle the random selection
-        # self.random_carnivore(choice)
-
-
-
-
         from stage2_files.creature_stats import predator_roles
         choice_stats = predator_roles[choice]
         # Randomly select a predator from the chosen profession's list
@@ -221,30 +261,36 @@ class PageView(arcade.View):
         prey = predator_roles[choice][self.cr_index]["prey"]
 
         # Write the selected carnivore's name to the cache file
-        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-        cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
-        with open(cache_file, "w") as f:
-            f.write(f"{carnivore}" + '\n')
-            f.write(self.dropdownmain.value + '\n')
-            f.write(f'|{prey[0]}|{prey[1]}|{prey[2]}')
+        cache = self.load_cache()
+        fifo = cache.get("fifo_cache", [])
+        entry = {
+            "creature_name": carnivore,
+            "creature_type": self.dropdownmain.value,
+            "prey": [prey[0],prey[1],prey[2]],
+            "username": self.load_cache_username()
+        }
 
+        fifo.append(entry)
         # Switch to the next view
         import stage2_files.keyboard_input as play_view
+        play_view.GameView1.on_show_view(play_view.GameView1())
         self.window.show_view(play_view.GameView1())
 
 
-        # if I want to resize -----
 
-        # self.title.move(dy=float((self.height/2)-(self.fontsize)))
-    #
-    # def on_resize(self, width: int, height: int):
-    #     super().on_resize(width, height)
-    #     self.WINDOW_WIDTH = width
-    #     self.WINDOW_HEIGHT = height
-    #     # self.title.x = float((self.width/2)-(self.fontsize*6))
-    #     # self.title.y = float((self.height/2)-(self.fontsize*4))
-    #     self.title.center_on_screen()
-    #     self.title.move(dy=float((self.height/2)-(self.fontsize)))
-    #     print(self.WINDOW_WIDTH)
 
-        # if I want to resize -----
+'''
+           - if I want to resize -
+
+self.title.move(dy=float((self.height/2)-(self.fontsize)))
+
+def on_resize(self, width: int, height: int):
+    super().on_resize(width, height)
+    self.WINDOW_WIDTH = width
+    self.WINDOW_HEIGHT = height
+    # self.title.x = float((self.width/2)-(self.fontsize*6))
+    # self.title.y = float((self.height/2)-(self.fontsize*4))
+    self.title.center_on_screen()
+    self.title.move(dy=float((self.height/2)-(self.fontsize)))
+    print(self.WINDOW_WIDTH)
+'''

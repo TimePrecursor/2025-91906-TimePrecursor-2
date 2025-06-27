@@ -1,8 +1,11 @@
+import pathlib
 import arcade
 from arcade.gui import *
 from arcade import gui
 import os
 import random
+import json
+
 #-----------------------
 codeVersion= "V 1.40.3.0 - School"
 '''
@@ -57,7 +60,8 @@ class Orginismselectionveiw(UIView):
     def __init__(self):
         super().__init__()
         self.fontsize = 50
-
+        project_root = pathlib.Path(__file__).resolve().parents[2]  # go up 2 levels
+        self.cache_file_path = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
         self.background_color = arcade.color.CINEREOUS
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
@@ -82,12 +86,38 @@ class Orginismselectionveiw(UIView):
         self.setup_buttons()
         self.label_making1()
 
+    def load_cache(self):
+        if self.cache_file_path.exists():
+            with open(self.cache_file_path, 'r') as f:
+                return json.load(f)
+        return {"fifo_cache": []}
+
+    def save_cache(self, cache):
+        with open(self.cache_file_path, 'w') as f:
+            json.dump(cache, f, indent=4)
+
+    def add_to_fifo_cache(self):
+        item = self.username.text
+        cache = self.load_cache()
+        fifo = cache.get("fifo_cache", [])
+
+        fifo.append(item)  # Add to end (newest)
+        if len(fifo) > 1:
+            fifo.pop(0)  # Remove oldest (first)
+
+        cache["fifo_cache"] = fifo
+        self.save_cache(cache)
+
+        print(f"Added: {item}")
+        print("Current FIFO:", fifo)
+
+    ''' OLD CODE:
     def username2(self):
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         cache_file = os.path.join(project_root, "Evolution_Game", "windows",
                                   "stage2_files", "saved_cache", "cache1.txt")
         tempcache = []
-        with open(cache_file) as cf:
+        with open(cache_file, "w") as cf:
             try:
                 if self.username.text != ("" or " "):
                     x = str(self.username.text)
@@ -102,15 +132,7 @@ class Orginismselectionveiw(UIView):
 
         print(Lines)
         self.writeovercache(Lines,cache_file)
-
-
-    def writeovercache(self, Lines, cache):
-
-        # joinedlist = ' \n'.join(Lines)
-        # print(joinedlist)
-        with open(cache, "w") as cf:
-            cf.writelines(Lines)
-
+    '''
 
 
     def setup_buttons(self):
@@ -121,12 +143,12 @@ class Orginismselectionveiw(UIView):
                 ui_manager=self.manager
             )
             file_path_list = []
+            project_root = pathlib.Path(__file__).resolve().parents[2]
+            image_folder = project_root / "assets" / "images"
             for x in range(3):
-                project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-                image_folder = os.path.join(project_root, "assets", "images")
                 file_name = self.sprite_list[count][x]
-                file_path = os.path.join(image_folder, file_name)
-                file_path_list.append(file_path)
+                file_path = image_folder / file_name
+                file_path_list.append(str(file_path))
 
             sprite_Norm_TEX = arcade.load_texture(file_path_list[0])
             sprite_Hover_TEX = arcade.load_texture(file_path_list[1])
@@ -194,17 +216,19 @@ class Orginismselectionveiw(UIView):
 
     def on_draw(self):
         self.clear()
-        self.manager.draw()  # ✅ Draw UI elements here
+        self.manager.draw()
 
     def on_hide_view(self):
-        self.username2()
+        self.add_to_fifo_cache()
         self.grid.clear()
         self.anchor.clear()
         self.manager.clear()
         self.manager.disable()
 
-    def showveiwfunc(self, viewselected):
+    def show_view_func(self, viewselected):
         self.window.show_view(viewselected)
+
+
 
 def main():
     """ Main function """

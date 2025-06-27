@@ -1,7 +1,10 @@
+import getpass
 import math
 # from arcade import *
 # from arcade import gui
 import os
+import pathlib
+import json
 import random
 import datetime
 
@@ -142,81 +145,150 @@ class GameView1(UIView):
                                    game_view=self)
         self.player_list.append(self.animalsprite)
 
-
-
     def load_image(self):
         self.prey_choices = []
-        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-        cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
-        with open(cache_file, "r") as cf:
-            for line in cf.readlines():
-                if line.startswith("|"):
-                    line.rstrip("\n")
-                    line.lstrip("|")
-                    self.prey_choices = line.split("|")
-                else:
-                    pass
-                    # print() # line Break in terminal
+        project_root = pathlib.Path(__file__).resolve().parents[2]  # adjust if needed
 
-        self.prey_choices.pop(0)
+        # Cache JSON file path
+        self.cache_file_path = project_root / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
+
+        # Load JSON cache safely
+        if self.cache_file_path.exists():
+            with open(self.cache_file_path, "r") as cf:
+                try:
+                    cache = json.load(cf)
+                    fifo = cache.get("fifo_cache", [])
+                except json.JSONDecodeError:
+                    fifo = []
+        else:
+            fifo = []
+
+        # Collect prey from all entries in fifo cache
+        for entry in fifo:
+            prey_list = entry.get("prey")
+            # Add each prey to prey_choices list
+            self.prey_choices.extend(prey_list)
+
+        # Remove duplicates if you want (optional)
+        self.prey_choices = list(set(self.prey_choices))
+
+        if not self.prey_choices:
+            # Fallback if no prey found, choose default or empty
+            self.prey_choices = ["default_prey_name"]
+
+        # Choose random prey from list
         random_prey = random.choice(self.prey_choices)
         self.chosen_prey = random_prey
-        self.filefood_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{random_prey}.png")
-        # live.live_food(arcade.load_image(self.filefood_path), scale=1)
+
+        # Build path to the prey image
+        self.filefood_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed",
+                                          f"pig.png")
+
+    import json
 
     def setup(self):
-        """ Set up the game and initialize the variables. """
+        self.setupdone = False
         self.player_list = arcade.SpriteList()
-        # Find the texture
-        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-        cache_file_path = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
-        with open(cache_file_path, "r") as f:
-            line1 = f.readline().rstrip("\n")
-            line2 = f.readline().rstrip("\n")
-        self.chosen_animal1 = line1
-        self.creature_type = line2
-        self.cr_index = 0
-        # file_path1 = os.path.join(cache_file_path, str(file_val))
-        # Set up the player
 
-        self.file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed", f"{self.chosen_animal1}.png")
+        project_root = pathlib.Path(__file__).resolve().parents[2]  # go up 2 levels
+        cache_file_path = project_root / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
+
+        # Load the JSON cache properly
+        if cache_file_path.exists():
+            with open(cache_file_path, "r") as f:
+                cache_data = json.load(f)
+            fifo_cache = cache_data.get("fifo_cache", [])
+
+            if fifo_cache:
+                # Get the last entry or first, depending on your FIFO usage
+                last_entry = fifo_cache[-1]  # or fifo_cache[0]
+                self.chosen_animal1 = last_entry.get("creature_name", "")
+                self.creature_type = last_entry.get("creature_type", "")
+            else:
+                self.chosen_animal1 = ""
+                self.creature_type = ""
+        else:
+            self.chosen_animal1 = ""
+            self.creature_type = ""
+
+        # Rest of your code (finding creature data, setting up sprites etc.)
+        # ...
+
+        # Find the correct creature index in the predator_roles list based on chosen_animal1 name
+        from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
+        creature_list = predator_roles.get(self.creature_type, [])
+
+        for i, creature in enumerate(creature_list):
+            if creature["name"] == self.chosen_animal1:
+                self.cr_index = i
+                break
+
+        # Use the creature data for stats
+        if creature_list:
+            creature_data = creature_list[self.cr_index]
+
+            self.stamina = creature_data["stamina"]
+            self.max_stamina = creature_data["stamina"]
+            self.range = creature_data["normal_detectable_range"]
+            self.sneak_range = creature_data["sneak_detectable_range"]
+            self.current_range = self.range
+            self.stat_speed = creature_data["sprint_speed"]
+            self.sprint_speed = self.stat_speed / 2.5
+            self.metabolism = creature_data["metabolism"]
+        else:
+            # Fallback defaults if something’s missing
+            self.stamina = 50
+            self.max_stamina = 50
+            self.range = 30
+            self.sneak_range = 15
+            self.current_range = self.range
+            self.stat_speed = 5
+            self.sprint_speed = self.stat_speed / 2.5
+            self.metabolism = 7
+
+        # Set file path for player texture
+        self.file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed",
+                                      f"{self.chosen_animal1}.png")
+
+        # Setup environment
         tree_texture_path = self.environment.asset_paths("tree1.png")
         self.environment.create_random_trees(tree_texture_path)
 
+        # Create player sprite
         self.player_sprite = Player()
         self.player_sprite.texture = arcade.load_texture(self.file_path)
         self.player_sprite.scale = 0.15
-        # self.player_sprite.center_x = WINDOW_WIDTH/2
-        # self.player_sprite.center_y = WINDOW_HEIGHT/2
-        self.player_sprite._angle = 0  # Start by facing up (90 degrees)
+        self.player_sprite._angle = 0  # Start facing up
         self.player_list.append(self.player_sprite)
-        # print(self.player_list)
 
-        from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
-        creature_type = predator_roles[self.creature_type]
-        if creature_type == self.chosen_animal1:
-            pass
-        elif creature_type != self.chosen_animal1:
-            self.cr_index = 1
-        self.stamina = (predator_roles[self.creature_type][self.cr_index]["stamina"])
-        self.max_stamina = (predator_roles[self.creature_type][self.cr_index]["stamina"])
-        self.range = (predator_roles[self.creature_type][self.cr_index]["normal_detectable_range"])
-        self.sneak_range = (predator_roles[self.creature_type][self.cr_index]["sneak_detectable_range"])
-        self.current_range = self.range
-        self.stat_speed = (predator_roles[self.creature_type][self.cr_index]["sprint_speed"])
-        self.sprint_speed = self.stat_speed / 2.5
+        # Create animal sprite at random location
+        import Evolution_Game.windows.stage2_files.environmentSetupMkII as enviro_setup
+        select_randxy = random.choice(enviro_setup.EnvironmentSetup.tree_locations)
+        self.animalsprite = Animal(self.filefood_path, select_randxy["center_x"], select_randxy["center_y"], scale=0.15,
+                                   game_view=self)
+        self.player_list.append(self.animalsprite)
+
+        # Load other data related to prey
         self.prey_data = live.live_food_stats_list
-        # implement metabolism and hunger
-        self.metabolism = (predator_roles[self.creature_type][self.cr_index]["metabolism"])
+        self.load_image()
+
+        self.animal = Animal(self.filefood_path, 0, 0)
+        self.nutritional_value = self.prey_data[self.chosen_prey]["nutritional_value"]
+
+        # Setup hunger and stamina info display
         self.hunger = 100
         self.max_hunger = 100
-        self.max_hunger_ratio = (self.hunger/100)
+        self.max_hunger_ratio = (self.hunger / 100)
         self.hunger_ratio = self.max_hunger_ratio
-        list = ["Stamina:", "Hunger:", f"Metabolism = {self.metabolism}\nSpeed = {round(self.stat_speed,ndigits=1)}\nDetectable Range = {self.range}"]
-        self.top_right_info_add(3,list,300,40,bold=False)
-        self.center_function()
-        self.animal = Animal(self.filefood_path,0,0)
-        self.nutritional_value = self.prey_data[self.chosen_prey]["nutritional_value"]
+
+        info_list = [
+            "Stamina:",
+            "Hunger:",
+            f"Metabolism = {self.metabolism}\nSpeed = {round(self.stat_speed, 1)}\nDetectable Range = {self.range}"
+        ]
+        self.top_right_info_add(3, info_list, 300, 40, bold=False)
+
+        self.setupdone = True
 
     def getfoodfile(self):
         return self.filefood_path
@@ -376,48 +448,161 @@ class GameView1(UIView):
         if self.hunger < 21:
             self.player_died()
 
+    def load_cache_username(self):
+        project_root = pathlib.Path(__file__).resolve().parents[4]  # go up 2 levels
+        self.cache_file_path = project_root  / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
+        print(self.cache_file_path)
+        if self.cache_file_path.exists():
+            with open(self.cache_file_path, 'r') as f:
+                return json.load(f)
+        else:
+            return "none"
+    #
+    # # Load cache
+    # def load_cache(self):
+    #     if self.cache_file.exists():
+    #         with self.cache_file.open("r") as f:
+    #             return json.load(f)
+    #     return {"fifo_cache": []}
+    #
+    # # Save cache
+    # def save_cache(self,cache):
+    #     self.cache_file_path.parent.mkdir(parents=True, exist_ok=True)
+    #     with self.cache_file_path.open("w") as f:
+    #         json.dump(cache, f, indent=4)
+    #
+    # # Add play session to FIFO cache
+    # def add_play_session(self,creature_name, creature_type, prey_list):
+    #     cache = self.load_cache()
+    #     fifo = cache.get("fifo_cache", [])
+    #
+    #     entry = {
+    #         "creature_name": creature_name,
+    #         "creature_type": creature_type,
+    #         "prey": prey_list,
+    #         "username": self.username
+    #     }
+    #
+    #     fifo.append(entry)
+    #
+    #     # Enforce FIFO size limit
+    #     if len(fifo) > 2:
+    #         fifo.pop(0)
+    #
+    #     cache["fifo_cache"] = fifo
+    #     self.save_cache(cache)
+    #
+    #     print(f"Added creature: {creature_name} | Current FIFO ({len(fifo)}):")
+    #     for e in fifo:
+    #         print("-", e["creature_name"], "by", e["username"])
+    #
+    # def player_died(self):
+    #     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    #     logins_path = os.path.join(project_root, "windows", "stage2_files", "secrets", "logins.json")
+    #     self.username = self.load_cache_username()
+    #     item = self.username.text
+    #     cache = self.load_cache()
+    #     fifo = cache.get("fifo_cache", [])
+    #
+    #     fifo.append(item)  # Add to end (newest)
+    #     if len(fifo) > 2:
+    #         fifo.pop(0)  # Remove oldest (first)
+    #
+    #     cache["fifo_cache"] = fifo
+    #     self.save_cache(cache)
+    #
+    #     print(f"Added: {item}")
+    #     print("Current FIFO:", fifo)
+    #     with open(logins_path,"a+") as logins:
+    #         logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")}'
+    #                      f' | Username: {self.username} | Creature: {self.chosen_animal1}'
+    #                      f' | Score: {round(self.alivetimer, 1)} | Kills: {self.kills}\n')
+    #     arcade.exit()
+
+    def load_cache(self):
+        if self.cache_file_path.exists():
+            with self.cache_file_path.open("r") as f:
+                return json.load(f)
+        return {"fifo_cache": []}
+
+    # Save cache
+    def save_cache(self,cache):
+        self.cache_file_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.cache_file_path.open("w") as f:
+            json.dump(cache, f, indent=4)
+
     def player_died(self):
-        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-        logins_path = os.path.join(project_root, "windows", "stage2_files", "secrets", "Logins.txt")
-        cache_file = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
-        with open(cache_file, "r") as cf:
-            for line in cf.readlines():
-                if line.startswith("User:"):
-                    line.rstrip("\n")
-                    line.lstrip("User:")
-                    self.username = line
-                else:
-                    pass
-        with open(logins_path,"a+") as logins:
-            logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")}'
-                         f' | Username: {self.username} | Creature: {self.chosen_animal1}'
-                         f' | Score: {round(self.alivetimer, 1)} | Kills: {self.kills}\n')
+        # Make sure the save folder exists
+        self.cache_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Load existing cache or initialize
+        if self.cache_file_path.exists():
+            with open(self.cache_file_path, "r") as f:
+                try:
+                    cache = json.load(f)
+                except json.JSONDecodeError:
+                    cache = {"fifo_cache": []}
+        else:
+            cache = {"fifo_cache": []}
+
+        fifo = cache.get("fifo_cache", [])
+
+        # Build log entry
+        new_entry = {
+            "creature_name": self.chosen_animal1,
+            "creature_type": self.creature_type,
+            "prey": [self.chosen_prey] if self.chosen_prey else [],
+            "username": self.username if self.username != "None" else getpass.getuser(),
+            "time_of_death": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "time_alive": round(self.alivetimer, 1),
+            "kills": self.kills
+        }
+
+        fifo.append(new_entry)
+
+        # Optional: enforce a limit
+        MAX_SIZE = 10
+        if len(fifo) > MAX_SIZE:
+            fifo.pop(0)
+
+        cache["fifo_cache"] = fifo
+
+        # Save to disk
+        print("Writing to file:", self.cache_file_path)  # Debug print
+        with open(self.cache_file_path, "w") as f:
+            json.dump(cache, f, indent=4)
+            print("✅ File saved.")
+
         arcade.exit()
 
     def on_update(self, delta_time):
-        """ Movement and game logic """
-        self.logic_timer += delta_time
-        self.alivetimer += delta_time
-        if self.logic_timer >= 0.1 and not self.fleeing:
-            self.update_constant_logic()
-            self.logic_timer = 0.0
-        if self.fleeing:
-            self.prey_logic_timer += 1
-            if self.prey_logic_timer >= 80:
-                self.stopflee(self.animalsprite)
-                self.fleeing = False
-                self.prey_logic_timer = 0
-        # if self.spawning_prey:
-        #     self.spawnprey_Timer += 1
-        #     if self.spawnprey_Timer >= 20:
-        #         self.center_function()
-        #         self.spawning_prey = False
-        #         self.spawnprey_Timer = 0
+        try:
+            if self.setupdone is True:
+                """ Movement and game logic """
+                self.logic_timer += delta_time
+                self.alivetimer += delta_time
+                if self.logic_timer >= 0.1 and not self.fleeing:
+                    self.update_constant_logic()
+                    self.logic_timer = 0.0
+                if self.fleeing:
+                    self.prey_logic_timer += 1
+                    if self.prey_logic_timer >= 80:
+                        self.stopflee(self.animalsprite)
+                        self.fleeing = False
+                        self.prey_logic_timer = 0
+                # if self.spawning_prey:
+                #     self.spawnprey_Timer += 1
+                #     if self.spawnprey_Timer >= 20:
+                #         self.center_function()
+                #         self.spawning_prey = False
+                #         self.spawnprey_Timer = 0
 
+                self.update_player_speed()  # Update speed and rotation here
+                self.player_list.update(delta_time)  # Make sure this is updating the sprite
+                self.check_prey_collision()
+        except:
+            print("AttributeError: 'GameView1' object has no attribute 'setupdone'")
 
-        self.update_player_speed()  # Update speed and rotation here
-        self.player_list.update(delta_time)  # Make sure this is updating the sprite
-        self.check_prey_collision()
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
