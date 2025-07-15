@@ -104,7 +104,7 @@ class Player(arcade.Sprite):
 class GameView1(UIView):
     def __init__(self):
         super().__init__()
-        # self.username = "None"
+        self.username = "None"
         self.logic_timer = 0.0  # Accumulated time
         self.prey_logic_timer = 0  # Accumulated time
         self.alivetimer = 0.0
@@ -164,6 +164,7 @@ class GameView1(UIView):
         # live.live_food(arcade.load_image(self.filefood_path), scale=1)
 
     def setup(self):
+        print("SETUP1")
         """ Set up the game and initialize the variables. """
         self.player_list = arcade.SpriteList()
         # Find the texture
@@ -218,7 +219,9 @@ class GameView1(UIView):
         self.nutritional_value = self.prey_data[self.chosen_prey]["nutritional_value"]
         self.project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         self.logins_path = os.path.join(self.project_root, "windows", "stage2_files", "secrets", "Logins.txt")
-
+        with open(self.logins_path, "a+") as logins:
+            logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")}'
+                         f' | Username: {self.username} | Creature: {self.chosen_animal1}')
     def getfoodfile(self):
         return self.filefood_path
 
@@ -384,7 +387,7 @@ class GameView1(UIView):
         with open(self.logins_path,"a+") as logins:
             logins.write(f' | Score: {round(10/self.alivetimer, 2)} | Kills: {self.kills}\n')
             logins.flush()
-        arcade.exit()
+        def arcade.Window.on_close()
 
     def on_update(self, delta_time):
         """ Movement and game logic """
@@ -462,12 +465,12 @@ class GameView1(UIView):
         if key == arcade.key.LCTRL:
             self.ctrl_pressed = False
 
-    def on_show_view(self):
-
-        print("SETUP1")
-        with open(self.logins_path, "a+") as logins:
-            logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")}'
-                         f' | Username: {self.username} | Creature: {self.chosen_animal1}')
+    # def on_show_view(self):
+        #
+        # print("SETUP1")
+        # with open(self.logins_path, "a+") as logins:
+        #     logins.write(f'Date: {time.strftime("%Y-%m-%d %H:%M:%S")}'
+        #                  f' | Username: {self.username} | Creature: {self.chosen_animal1}')
 
     def top_right_info_add(self, amount=4, text=None, width=200, height=30, font_size=20, bold=True, y_val=(WINDOW_HEIGHT / 2) - 25):
         self.y2 = 60
@@ -567,3 +570,19 @@ class GameView1(UIView):
         if hit_list:
             self.kills += 1
             self.remove_prey()
+
+    def on_hide_view(self):
+        self.player_died()
+        super().on_hide_view()
+        self.window.on_close = self.player_died()
+# class MyWindow(arcade.Window):
+    # def __init__(self):
+    #     super().__init__(800, 600, "My Game")
+    #     # self.view = GameView1()
+    #     self.show_view(self.view)
+    #
+    # def on_close(self):
+    #     # Ensure the current view's on_close is called
+    #     if hasattr(self.view, "on_close"):
+    #         self.view.on_close()
+    #     super().on_close()
