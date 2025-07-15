@@ -1,3 +1,3 @@
-Lion
-Ambush
-|Gazelle|Deer|Pig
+Wolf
+Persistence
+|Deer|Rabbit|Pig

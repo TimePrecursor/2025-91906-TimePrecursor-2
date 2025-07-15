@@ -170,4 +170,6 @@ class PageView(arcade.View):
 
         # Move to next view
         import stage2_files.keyboard_input as play_view
-        self.window.show_view(play_view.GameView1())
+        tempvar = play_view.GameView1()
+        play_view.GameView1.setup(tempvar)
+        self.window.show_view(tempvar)
