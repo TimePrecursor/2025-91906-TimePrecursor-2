@@ -1,5 +1,10 @@
 {
-    "fifo_cache": [
-        "lol"
-    ]
+    "creature_name": "Cheetah",
+    "creature_type": "Speed",
+    "prey": [
+        "Gazelle",
+        "Rabbit",
+        "Pig"
+    ],
+    "username": "lllllla"
 }

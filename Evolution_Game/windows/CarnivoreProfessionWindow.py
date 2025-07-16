@@ -199,11 +199,19 @@ class PageView(arcade.View):
         self.manager.add(self.choose_button)
 
     def load_cache_username(self):
-        project_root = pathlib.Path(__file__).resolve().parents[2]  # go up 2 levels
+        project_root = pathlib.Path(__file__).resolve().parents[2]
         self.cache_file_path = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
+
         if self.cache_file_path.exists():
             with open(self.cache_file_path, 'r') as f:
-                return json.load(f)
+                data = json.load(f)  # ✅ only once
+                print(data)  # debug print
+                tempdebug1 = data.get("fifo_cache", [])
+                print(tempdebug1, "100")
+                if tempdebug1:
+                    return tempdebug1[0]  #return the string
+                else:
+                    return "none"
         else:
             return "none"
 
@@ -270,7 +278,9 @@ class PageView(arcade.View):
             "username": self.load_cache_username()
         }
 
-        fifo.append(entry)
+        # entry.update({"debug1":fifo})
+        # fifo.append(entry)
+        self.save_cache(entry)
         # Switch to the next view
         import stage2_files.keyboard_input as play_view
         play_view.GameView1.on_show_view(play_view.GameView1())

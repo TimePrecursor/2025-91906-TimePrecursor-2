@@ -53,7 +53,7 @@ class FirstButtons(arcade.gui.UITextureButton):
         if self.button_id > 0:
             self.errormessage()
         elif self.button_id == 0:
-            Orginismselectionveiw.showveiwfunc(next_view, next_view)
+            Orginismselectionveiw.show_view_func(next_view, next_view)
             # print(f"DEBUGGING:  To the {view_factory[self.button_id][1]} window!")
 
 class Orginismselectionveiw(UIView):
