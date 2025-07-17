@@ -219,22 +219,17 @@ class GameView1(UIView):
                 cache_data = json.load(f)
             fifo_cache = cache_data.get("fifo_cache", [])
 
-            if fifo_cache:
-                # Get the last entry or first, depending on your FIFO usage
-                last_entry = fifo_cache # or fifo_cache[0]
-                try:
-                    self.chosen_animal1 = fifo_cache.get("creature_name", "")
-                    print(self.chosen_animal1)
-                    self.creature_type = fifo_cache.get("creature_type", "")
-                    print(self.creature_type)
-                except:
-                    print("nope1")
-                finally:
-                    print("yep1")
-            else:
-                self.chosen_animal1 = "debug"
-                self.creature_type = "debug"
-                print("nope2")
+            # Get the last entry or first, depending on your FIFO usage
+            last_entry = fifo_cache # or fifo_cache[0]
+            try:
+                self.chosen_animal1 = cache_data.get("creature_name", ())
+                print(self.chosen_animal1)
+                self.creature_type = cache_data.get("creature_type", ())
+                print(self.creature_type)
+            except:
+                print("nope1")
+            finally:
+                print("yep1")
         else:
             self.chosen_animal1 = "debug"
             self.creature_type = "debug"
@@ -264,8 +259,6 @@ class GameView1(UIView):
             self.stat_speed = creature_data["sprint_speed"]
             self.sprint_speed = self.stat_speed / 2.5
             self.metabolism = creature_data["metabolism"]
-            # self.nutritional_value = self.prey_data[self.chosen_prey]["nutritional_value"]
-            self.nutritional_value = creature_data["nutritional_value"]
         else:
             # Fallback defaults if something’s missing
             self.stamina = 50
@@ -304,7 +297,8 @@ class GameView1(UIView):
 
         # Load other data related to prey
         self.prey_data = live.live_food_stats_list
-
+        # self.nutritional_value = self.prey_data[self.chosen_prey]["nutritional_value"]
+        self.nutritional_value = self.prey_data[self.chosen_prey]["nutritional_value"]
         self.animal = Animal(self.filefood_path, 0, 0)
         # Setup hunger and stamina info display
         self.hunger = 100
@@ -480,15 +474,20 @@ class GameView1(UIView):
             self.player_died()
 
     def load_cache_username(self):
-        project_root = pathlib.Path(__file__).resolve().parents[4]  # go up 2 levels
-        self.cache_file_path = project_root  / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
-        print(self.cache_file_path)
-        if self.cache_file_path.exists():
-            with open(self.cache_file_path, 'r') as f:
-                return json.load(f)
-        else:
-            return "none"
-    #
+        project_root = pathlib.Path(__file__).resolve().parents[3]
+        cache_file_path1 = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
+        print(cache_file_path1, "load_cache_username")
+        # if cache_file_path1.exists():
+        with open(cache_file_path1, 'r') as f:
+            temp = json.load(f)
+            username = temp.get("username", "")
+            print("USERNAME:",username)
+            return username
+    # else:
+    #     print("debug44")
+    #     return "none"
+
+
     # # Load cache
     # def load_cache(self):
     #     if self.cache_file.exists():
@@ -579,12 +578,12 @@ class GameView1(UIView):
         fifo = cache.get("logins", [])
 
         # Build log entry
-
+        username = self.load_cache_username()
         new_entry = {
             "creature_name": self.chosen_animal1,
             "creature_type": self.creature_type,
             "prey": [self.chosen_prey] if self.chosen_prey else [],
-            "username": self.load_cache_username() if self.username != "None" else getpass.getuser(),
+            "username": username, #if self.username != "None" else getpass.getuser(),
             "time_of_death": time.strftime("%Y-%m-%d %H:%M:%S"),
             "time_alive": round(self.alivetimer, 1),
             "kills": self.kills
@@ -608,31 +607,24 @@ class GameView1(UIView):
         arcade.exit()
 
     def on_update(self, delta_time):
-        debugvarnum = 0
-        # try:
-        debugvarnum += 1
-        print(debugvarnum)
+        print()
         if self.setupdone is True:
             """ Movement and game logic """
             self.logic_timer += delta_time
             self.alivetimer += delta_time
-            debugvarnum += 1
-            print(debugvarnum)
+            print()
             if self.logic_timer >= 0.1 and not self.fleeing:
                 self.update_constant_logic()
                 self.logic_timer = 0.0
-                debugvarnum += 1
-                print(debugvarnum)
+                print()
             if self.fleeing:
                 self.prey_logic_timer += 1
-                debugvarnum += 1
-                print(debugvarnum)
+                print()
                 if self.prey_logic_timer >= 80:
                     self.stopflee(self.animalsprite)
                     self.fleeing = False
                     self.prey_logic_timer = 0
-                    debugvarnum += 1
-                    print(debugvarnum)
+                    print()
             # if self.spawning_prey:
             #     self.spawnprey_Timer += 1
             #     if self.spawnprey_Timer >= 20:
