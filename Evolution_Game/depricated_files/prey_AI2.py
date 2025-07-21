@@ -16,7 +16,7 @@ class PreySprite2:
         self.change_y = 0
         self.change_x = 0
         import Evolution_Game.windows.stage2_files.live_food_stats as live
-        from Evolution_Game.windows.stage2_files import keyboard_input
+        from Evolution_Game.windows.stage2_files import game_processing
         # gameveiw = keyboard_input.GameView1
         prey_name = keyboard_input.GameView1.getfoodname(keyboard_input.GameView1())
         print(prey_name, "== prey name")
@@ -46,7 +46,7 @@ class PreySprite2:
         self.flee_direction = (0, 0)
         self.alert_timer = 0
         self.graze_timer = random.uniform(3.0, 6.0)
-        from Evolution_Game.windows.stage2_files.keyboard_input import Player as currentPred
+        from Evolution_Game.windows.stage2_files.game_processing import Player as currentPred
         self.predator = currentPred
 
     # @property
@@ -87,11 +87,11 @@ class PreySprite2:
         self.is_fleeing = True
 
     def detect_threats(self, pred_vis_dis=None):
-        from Evolution_Game.windows.stage2_files.keyboard_input import Player as currentPred
+        from Evolution_Game.windows.stage2_files.game_processing import Player as currentPred
         prey_y = arcade.Sprite()
         lol1 = prey_y.center_y
         lol2 = prey_y.center_x
-        from Evolution_Game.windows.stage2_files import keyboard_input
+        from Evolution_Game.windows.stage2_files import game_processing
         lol0 = keyboard_input.Player()
         predator_x, predator_y = keyboard_input.Player.get_pos(lol0)
         lol3 = predator_y

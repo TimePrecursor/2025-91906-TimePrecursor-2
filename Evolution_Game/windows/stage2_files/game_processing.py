@@ -149,7 +149,7 @@ class GameView1(UIView):
         project_root = pathlib.Path(__file__).resolve().parents[2]  # adjust if needed
 
         # Cache JSON file path
-        self.cache_file_path = project_root / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
+        self.cache_file_path = project_root / "windows" / "stage2_files" / "saved_cache" / "cache.json"
         self.save_path = project_root / "windows" / "stage2_files" / "secrets" / "logins.json"
 
 
@@ -157,8 +157,8 @@ class GameView1(UIView):
         if os.path.getsize(self.cache_file_path) > 0:
             with open(self.cache_file_path, "r") as f:
                 data = json.load(f)
-                print(data)
         else:
+            print("JSON file is empty!")
             print("JSON file is empty!")
             data = {}
 
@@ -171,30 +171,10 @@ class GameView1(UIView):
             # Access the "prey" list
             prey_list = data.get("prey", [])  # Use .get() for safety
             print(prey_list)
-            # try:
-                #     cache = json.load(cf)
-                #     self.fifo = cache.get("prey", [])
-                #     print(self.fifo)
-                # except json.JSONDecodeError:
-                #     self.fifo = []
-                #     print("failed3")
-        # else:
-        #     self.fifo = []
-        #     print("failed4")
-
-        # Collect prey from all entries in fifo cache
-        # for entry in self.fifo:
-        # prey_list = self.fifo.get("prey")
-        print(prey_list)
-        # Add each prey to prey_choices list
         self.prey_choices.extend(prey_list)
 
         # Remove duplicates if you want (optional)
         self.prey_choices = list(set(self.prey_choices))
-        #
-        # if not self.prey_choices:
-        #     # Fallback if no prey found, choose default or empty
-        #     self.prey_choices = ["debug"]
 
         # Choose random prey from list
         random_prey = random.choice(self.prey_choices)
@@ -211,7 +191,7 @@ class GameView1(UIView):
         self.player_list = arcade.SpriteList()
 
         project_root = pathlib.Path(__file__).resolve().parents[2]  # go up 2 levels
-        cache_file_path = project_root / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
+        cache_file_path = project_root / "windows" / "stage2_files" / "saved_cache" / "cache.json"
 
         # Load the JSON cache properly
         if cache_file_path.exists():
@@ -223,17 +203,13 @@ class GameView1(UIView):
             last_entry = fifo_cache # or fifo_cache[0]
             try:
                 self.chosen_animal1 = cache_data.get("creature_name", ())
-                print(self.chosen_animal1)
                 self.creature_type = cache_data.get("creature_type", ())
-                print(self.creature_type)
             except:
-                print("nope1")
-            finally:
-                print("yep1")
+                print("error in a try function in setup, game_processing")
         else:
             self.chosen_animal1 = "debug"
             self.creature_type = "debug"
-            print("nope3")
+            # print("nope3")
 
         # Rest of your code (finding creature data, setting up sprites etc.)
         # ...
@@ -404,7 +380,7 @@ class GameView1(UIView):
             if self.hunger > 10 and self.stamina < self.max_stamina:
                 self.stamina += self.sprint_speed / 15
                 self.stamina = clamp(self.stamina, 10, self.max_stamina)
-                self.hunger -= (self.metabolism ** 1.75) / 10
+                self.hunger -= (self.metabolism ** 2) / 100
                 self.hunger = clamp(self.hunger, 10, 100)
 
         # Raw movement input (no clamping yet)
@@ -475,13 +451,13 @@ class GameView1(UIView):
 
     def load_cache_username(self):
         project_root = pathlib.Path(__file__).resolve().parents[3]
-        cache_file_path1 = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
-        print(cache_file_path1, "load_cache_username")
+        cache_file_path1 = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "cache.json"
+        # print(cache_file_path1, "load_cache_username")
         # if cache_file_path1.exists():
         with open(cache_file_path1, 'r') as f:
             temp = json.load(f)
             username = temp.get("username", "")
-            print("USERNAME:",username)
+            # print("USERNAME:",username)
             return username
     # else:
     #     print("debug44")
@@ -599,7 +575,7 @@ class GameView1(UIView):
         cache["logins"] = fifo
 
         # Save to disk
-        print("Writing to file:", self.save_path)  # Debug print
+        # print("Writing to file:", self.save_path)  # Debug print
         with open(self.save_path, "w") as f:
             json.dump(cache, f, indent=4)
             print("File saved.")
@@ -607,24 +583,19 @@ class GameView1(UIView):
         arcade.exit()
 
     def on_update(self, delta_time):
-        print()
         if self.setupdone is True:
             """ Movement and game logic """
             self.logic_timer += delta_time
             self.alivetimer += delta_time
-            print()
             if self.logic_timer >= 0.1 and not self.fleeing:
                 self.update_constant_logic()
                 self.logic_timer = 0.0
-                print()
             if self.fleeing:
                 self.prey_logic_timer += 1
-                print()
                 if self.prey_logic_timer >= 80:
                     self.stopflee(self.animalsprite)
                     self.fleeing = False
                     self.prey_logic_timer = 0
-                    print()
             # if self.spawning_prey:
             #     self.spawnprey_Timer += 1
             #     if self.spawnprey_Timer >= 20:
@@ -635,7 +606,6 @@ class GameView1(UIView):
             self.update_player_speed()  # Update speed and rotation here
             self.player_list.update(delta_time)  # Make sure this is updating the sprite
             self.check_prey_collision()
-            print("worked1")
         # except:
         #     print("failed1")
         #     print("AttributeError: 'GameView1' object has no attribute 'setupdone'")

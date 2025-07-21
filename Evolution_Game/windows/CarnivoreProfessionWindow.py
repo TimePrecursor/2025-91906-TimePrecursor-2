@@ -17,7 +17,7 @@ class PageView(arcade.View):
     def __init__(self):
         super().__init__()
         project_root = pathlib.Path(__file__).resolve().parents[2]  # go up 2 levels
-        self.cache_file_path = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
+        self.cache_file_path = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "cache.json"
         self.fontsize = 50
         self.WINDOW_WIDTH = 1000
         self.WINDOW_HEIGHT = 600
@@ -195,12 +195,12 @@ class PageView(arcade.View):
             text="Confirm!",
         )
 
-        self.choose_button.on_click = self.click
+        self.choose_button.on_click = self.to_next_window
         self.manager.add(self.choose_button)
 
     def load_cache_username(self):
         project_root = pathlib.Path(__file__).resolve().parents[2]
-        self.cache_file_path = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
+        self.cache_file_path = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "cache.json"
 
         if self.cache_file_path.exists():
             with open(self.cache_file_path, 'r') as f:
@@ -223,36 +223,19 @@ class PageView(arcade.View):
 
     # Save cache
     def save_cache(self,cache):
+        """
+
+        :param cache:
+        """
         self.cache_file_path.parent.mkdir(parents=True, exist_ok=True)
         with self.cache_file_path.open("w") as f:
             json.dump(cache, f, indent=4)
 
-    # # Add play session to FIFO cache
-    # def add_play_session(self,creature_name, creature_type, prey_list):
-    #     cache = self.load_cache()
-    #     fifo = cache.get("fifo_cache", [])
-    #
-    #     entry = {
-    #         "creature_name": carnivore,
-    #         "creature_type": self.dropdownmain.value,
-    #         "prey": [prey[0], prey[1], prey[2]],
-    #         "username": self.load_cache_username()
-    #     }
-    #
-    #     fifo.append(entry)
-    #
-    #     # Enforce FIFO size limit
-    #     if len(fifo) > 1:
-    #         fifo.pop(0)
-    #
-    #     cache["fifo_cache"] = fifo
-    #     save_cache(cache)
-    #
-    #     print(f"Added creature: {creature_name} | Current FIFO ({len(fifo)}):")
-    #     for e in fifo:
-    #         print("-", e["creature_name"], "by", e["username"])
+    def to_next_window(self, event):
+        """
 
-    def click(self, event):
+        :param event:
+        """
         # Get the selected profession
         choice = self.dropdownmain.value
         from stage2_files.creature_stats import predator_roles
@@ -282,7 +265,7 @@ class PageView(arcade.View):
         # fifo.append(entry)
         self.save_cache(entry)
         # Switch to the next view
-        import stage2_files.keyboard_input as play_view
+        import stage2_files.game_processing as play_view
         play_view.GameView1.on_show_view(play_view.GameView1())
         self.window.show_view(play_view.GameView1())
 

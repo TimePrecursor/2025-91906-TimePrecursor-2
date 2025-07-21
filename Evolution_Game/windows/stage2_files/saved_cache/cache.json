@@ -1,0 +1,10 @@
+{
+    "creature_name": "Tiger",
+    "creature_type": "Ambush",
+    "prey": [
+        "Gazelle",
+        "Deer",
+        "Pig"
+    ],
+    "username": "lloo;lfu"
+}

@@ -8,7 +8,7 @@ import Evolution_Game.windows.stage2_files.live_food_stats as live
 
 def detect_threats(x,y):
     # print(lol1, "= 'live_food.center_y'")
-    from Evolution_Game.windows.stage2_files import keyboard_input
+    from Evolution_Game.windows.stage2_files import game_processing
     lol0 = keyboard_input.Player()
     predator_x, predator_y = keyboard_input.Player.get_pos(lol0)
     lol3 = predator_y
@@ -30,7 +30,7 @@ class PreySprite3:
     def __init__(self):
         super().__init__()
 
-        from Evolution_Game.windows.stage2_files import keyboard_input
+        from Evolution_Game.windows.stage2_files import game_processing
         lol2 = keyboard_input.GameView1.getfoodname(keyboard_input.GameView1())
         print(lol2)
         print(prey_name, "== prey name")

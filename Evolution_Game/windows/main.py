@@ -61,7 +61,7 @@ class Orginismselectionveiw(UIView):
         super().__init__()
         self.fontsize = 50
         project_root = pathlib.Path(__file__).resolve().parents[2]  # go up 2 levels
-        self.cache_file_path = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "fifo.json"
+        self.cache_file_path = project_root / "Evolution_Game" / "windows" / "stage2_files" / "saved_cache" / "cache.json"
         self.background_color = arcade.color.CINEREOUS
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
