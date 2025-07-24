@@ -67,7 +67,7 @@ class Animal(arcade.Sprite):
         distance = arcade.get_distance_between_sprites(prey_spr,pred_spr)
 
 
-        if distance < ((range*1.5)*prey_sight)/5:
+        if distance < ((range*1.5)*prey_sight)/4:
             self.fleeing = True
             game = GameView1()
             changex,changey = self.get_adj_and_opp(angle_deg,10)

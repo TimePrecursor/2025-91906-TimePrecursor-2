@@ -1,10 +1,10 @@
 {
-    "creature_name": "Tiger",
-    "creature_type": "Ambush",
+    "creature_name": "Wolf",
+    "creature_type": "Persistence",
     "prey": [
-        "Gazelle",
         "Deer",
+        "Rabbit",
         "Pig"
     ],
-    "username": "lloo;lfu"
+    "username": ""
 }
