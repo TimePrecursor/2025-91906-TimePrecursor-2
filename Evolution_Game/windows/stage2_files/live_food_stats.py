@@ -4,7 +4,7 @@ import arcade
 import os
 from arcade.gui import UIView
 
-from Evolution_Game.windows.stage2_files import keyboard_input
+from Evolution_Game.windows.stage2_files import keyboard_input3
 
 live_food_stats_list = {
 

@@ -225,7 +225,7 @@ class PageView(arcade.View):
         # Switch to the next view
         # self.window.hide_view()
 
-        from Evolution_Game.windows.stage2_files import keyboard_input as nextfile
+        from Evolution_Game.windows.stage2_files import keyboard_input3 as nextfile
         # nextfile.GameView1.setup(self=nextfile.GameView1())
         self.window.show_view(nextfile.GameView1())
         # self.window.hide_view()

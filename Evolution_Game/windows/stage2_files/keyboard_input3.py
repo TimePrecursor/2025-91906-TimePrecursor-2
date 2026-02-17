@@ -20,6 +20,7 @@ WINDOW_HEIGHT = 600
 
 NORMAL_SPEED = 3
 
+
 import arcade
 
 
@@ -83,34 +84,9 @@ class Player(arcade.Sprite):
 
 class GameView1(UIView):
     setup_done = True
-
     def __init__(self):
         super().__init__()
         """ Set up the game and initialize the variables. """
-
-        # Initialize UI manager and grid FIRST before using them
-        self.manager = arcade.gui.UIManager()
-        self.manager.enable()
-        self.grid = UIAnchorLayout()
-        self.manager.add(self.grid)
-
-        # Track the current state of what key is pressed
-        self.left_pressed = False
-        self.right_pressed = False
-        self.up_pressed = False
-        self.down_pressed = False
-        self.shift_pressed = False
-        self.ctrl_pressed = False
-        self.A_pressed = False
-        self.chosen_animal = None
-        self.chosen_prey = None
-        self.fleeing = False
-        self.prey_is_alive = True
-        self.logic_timer = 0.0  # Accumulated time
-        self.prey_logic_timer = 0  # Accumulated time
-        # Set the background color
-        self.background_color = arcade.color.AMAZON
-
         # Find the texture
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         cache_file_path = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
@@ -123,31 +99,72 @@ class GameView1(UIView):
 
         self.file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed",
                                       f"{self.chosen_animal1}.png")
+        from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
+        self.environment = EnvironmentSetup()
+        tree_texture_path = self.environment.asset_paths("tree1.png")
+        self.environment.create_random_trees(tree_texture_path)
+        self.player_list = arcade.SpriteList
 
-        # Don't initialize environment or sprites here - wait for setup()
-        self.environment = None
-        self.player_list = None
-        self.player_sprite = None
-        self.animalsprite = None
-        self.animal = None
-        self.filefood_path = None
-        self.chosen_prey = None
-        self.nutritional_value = 0
-        self.stamina = 0
-        self.max_stamina = 0
-        self.range = 0
-        self.sneak_range = 0
-        self.current_range = 0
-        self.stat_speed = 0
-        self.sprint_speed = 0
-        self.metabolism = 0
+        self.player_sprite = Player()
+        self.player_sprite = arcade.Sprite
+        self.player_sprite.texture = arcade.load_texture(self.file_path)
+        self.player_sprite.scale = 0.15
+        self.player_sprite._angle = 0  # Start by facing up (90 degrees)
+        playersprite1 = self.player_sprite
+        self.player_list.append(playersprite1)
+
+        from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
+        creature_type = predator_roles[self.creature_type]
+        if creature_type == self.chosen_animal1:
+            pass
+        elif creature_type != self.chosen_animal1:
+            self.cr_index = 1
+        self.stamina = (predator_roles[self.creature_type][self.cr_index]["stamina"])
+        self.max_stamina = (predator_roles[self.creature_type][self.cr_index]["stamina"])
+        self.range = (predator_roles[self.creature_type][self.cr_index]["normal_detectable_range"])
+        self.sneak_range = (predator_roles[self.creature_type][self.cr_index]["sneak_detectable_range"])
+        self.current_range = self.range
+        self.stat_speed = (predator_roles[self.creature_type][self.cr_index]["sprint_speed"])
+        self.sprint_speed = self.stat_speed / 2.5
+        self.prey_data = live.live_food_stats_list
+        # implement metabolism and hunger
+        self.metabolism = (predator_roles[self.creature_type][self.cr_index]["metabolism"])
         self.hunger = 100
         self.max_hunger = 100
-        self.max_hunger_ratio = 1.0
-        self.hunger_ratio = 1.0
-        self.prey_data = live.live_food_stats_list
-        self.setup_done = False
-
+        self.max_hunger_ratio = (self.hunger / 100)
+        self.hunger_ratio = self.max_hunger_ratio
+        list = ["Stamina:", "Hunger:",
+                f"Metabolism = {self.metabolism}\nSpeed = {round(self.stat_speed, ndigits=1)}\nDetectable Range = {self.range}"]
+        self.top_right_info_add(3, list, 300, 40, bold=False)
+        self.center_function()
+        self.animal = Animal(self.filefood_path, 0, 0)
+        self.nutritional_value = self.prey_data[self.chosen_prey]["nutritional_value"]
+        self.setup_done = True
+        from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
+        self.environment = EnvironmentSetup()
+        self.manager = arcade.gui.UIManager()
+        self.manager.enable()
+        # Track the current state of what key is press
+        self.left_pressed = False
+        self.right_pressed = False
+        self.up_pressed = False
+        self.down_pressed = False
+        self.shift_pressed = False
+        self.ctrl_pressed = False
+        self.A_pressed = False
+        self.grid = UIAnchorLayout()
+        self.manager.add(self.grid)
+        self.chosen_animal = None
+        self.chosen_prey = None
+        self.fleeing = False
+        self.prey_is_alive = True
+        self.logic_timer = 0.0  # Accumulated time
+        self.prey_logic_timer = 0  # Accumulated time
+        # Set the background color
+        self.background_color = arcade.color.AMAZON
+        self.player_sprite = Player()
+        # if self.setup_done == False:
+        #     self.setup(False)
     def center_function(self):
         """ central function """
         self.load_image()
@@ -180,21 +197,25 @@ class GameView1(UIView):
         """ Set up the game and initialize the variables. """
         # Find the texture
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        cache_file_path = os.path.join(project_root, "windows", "stage2_files", "saved_cache", "cache1.txt")
+        with open(cache_file_path, "r") as f:
+            line1 = f.readline().rstrip("\n")
+            line2 = f.readline().rstrip("\n")
+        self.chosen_animal1 = line1
+        self.creature_type = line2
+        self.cr_index = 0
 
+        self.file_path = os.path.join(project_root, "assets", "images", "animal_textures_fixed",
+                                      f"{self.chosen_animal1}.png")
         from Evolution_Game.windows.stage2_files.environmentSetupMkII import EnvironmentSetup
         self.environment = EnvironmentSetup()
         tree_texture_path = self.environment.asset_paths("tree1.png")
         self.environment.create_random_trees(tree_texture_path)
 
-        # FIX: Initialize as instance with parentheses
-        self.player_list = arcade.SpriteList()
-
         self.player_sprite = Player()
         self.player_sprite.texture = arcade.load_texture(self.file_path)
         self.player_sprite.scale = 0.15
         self.player_sprite._angle = 0  # Start by facing up (90 degrees)
-
-        # FIX: Just pass the sprite, not self
         self.player_list.append(self.player_sprite)
 
         from Evolution_Game.windows.stage2_files.creature_stats import predator_roles
@@ -394,7 +415,7 @@ class GameView1(UIView):
                     self.prey_logic_timer = 0
 
             self.update_player_speed()  # Update speed and rotation here
-            self.player_list.update()  # Make sure this is updating the sprite
+            self.player_list.update(delta_time)  # Make sure this is updating the sprite
             self.check_prey_collision()
 
     def on_key_press(self, key, modifiers):
